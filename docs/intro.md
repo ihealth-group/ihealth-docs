@@ -43,7 +43,7 @@ Nossa **Extração de Dados Clínicos** é um produto que disponibiliza dados es
 - Dados organizados com terminologias médicas padronizadas
 - Base para análises de dados por cientistas e analistas
 
-[**Começar com a Extração de Dados →**](./exporter/intro)
+[**Começar com a Extração de Dados →**](./clinical-data-extraction/intro)
 
 ## Nossos Valores
 

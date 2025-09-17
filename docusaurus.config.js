@@ -91,7 +91,7 @@ const config = {
               },
               {
                 label: "Extração de Dados Clínicos",
-                to: "/exporter/intro",
+                to: "/clinical-data-extraction/intro",
               },
             ],
           },
