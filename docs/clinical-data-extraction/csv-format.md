@@ -189,5 +189,5 @@ plt.show()
 
 ---
 
-**Anterior**: [Estrutura dos Dados](./data-structure.md)  
+**Anterior**: [Entrega dos Dados](./delivery.md)  
 **Próximo**: [Formato JSONL](./jsonl-format.md)

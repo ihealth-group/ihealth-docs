@@ -184,4 +184,4 @@ Nossa base de dados clínica inclui dados de 31 provedores (hospitais) distribu�
 
 ---
 
-**Próximo**: [Formato CSV](./csv-format.md)
+**Próximo**: [Entrega dos Dados](./delivery.md)

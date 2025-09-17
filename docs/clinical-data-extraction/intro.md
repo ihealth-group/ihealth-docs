@@ -16,19 +16,23 @@ Nossa extração de dados é uma seleção estruturada de nosso banco de dados c
 
 ## Formatos de Disponibilização
 
-Os dados extraídos são disponibilizados em dois formatos principais:
+Os dados extraídos são disponibilizados em dois formatos principais, organizados em **lotes de arquivos** para facilitar o processamento:
 
 ### 📊 CSV
 
 - **Granularidade**: Cada linha = 1 entidade clínica
 - **Estrutura**: Dados "achatados" em colunas
 - **Uso recomendado**: Análises estatísticas, agregações por tipo de entidade, análises exploratórias
+- **Entrega**: Arquivos em lotes de 10-50 pacientes cada
 
 ### 📋 JSONL
 
 - **Granularidade**: Cada linha = 1 documento completo
 - **Estrutura**: Dados aninhados preservando hierarquia
 - **Uso recomendado**: Análises por documento, preservação de contexto clínico, análises de jornada do paciente
+- **Entrega**: Arquivos em lotes de 10-50 pacientes cada
+
+> **Importante**: O número de linhas por arquivo varia conforme a quantidade de documentos clínicos disponíveis para cada paciente na base de dados. Para detalhes completos sobre a estrutura de entrega, consulte a seção [Entrega dos Dados](./delivery.md).
 
 ## Público-Alvo
 
@@ -44,8 +48,9 @@ Esta documentação é destinada a:
 1. **[Estrutura dos Dados](./data-structure.md)** - Entenda como os dados extraídos são organizados
 2. **[Formato CSV](./csv-format.md)** - Aprenda a trabalhar com dados em CSV
 3. **[Formato JSONL](./jsonl-format.md)** - Explore a estrutura JSONL
-4. **[Diretrizes de Análise](./analysis-guidelines.md)** - Boas práticas para análise dos dados extraídos
-5. **[Limitações](./limitations.md)** - Conheça as limitações e considerações importantes
+4. **[Entrega dos Dados](./delivery.md)** - Saiba como os dados são entregues em lotes e como processá-los
+5. **[Diretrizes de Análise](./analysis-guidelines.md)** - Boas práticas para análise dos dados extraídos
+6. **[Limitações](./limitations.md)** - Conheça as limitações e considerações importantes
 
 ---
 

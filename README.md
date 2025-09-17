@@ -10,9 +10,10 @@ A documentação está organizada na pasta `docs/` com a seguinte estrutura:
 
 ```
 docs/
-└── exporter/
-    ├── intro.md                 # Introdução ao Exporter
+└── clinical-data-extraction/
+    ├── intro.md                 # Introdução à Extração de Dados Clínicos
     ├── data-structure.md        # Estrutura dos dados
+    ├── delivery.md             # Entrega dos dados em lotes
     ├── csv-format.md           # Formato CSV
     ├── jsonl-format.md         # Formato JSONL
     ├── analysis-guidelines.md  # Diretrizes de análise
@@ -55,16 +56,17 @@ Personalize as cores e estilos em:
 
 ## Estrutura da Documentação
 
-### Exporter
+### Extração de Dados Clínicos
 
-A documentação do Exporter está dividida em seções lógicas:
+A documentação da Extração de Dados Clínicos está dividida em seções lógicas:
 
 1. **Introdução**: Visão geral do produto
-2. **Estrutura dos Dados**: Campos e categorias disponíveis
+2. **Entrega dos Dados**: Como os dados são entregues em lotes
 3. **Formato CSV**: Como trabalhar com dados em CSV
 4. **Formato JSONL**: Como trabalhar com dados em JSONL
-5. **Diretrizes de Análise**: Boas práticas e exemplos
-6. **Limitações**: Considerações importantes
+5. **Estrutura dos Dados**: Campos e categorias disponíveis
+6. **Diretrizes de Análise**: Boas práticas e exemplos
+7. **Limitações**: Considerações importantes
 
 ### Navegação
 
