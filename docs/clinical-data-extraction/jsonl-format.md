@@ -23,7 +23,7 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
   "gender": "MALE",
   "birthdate": "1980-05-15 00:00:00",
   "death": "N",
-  "provider": "Centro 1",
+  "provider": "provider_abc123",
   "provider_state_code": "SP",
   "provider_city": "São Paulo",
   "provider_type": "Convênio ou Particular",
