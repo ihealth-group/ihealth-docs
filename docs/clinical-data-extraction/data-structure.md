@@ -20,7 +20,7 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 | `gender`              | string | Gênero do paciente (MALE, FEMALE, UNKNOWN)                 |
 | `birthdate`           | string | Data de nascimento do paciente (YYYY-MM-DD HH:MM:SS)       |
 | `death`               | string | Status de óbito (Y, N, X)                                  |
-| `provider`            | string | Nome do provedor de dados (anonimizado ou completo)        |
+| `provider`            | string | Provedor de dados anonimizado                              |
 | `provider_state_code` | string | Código da Unidade Federativa do provedor                   |
 | `provider_city`       | string | Cidade do provedor                                         |
 | `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular)           |

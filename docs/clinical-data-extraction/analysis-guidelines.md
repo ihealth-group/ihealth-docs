@@ -270,7 +270,7 @@ print(terminology_coverage)
 ### 1. Anonimização
 
 - **IDs de pacientes e casos**: Anonimizados para preservar privacidade
-- **Provedores**: Podem estar anonimizados ou completos
+- **Provedores**: Anonimizados
 - **Preservação de privacidade**: Mantenha confidencialidade em todas as análises
 
 ```python
