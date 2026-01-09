@@ -29,9 +29,9 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 
 Os campos abaixo podem ser contratados de forma adicional durante o processo de compra do banco de dados.
 
-| Campo        | Tipo   | Descrição                                                                                                                                                                                                                                                   |
-| ------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `payer_name` | string | Nome da fonte pagadora pelo atendimento do paciente (plano de saúde, atendimento público ou privado). String não normalizada, um mesmo plano ou tipo de atendimento pode aparecer escrito de formas diferentes, sendo necessária normalização nas análises. |
+| Campo        | Tipo   | Descrição                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `payer_name` | string | Identificador da fonte pagadora associada à nota clínica. Um mesmo paciente ou atendimento pode ter múltiplas fontes pagadoras, conforme os serviços registrados. Campo do tipo string, não normalizado, que representa diversos planos/convênios de saúde, SUS ou privado, podendo conter variações de grafia para uma mesma fonte, o que exige normalização prévia para fins analíticos. |
 
 > **Importante**: Verifique com o time comercial durante as negociações para inclusão do campo.
 
