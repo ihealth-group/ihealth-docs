@@ -2,11 +2,11 @@
 
 ## Contexto dos Dados
 
-Esta documentação fornece diretrizes para análise dos **dados extraídos** de nosso banco clínico. Estes dados representam uma seleção específica de documentos médicos de aproximadamente 2,7 milhões de pacientes, filtrados conforme critérios definidos para o projeto.
+Esta documentação fornece diretrizes para análise dos **dados extraídos** de nosso banco clínico. Estes dados representam uma seleção específica de documentos médicos de nossa base, com ampla cobertura nacional e representatividade para análises, filtrados conforme critérios definidos para o projeto.
 
 ### Características Importantes dos Dados Extraídos
 
-- **Origem**: Banco de dados clínico com mais de 45 milhões de documentos de aproximadamente 2,7 milhões de vidas
+- **Origem**: Banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
 - **Seleção**: Pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
 - **Estruturação**: Dados processados com NLP para extração de entidades clínicas
 - **Anonimização**: Identificadores de pacientes e provedores anonimizados

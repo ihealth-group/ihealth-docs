@@ -29,13 +29,13 @@ Nossa principal plataforma, o **Smart Health Connect (SHC)**, utiliza processame
 
 ## Data Lake Colaborativo
 
-Com um data lake colaborativo que reúne dados clínicos altamente capilares de **31 hospitais brasileiros** e **aproximadamente 2,7 milhões de vidas**, totalizando **mais de 45 milhões de documentos**, entregamos soluções que transformam a forma como a saúde é gerenciada e pesquisada.
+Com um data lake colaborativo que reúne dados clínicos altamente capilares de hospitais brasileiros em todas as regiões do país, entregamos soluções que transformam a forma como a saúde é gerenciada e pesquisada.
 
 ## Documentação Disponível
 
 ### 📊 Extração de Dados Clínicos
 
-Nossa **Extração de Dados Clínicos** é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, composto por mais de 45 milhões de documentos de aproximadamente 2,7 milhões de pacientes. Esta extração é personalizada conforme critérios específicos (diagnósticos, medicamentos, procedimentos, etc.) e permite:
+Nossa **Extração de Dados Clínicos** é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, com ampla cobertura e representatividade para estudos e projetos. Esta extração é personalizada conforme critérios específicos (diagnósticos, medicamentos, procedimentos, etc.) e permite:
 
 - Acesso a dados clínicos estruturados e anonimizados
 - Disponibilização em múltiplos formatos (CSV e JSONL)

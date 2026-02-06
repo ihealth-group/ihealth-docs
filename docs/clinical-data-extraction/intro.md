@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-A **Extração de Dados Clínicos** da iHealth é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, composto por mais de 45 milhões de documentos de aproximadamente 2,7 milhões de pacientes de 31 hospitais brasileiros. Esta extração é personalizada conforme critérios específicos definidos pelo cliente contratante.
+A **Extração de Dados Clínicos** da iHealth é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos e projetos, e provedores em todas as regiões do Brasil. Esta extração é personalizada conforme critérios específicos definidos pelo cliente contratante.
 
 ## O que é a Extração de Dados Clínicos?
 

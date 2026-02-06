@@ -7,37 +7,80 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 1. **Campos de Identificação** - Informações sobre paciente e documento (anonimizadas)
 2. **Campos de Entidades Clínicas** - Dados estruturados extraídos dos documentos médicos
 
-> **Nota**: Estes dados representam uma seleção específica de nosso banco de dados clínico, composto por mais de 45 milhões de documentos de aproximadamente 2,7 milhões de pacientes de 31 hospitais brasileiros, filtrados conforme critérios definidos pelo cliente contratante.
+> **Nota**: Estes dados representam uma seleção específica de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos, filtrados conforme critérios definidos pelo cliente contratante.
 
 ## Campos de Identificação do Paciente e Documento
 
-| Campo                 | Tipo   | Descrição                                                  |
-| --------------------- | ------ | ---------------------------------------------------------- |
-| `document_id`         | string | Identificador único do documento no banco de dados         |
-| `document_date`       | string | Data de criação do documento clínico (YYYY-MM-DD HH:MM:SS) |
-| `patient_id`          | string | ID anonimizado do paciente (prefixo: "patient\_")          |
-| `case_id`             | string | ID anonimizado do caso clínico (prefixo: "case\_")         |
-| `gender`              | string | Gênero do paciente (MALE, FEMALE, UNKNOWN)                 |
-| `birthdate`           | string | Data de nascimento do paciente (YYYY-MM-DD HH:MM:SS)       |
-| `death`               | string | Status de óbito (Y, N, X)                                  |
-| `provider`            | string | Provedor de dados anonimizado                              |
-| `provider_state_code` | string | Código da Unidade Federativa do provedor                   |
-| `provider_city`       | string | Cidade do provedor                                         |
-| `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular)           |
+
+| Campo                 | Tipo   | Descrição                                                                                      |
+| --------------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| `document_id`         | string | Identificador único do documento no banco de dados                                             |
+| `document_date`       | string | Data de criação do documento clínico (YYYY-MM-DD HH:MM:SS)                                     |
+| `patient_id`          | string | ID anonimizado do paciente (prefixo: "patient")                                                |
+| `case_id`             | string | ID anonimizado do caso clínico (prefixo: "case")                                               |
+| `gender`              | string | Sexo biológico do paciente (MALE, FEMALE, UNKNOWN). [Ver detalhes abaixo](#campo-gender).      |
+| `birthdate`           | string | Data de nascimento do paciente (YYYY-MM-DD HH:MM:SS)                                           |
+| `death`               | string | Status de óbito do paciente (Y, N, X). [Ver detalhes abaixo](#campo-death).                    |
+| `provider`            | string | Provedor de dados anonimizado                                                                  |
+| `provider_state_code` | string | Código da Unidade Federativa do provedor                                                       |
+| `provider_city`       | string | Cidade do provedor                                                                             |
+| `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular). [Ver detalhes abaixo](#campo-provider-type). |
+
 
 ## Campos Adicionais
 
 Os campos abaixo podem ser contratados de forma adicional durante o processo de compra do banco de dados.
 
+
 | Campo        | Tipo   | Descrição                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `payer_name` | string | Identificador da fonte pagadora associada à nota clínica. Um mesmo paciente ou atendimento pode ter múltiplas fontes pagadoras, conforme os serviços registrados. Campo do tipo string, não normalizado, que representa diversos planos/convênios de saúde, SUS ou privado, podendo conter variações de grafia para uma mesma fonte, o que exige normalização prévia para fins analíticos. |
 
+
 > **Importante**: Verifique com o time comercial durante as negociações para inclusão do campo.
+
+### Detalhamento dos Campos de Identificação
+
+#### Campo death – Status de Óbito {#campo-death}
+
+O campo `death` indica se há registro de óbito do paciente na base.
+
+
+| Valor | Descrição                                                                            |
+| ----- | ------------------------------------------------------------------------------------ |
+| `Y`   | **Sim** – Óbito registrado                                                           |
+| `N`   | **Não** – Sem registro de óbito                                                      |
+| `X`   | **Não especificado / Indisponível** – Informação não consta ou não pôde ser definida |
+
+
+#### Campo gender – Sexo Biológico do Paciente {#campo-gender}
+
+O campo `gender` representa o sexo biológico do paciente, registrado nos documentos clínicos.
+
+
+| Valor     | Descrição                                                                            |
+| --------- | ------------------------------------------------------------------------------------ |
+| `MALE`    | **Masculino**                                                                        |
+| `FEMALE`  | **Feminino**                                                                         |
+| `UNKNOWN` | **Não especificado / Indisponível** – Informação não consta ou não pôde ser definida |
+
+
+#### Campo provider_type – Tipo de Hospital {#campo-provider-type}
+
+O campo `provider_type` classifica o provedor quanto à natureza da gestão e da fonte pagadora. 
+
+
+| Valor                             | Descrição                                                                                                                |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `Público`                         | Estabelecimento exclusivamente da rede pública de saúde (SUS ou equivalente). Atendimento financiado pelo poder público. |
+| `Convênio ou Particular`          | Estabelecimento que atende por planos de saúde/convênios e/ou atendimento particular (privado), sem oferta pública.      |
+| `Público, Convênio ou Particular` | Estabelecimento que oferece atendimento nas três modalidades (público, convênio e particular).                           |
+
 
 ## Campos de Entidades Clínicas
 
 ### Campos Básicos da Entidade
+
 
 | Campo       | Tipo   | Descrição                                                                                         |
 | ----------- | ------ | ------------------------------------------------------------------------------------------------- |
@@ -46,7 +89,9 @@ Os campos abaixo podem ser contratados de forma adicional durante o processo de 
 | `label`     | string | Categoria da entidade clínica                                                                     |
 | `assertion` | string | Aserção sobre o contexto da entidade (AUSENTE, PRESENTE, POSSIVEL, HISTORICO) (quando disponível) |
 
+
 ### Campos de Terminologia (quando disponível)
+
 
 | Campo         | Tipo   | Descrição                                  |
 | ------------- | ------ | ------------------------------------------ |
@@ -54,7 +99,9 @@ Os campos abaixo podem ser contratados de forma adicional durante o processo de 
 | `term_code`   | string | Código da terminologia                     |
 | `term_desc`   | string | Descrição do termo                         |
 
+
 ### Campos de Relação (quando aplicável)
+
 
 | Campo               | Tipo   | Descrição                          |
 | ------------------- | ------ | ---------------------------------- |
@@ -62,9 +109,11 @@ Os campos abaixo podem ser contratados de forma adicional durante o processo de 
 | `relation_entity`   | string | Entidade relacionada               |
 | `relation_position` | string | Posição na relação (head, tail)    |
 
+
 ## Campos Estruturados para Exames e Biomarcadores
 
 **Importante**: Os campos abaixo são preenchidos apenas quando foi possível fazer a normalização/estruturação da entidade e se aplicam apenas às categorias especificadas:
+
 
 | Campo               | Tipo   | Categorias Aplicáveis             | Descrição                                                         |
 | ------------------- | ------ | --------------------------------- | ----------------------------------------------------------------- |
@@ -76,6 +125,7 @@ Os campos abaixo podem ser contratados de forma adicional durante o processo de 
 | `condition`         | string | CLINICAL_ATT                      | Condições associadas                                              |
 | `loinc_code`        | string | BIOMARKER                         | Código LOINC (quando disponível)                                  |
 
+
 ## Detalhamentos e Informações Adicionais
 
 ### Campo de Asserção - Contexto das Entidades
@@ -84,12 +134,14 @@ O campo `assertion` é uma classificação importante que indica o **contexto cl
 
 #### Valores Possíveis de Asserção
 
+
 | Valor       | Descrição                                  | Exemplo de Uso                                |
 | ----------- | ------------------------------------------ | --------------------------------------------- |
 | `PRESENTE`  | A entidade está **confirmada** no paciente | "Paciente apresenta diabetes tipo 2"          |
 | `AUSENTE`   | A entidade está **negada** ou **ausente**  | "Paciente não apresenta hipertensão"          |
 | `POSSIVEL`  | A entidade é **suspeita** ou **possível**  | "Suspeita de pneumonia" ou "Possível infarto" |
 | `HISTORICO` | A entidade é um **histórico** do paciente  | "Histórico de cirurgia cardíaca em 2020"      |
+
 
 #### Importância para Análise de Dados
 
@@ -120,11 +172,13 @@ Os campos de terminologia (`terminology`, `term_code`, `term_desc`) são aplicad
 
 #### Categorias com Terminologia
 
+
 | Categoria         | Terminologia | Descrição                                   | Exemplo                              |
 | ----------------- | ------------ | ------------------------------------------- | ------------------------------------ |
 | `DISEASE`         | **CID-10**   | Classificação Internacional de Doenças      | "diabetes tipo 2" → CID-10: E11      |
 | `PROCEDURE`       | **TUSS**     | Terminologia Unificada da Saúde Suplementar | "cirurgia cardíaca" → TUSS: 31001001 |
 | `PHARM_SUBSTANCE` | **ATC**      | Anatomical Therapeutic Chemical             | "metformina" → ATC: A10BA02          |
+
 
 #### Exemplo Prático
 
@@ -142,6 +196,7 @@ Terminologia aplicada:
 ### Categorias de Entidades Clínicas
 
 #### Labels Disponíveis
+
 
 | Label              | Descrição                    | Exemplo                           |
 | ------------------ | ---------------------------- | --------------------------------- |
@@ -164,7 +219,9 @@ Terminologia aplicada:
 | `LAB_TEST`         | Exames laboratoriais         | "hemograma", "urina"              |
 | `CLINICAL_ATT`     | Sinais vitais                | "pressão arterial", "temperatura" |
 
+
 ### Tipos de Relação
+
 
 | Relation Type                          | Descrição                             | Exemplo                   |
 | -------------------------------------- | ------------------------------------- | ------------------------- |
@@ -180,17 +237,8 @@ Terminologia aplicada:
 | `disease_has_metastatic_anatomic_site` | Define local metastático              | "câncer" → "pulmão"       |
 | `disease_has_associated_anatomic_site` | Relaciona doença a local associado    | "pneumonia" → "pulmão"    |
 
-## Provedores Disponíveis
 
-Nossa base de dados clínica inclui dados de 31 provedores (hospitais) distribuídos por todas as regiões do Brasil, totalizando aproximadamente 2,7 milhões de vidas e mais de 45 milhões de documentos:
-
-- **Sudeste**: 12 provedores (SP, MG)
-- **Nordeste**: 6 provedores (PE, RN, CE, PB)
-- **Sul**: 8 provedores (RS, PR, SC)
-- **Norte**: 3 provedores (TO, RO)
-- **Centro-Oeste**: 2 provedores (MT)
-
-> **Importante**: A extração de dados disponibilizada contém apenas os pacientes e documentos que atendem aos critérios específicos definidos para o projeto, representando uma amostra selecionada desta base completa.
+> **Importante**: A extração de dados disponibilizada contém apenas os pacientes e documentos que atendem aos critérios específicos definidos para o projeto, representando uma amostra selecionada de nossa base, com ampla cobertura e representatividade.
 
 ---
 
