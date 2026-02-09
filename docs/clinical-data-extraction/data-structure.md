@@ -4,13 +4,12 @@
 
 Os dados extraídos de nosso banco clínico são organizados em duas seções principais:
 
-1. **Campos de Identificação** - Informações sobre paciente e documento (anonimizadas)
+1. **Campos de Metadados** - Informações sobre paciente e documento (anonimizadas)
 2. **Campos de Entidades Clínicas** - Dados estruturados extraídos dos documentos médicos
 
 > **Nota**: Estes dados representam uma seleção específica de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos, filtrados conforme critérios definidos pelo cliente contratante.
 
-## Campos de Identificação do Paciente e Documento
-
+## Campos de Metadados do Paciente e do Documento
 
 | Campo                 | Tipo   | Descrição                                                                                      |
 | --------------------- | ------ | ---------------------------------------------------------------------------------------------- |
@@ -26,25 +25,21 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 | `provider_city`       | string | Cidade do provedor                                                                             |
 | `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular). [Ver detalhes abaixo](#campo-provider-type). |
 
-
 ## Campos Adicionais
 
 Os campos abaixo podem ser contratados de forma adicional durante o processo de compra do banco de dados.
-
 
 | Campo        | Tipo   | Descrição                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `payer_name` | string | Identificador da fonte pagadora associada à nota clínica. Um mesmo paciente ou atendimento pode ter múltiplas fontes pagadoras, conforme os serviços registrados. Campo do tipo string, não normalizado, que representa diversos planos/convênios de saúde, SUS ou privado, podendo conter variações de grafia para uma mesma fonte, o que exige normalização prévia para fins analíticos. |
 
-
 > **Importante**: Verifique com o time comercial durante as negociações para inclusão do campo.
 
-### Detalhamento dos Campos de Identificação
+### Detalhamento dos Campos
 
 #### Campo death – Status de Óbito {#campo-death}
 
 O campo `death` indica se há registro de óbito do paciente na base.
-
 
 | Valor | Descrição                                                                            |
 | ----- | ------------------------------------------------------------------------------------ |
@@ -52,11 +47,9 @@ O campo `death` indica se há registro de óbito do paciente na base.
 | `N`   | **Não** – Sem registro de óbito                                                      |
 | `X`   | **Não especificado / Indisponível** – Informação não consta ou não pôde ser definida |
 
-
 #### Campo gender – Sexo Biológico do Paciente {#campo-gender}
 
 O campo `gender` representa o sexo biológico do paciente, registrado nos documentos clínicos.
-
 
 | Valor     | Descrição                                                                            |
 | --------- | ------------------------------------------------------------------------------------ |
@@ -64,11 +57,9 @@ O campo `gender` representa o sexo biológico do paciente, registrado nos docume
 | `FEMALE`  | **Feminino**                                                                         |
 | `UNKNOWN` | **Não especificado / Indisponível** – Informação não consta ou não pôde ser definida |
 
-
 #### Campo provider_type – Tipo de Hospital {#campo-provider-type}
 
-O campo `provider_type` classifica o provedor quanto à natureza da gestão e da fonte pagadora. 
-
+O campo `provider_type` classifica o provedor quanto à natureza da gestão e da fonte pagadora.
 
 | Valor                             | Descrição                                                                                                                |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -76,11 +67,9 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `Convênio ou Particular`          | Estabelecimento que atende por planos de saúde/convênios e/ou atendimento particular (privado), sem oferta pública.      |
 | `Público, Convênio ou Particular` | Estabelecimento que oferece atendimento nas três modalidades (público, convênio e particular).                           |
 
-
 ## Campos de Entidades Clínicas
 
 ### Campos Básicos da Entidade
-
 
 | Campo       | Tipo   | Descrição                                                                                         |
 | ----------- | ------ | ------------------------------------------------------------------------------------------------- |
@@ -89,9 +78,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `label`     | string | Categoria da entidade clínica                                                                     |
 | `assertion` | string | Aserção sobre o contexto da entidade (AUSENTE, PRESENTE, POSSIVEL, HISTORICO) (quando disponível) |
 
-
 ### Campos de Terminologia (quando disponível)
-
 
 | Campo         | Tipo   | Descrição                                  |
 | ------------- | ------ | ------------------------------------------ |
@@ -99,9 +86,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `term_code`   | string | Código da terminologia                     |
 | `term_desc`   | string | Descrição do termo                         |
 
-
 ### Campos de Relação (quando aplicável)
-
 
 | Campo               | Tipo   | Descrição                          |
 | ------------------- | ------ | ---------------------------------- |
@@ -109,11 +94,9 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `relation_entity`   | string | Entidade relacionada               |
 | `relation_position` | string | Posição na relação (head, tail)    |
 
-
 ## Campos Estruturados para Exames e Biomarcadores
 
 **Importante**: Os campos abaixo são preenchidos apenas quando foi possível fazer a normalização/estruturação da entidade e se aplicam apenas às categorias especificadas:
-
 
 | Campo               | Tipo   | Categorias Aplicáveis             | Descrição                                                         |
 | ------------------- | ------ | --------------------------------- | ----------------------------------------------------------------- |
@@ -125,7 +108,6 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `condition`         | string | CLINICAL_ATT                      | Condições associadas                                              |
 | `loinc_code`        | string | BIOMARKER                         | Código LOINC (quando disponível)                                  |
 
-
 ## Detalhamentos e Informações Adicionais
 
 ### Campo de Asserção - Contexto das Entidades
@@ -134,14 +116,12 @@ O campo `assertion` é uma classificação importante que indica o **contexto cl
 
 #### Valores Possíveis de Asserção
 
-
 | Valor       | Descrição                                  | Exemplo de Uso                                |
 | ----------- | ------------------------------------------ | --------------------------------------------- |
 | `PRESENTE`  | A entidade está **confirmada** no paciente | "Paciente apresenta diabetes tipo 2"          |
 | `AUSENTE`   | A entidade está **negada** ou **ausente**  | "Paciente não apresenta hipertensão"          |
 | `POSSIVEL`  | A entidade é **suspeita** ou **possível**  | "Suspeita de pneumonia" ou "Possível infarto" |
 | `HISTORICO` | A entidade é um **histórico** do paciente  | "Histórico de cirurgia cardíaca em 2020"      |
-
 
 #### Importância para Análise de Dados
 
@@ -172,13 +152,11 @@ Os campos de terminologia (`terminology`, `term_code`, `term_desc`) são aplicad
 
 #### Categorias com Terminologia
 
-
 | Categoria         | Terminologia | Descrição                                   | Exemplo                              |
 | ----------------- | ------------ | ------------------------------------------- | ------------------------------------ |
 | `DISEASE`         | **CID-10**   | Classificação Internacional de Doenças      | "diabetes tipo 2" → CID-10: E11      |
 | `PROCEDURE`       | **TUSS**     | Terminologia Unificada da Saúde Suplementar | "cirurgia cardíaca" → TUSS: 31001001 |
 | `PHARM_SUBSTANCE` | **ATC**      | Anatomical Therapeutic Chemical             | "metformina" → ATC: A10BA02          |
-
 
 #### Exemplo Prático
 
@@ -196,7 +174,6 @@ Terminologia aplicada:
 ### Categorias de Entidades Clínicas
 
 #### Labels Disponíveis
-
 
 | Label              | Descrição                    | Exemplo                           |
 | ------------------ | ---------------------------- | --------------------------------- |
@@ -219,9 +196,7 @@ Terminologia aplicada:
 | `LAB_TEST`         | Exames laboratoriais         | "hemograma", "urina"              |
 | `CLINICAL_ATT`     | Sinais vitais                | "pressão arterial", "temperatura" |
 
-
 ### Tipos de Relação
-
 
 | Relation Type                          | Descrição                             | Exemplo                   |
 | -------------------------------------- | ------------------------------------- | ------------------------- |
@@ -236,7 +211,6 @@ Terminologia aplicada:
 | `disease_has_finding`                  | Associa doença a achado               | "diabetes" → "poliúria"   |
 | `disease_has_metastatic_anatomic_site` | Define local metastático              | "câncer" → "pulmão"       |
 | `disease_has_associated_anatomic_site` | Relaciona doença a local associado    | "pneumonia" → "pulmão"    |
-
 
 > **Importante**: A extração de dados disponibilizada contém apenas os pacientes e documentos que atendem aos critérios específicos definidos para o projeto, representando uma amostra selecionada de nossa base, com ampla cobertura e representatividade.
 
