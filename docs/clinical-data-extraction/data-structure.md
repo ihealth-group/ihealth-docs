@@ -20,9 +20,7 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 | `gender`              | string | Sexo biológico do paciente (MALE, FEMALE, UNKNOWN). [Ver detalhes abaixo](#campo-gender).      |
 | `birthdate`           | string | Data de nascimento do paciente (YYYY-MM-DD HH:MM:SS)                                           |
 | `death`               | string | Status de óbito do paciente (Y, N, X). [Ver detalhes abaixo](#campo-death).                    |
-| `provider`            | string | Provedor de dados anonimizado                                                                  |
 | `provider_state_code` | string | Código da Unidade Federativa do provedor                                                       |
-| `provider_city`       | string | Cidade do provedor                                                                             |
 | `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular). [Ver detalhes abaixo](#campo-provider-type). |
 
 ## Campos Adicionais
@@ -144,7 +142,13 @@ Entidades extraídas:
 - "insuficiência cardíaca" → assertion: POSSIVEL
 ```
 
-> **Nota**: O campo `assertion` está disponível apenas para algumas categorias de entidades e nem todos os documentos podem ter esta classificação aplicada.
+#### Categorias com Asserção
+
+O modelo de inferência de asserção é aplicado apenas às seguintes categorias de entidades:
+
+**DISEASE**, **PROCEDURE**, **PHARM_SUBSTANCE**, **SYMPTOM**, **FINDING**, **INJURY**, **VENT_SUPPORT**, **MEDICAL_DEVICE**.
+
+Nas demais categorias (por exemplo, BIOMARKER, LAB_TEST, CLINICAL_ATT, BODY_PART, TEMPORAL_CONCEPT, entre outras), o modelo de inferência **não é aplicado**. Essas entidades são tratadas como naturalmente presentes no contexto clínico do documento e não demandam classificação adicional. Deste modo, a ausência do campo preenchido não indica falha do modelo na inferência.
 
 ### Campos de Terminologia - Normalização e Codificação
 

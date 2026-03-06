@@ -150,16 +150,6 @@ plt.show()
 region_distribution = df['provider_state_code'].value_counts()
 print("Distribuição por UF:")
 print(region_distribution)
-
-# Análise por provedor
-provider_analysis = df.groupby('provider').agg({
-    'document_id': 'nunique',
-    'entity_id': 'count',
-    'patient_id': 'nunique'
-}).sort_values('document_id', ascending=False)
-
-print("Análise por provedor:")
-print(provider_analysis.head(10))
 ```
 
 ### 4. Análise de Relações
@@ -270,7 +260,6 @@ print(terminology_coverage)
 ### 1. Anonimização
 
 - **IDs de pacientes e casos**: Anonimizados para preservar privacidade
-- **Provedores**: Anonimizados
 - **Preservação de privacidade**: Mantenha confidencialidade em todas as análises
 
 ```python
@@ -310,8 +299,7 @@ print(f"Relações órfãs: {orphan_relations}")
 doc_analysis = df.groupby('document_id').agg({
     'entity_id': 'count',
     'label': lambda x: list(x.unique()),
-    'patient_id': 'first',
-    'provider': 'first'
+    'patient_id': 'first'
 })
 
 print("Análise por documento:")

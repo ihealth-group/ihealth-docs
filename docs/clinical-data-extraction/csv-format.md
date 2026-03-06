@@ -11,17 +11,17 @@
 ### Cabeçalho
 
 ```csv
-document_id,document_date,patient_id,case_id,gender,birthdate,death,provider,provider_state_code,provider_city,provider_type,entity_id,entity,label,assertion,normalized_entity,specific_marker,detection_status,condition,numeric_value,unit,loinc_code,terminology,term_code,term_desc,relation_type,relation_entity,relation_position
+document_id,document_date,patient_id,case_id,gender,birthdate,death,provider_state_code,provider_type,entity_id,entity,label,assertion,normalized_entity,specific_marker,detection_status,condition,numeric_value,unit,loinc_code,terminology,term_code,term_desc,relation_type,relation_entity,relation_position
 ```
 
 ### Exemplo de Dados
 
 ```csv
-doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,provider_abc123,SP,São Paulo,Público,doc_123_45,hipertensão,DISEASE,PRESENTE,,,,,,,,CID-10,I10,Hipertensão arterial essencial,,,
-doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,provider_abc123,SP,São Paulo,Público,doc_123_120,HER2 positivo,BIOMARKER,,HER2,HER2,positivo,,,33747-0,,,,,,
-doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,provider_abc123,SP,São Paulo,Público,doc_123_200,plaquetas 150.000/mm³,LAB_TEST,,Plaquetas,,,,150000.0,mm³,,,,,,
-doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,provider_def456,MG,Belo Horizonte,Convênio ou Particular,doc_456_78,metformina,PHARM_SUBSTANCE,PRESENTE,,,,,,,,ATC,A10BA02,Metformina,may_treat,diabetes,head
-doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,provider_def456,MG,Belo Horizonte,Convênio ou Particular,doc_456_90,rx toráx,PROCEDURE,PRESENTE,,,,,,,,TUSS,31001001,Radiografia de tórax,procedure_has_target_anatomy,tórax,head
+doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_45,hipertensão,DISEASE,PRESENTE,,,,,,,,CID-10,I10,Hipertensão arterial essencial,,,
+doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_120,HER2 positivo,BIOMARKER,,HER2,HER2,positivo,,,33747-0,,,,,,
+doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_200,plaquetas 150.000/mm³,LAB_TEST,,Plaquetas,,,,150000.0,mm³,,,,,,
+doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_78,metformina,PHARM_SUBSTANCE,PRESENTE,,,,,,,,ATC,A10BA02,Metformina,may_treat,diabetes,head
+doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_90,rx toráx,PROCEDURE,PRESENTE,,,,,,,,TUSS,31001001,Radiografia de tórax,procedure_has_target_anatomy,tórax,head
 ```
 
 ## Trabalhando com CSV
@@ -51,7 +51,6 @@ df['birthdate'] = pd.to_datetime(df['birthdate'])
 
 # Verificar valores únicos
 print("Labels disponíveis:", df['label'].unique())
-print("Provedores:", df['provider'].unique())
 ```
 
 ### Análises Básicas
@@ -83,13 +82,6 @@ print(monthly_docs)
 # Distribuição por região
 region_distribution = df['provider_state_code'].value_counts()
 print(region_distribution)
-
-# Análise por provedor
-provider_analysis = df.groupby('provider').agg({
-    'document_id': 'nunique',
-    'entity_id': 'count'
-})
-print(provider_analysis)
 ```
 
 ### Análise de Biomarcadores e Exames
