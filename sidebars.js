@@ -20,6 +20,11 @@ const sidebars = {
     "intro",
     {
       type: "category",
+      label: "Plataforma iHealth",
+      items: ["plataforma/boas-vindas"],
+    },
+    {
+      type: "category",
       label: "Extração de Dados Clínicos",
       items: [
         "clinical-data-extraction/intro",

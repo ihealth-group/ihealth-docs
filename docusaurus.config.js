@@ -90,6 +90,10 @@ const config = {
                 to: "/",
               },
               {
+                label: "Plataforma iHealth",
+                to: "/plataforma/boas-vindas",
+              },
+              {
                 label: "Extração de Dados Clínicos",
                 to: "/clinical-data-extraction/intro",
               },

@@ -12,24 +12,24 @@ A **iHealth** é uma empresa do grupo DoctorAssistant.ai especializada no uso de
 
 Transformar dados clínicos em inteligência estratégica através de tecnologia avançada, conectando informações de mundo real às decisões clínicas e estratégicas de forma ética, segura e inteligente.
 
-## Smart Health Connect (SHC)
-
-Nossa principal plataforma, o **Smart Health Connect (SHC)**, utiliza processamento de linguagem natural (NLP) para processar notas clínicas de textos livres (evoluções médicas e multiprofissionais) e gerar bancos de dados reestruturados.
-
-### Principais Funcionalidades
-
-- **Triagem automatizada** de pacientes
-- **Análises de mercado** e insights estratégicos
-- **Estudos de RWE** (Real World Evidence)
-- **Identificação de pacientes** elegíveis para estudos clínicos
-- **Criação de bancos de dados** clínicos auditáveis e anonimizados
-- **Reconstrução da jornada** do paciente
-- **Dashboards interativos** personalizáveis
-- **Codificação automatizada** de DRG com IA
-
 ## Data Lake Colaborativo
 
 Com um data lake colaborativo que reúne dados clínicos altamente capilares de hospitais brasileiros em todas as regiões do país, entregamos soluções que transformam a forma como a saúde é gerenciada e pesquisada.
+
+## Plataforma iHealth
+
+A **Plataforma iHealth** é o ambiente para transformar texto clínico em população de estudo. Ela lê evoluções, laudos, sumários de alta e pareceres com modelos de inteligência artificial, estrutura o que está no documento e coloca isso ao alcance em linguagem clínica — para montar coortes, explorar populações e sustentar análises.
+
+### Principais funcionalidades
+
+- **Busca estruturada** em texto clínico, com categorias, contextos e relações entre entidades
+- **Painel Geral** da base disponível para pesquisa
+- **Análise de Funil** para critérios de elegibilidade em etapas
+- **Protocolos clínicos** para acompanhar e compartilhar coortes ao longo do tempo
+- **Estudos de RWE / RWD**, viabilidade e recrutamento
+- **Recortes por tipo de acesso**: datalake completo ou hospitalar
+
+[**Começar pelas boas-vindas da plataforma →**](./plataforma/boas-vindas)
 
 ## Documentação Disponível
 

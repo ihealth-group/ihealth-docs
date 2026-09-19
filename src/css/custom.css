@@ -28,3 +28,18 @@
   --ifm-color-primary-lightest: #4cc1ea;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Tip cards use brand colors */
+.theme-admonition-tip {
+  --ifm-alert-background-color: #e6f0f5;
+  --ifm-alert-background-color-highlight: rgba(1, 69, 107, 0.15);
+  --ifm-alert-foreground-color: #012a3f;
+  --ifm-alert-border-color: var(--ifm-color-primary);
+}
+
+[data-theme="dark"] .theme-admonition-tip {
+  --ifm-alert-background-color: rgba(3, 165, 221, 0.12);
+  --ifm-alert-background-color-highlight: rgba(3, 165, 221, 0.22);
+  --ifm-alert-foreground-color: #e8f6fb;
+  --ifm-alert-border-color: var(--ifm-color-primary);
+}
