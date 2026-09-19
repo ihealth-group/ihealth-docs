@@ -8,7 +8,7 @@ hide_title: true
 
 # A nova plataforma iHealth
 
-Grande parte da informação clínica mais rica está escrita em texto livre: evoluções, laudos, sumários de alta, pareceres. A plataforma iHealth lê esses documentos com modelos de inteligência artificial, estrutura e normaliza o que está ali dentro, e coloca tudo isso ao seu alcance em linguagem clínica — para você montar coortes, explorar populações e sustentar análises.
+Grande parte da informação clínica mais rica está escrita em texto livre: evoluções, laudos, sumários de alta, pareceres. A plataforma iHealth lê esses documentos com modelos de inteligência artificial, estrutura e normaliza o que está ali dentro, e coloca tudo isso ao seu alcance em linguagem clínica — para você montar coortes, avaliar viabilidade e sustentar análises de mundo real, da doença rara ao perfil assistencial da instituição.
 
 Nesta versão, a plataforma ganha uma interface nova e uma camada de leitura clínica ainda mais apurada. Tudo o que você já fazia continua aqui: busca estruturada, protocolos, funil e painéis.
 
@@ -31,7 +31,7 @@ Nossos modelos de extração e normalização evoluem continuamente. Nesta vers�
 
 **1. Captura de entidades.** O vocabulário clínico não para: terapias novas chegam, nomenclaturas se atualizam, siglas entram no uso corrente. A amostra ampliada acompanha esse movimento, e o modelo passa a reconhecer um conjunto maior de termos — inclusive medicamentos recentes.
 
-**2. Asserção de contexto.** Cada menção é classificada segundo o papel que tem no texto, com precisão maior. E o conjunto ganhou um contexto novo: **Histórico familiar**, que distingue o antecedente de um parente da condição do próprio paciente — um recorte a mais à sua disposição na hora de montar o critério.
+**2. Asserção de contexto.** Cada menção é classificada segundo o papel que tem no texto, com precisão maior. O conjunto ganhou **Histórico familiar**, e o que era _Possível_ passa a se chamar **Em investigação** — para cobrir hipóteses e suspeitas em qualquer formulação do texto.
 
 **3. Relações entre entidades.** O modelo liga com mais confiança um termo a outro: a doença ao órgão, o procedimento à anatomia em que foi feito, o fármaco à condição que ele pode tratar, a doença ao biomarcador e ao estadiamento. A leitura do documento fica mais conectada, e a jornada do paciente, mais fácil de acompanhar.
 
@@ -47,16 +47,38 @@ Na prática: coortes mais aderentes à pergunta clínica e uma leitura de jornad
 
 ---
 
-## Para que usar a plataforma
+## O que mudou
 
-A plataforma foi feita para quem precisa transformar informação clínica em população de estudo.
+Se você já usava a plataforma, categorias e contextos foram reorganizados para refletir melhor a forma como o texto clínico descreve o paciente. A busca e os protocolos acompanham essa taxonomia.
 
-- **RWE / RWD** — descrever como uma doença se comporta fora do ensaio clínico: perfil dos pacientes, linha de tratamento praticada, tempo entre eventos, desfecho registrado.
-- **Viabilidade e recrutamento** — antes de abrir um estudo, saber quantos pacientes atendem aos critérios, em quais instituições, em quais estados.
-- **Doenças raras** — onde a leitura de texto rende mais: o diagnóstico costuma estar na narrativa do documento, não em um código administrativo. Sinônimos, siglas e contexto fazem diferença.
-- **Novos medicamentos** — mapear população elegível, uso real de fármacos e o que se registra em torno deles.
-- **Epidemiologia hospitalar** — para a instituição, entender o próprio perfil assistencial: quem atende, em que setor, com que fonte pagadora, ao longo do tempo.
-- **Estratificação por biomarcador e estadiamento** — recortar a coorte por resultado, faixa de valor e estágio, que são campos próprios na busca.
+### Contextos
+
+O papel de cada menção no texto ficou mais preciso — e o conjunto mudou em dois pontos:
+
+| Antes    | Agora                           | O que isso significa                                                          |
+| -------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| Possível | **Em investigação**             | Cobre hipóteses, suspeitas e diagnósticos em apuração, em qualquer formulação |
+| —        | **Histórico familiar** _(novo)_ | Distingue o antecedente de um parente da condição do próprio paciente         |
+
+**Presente**, **Histórico** e **Ausente** permanecem.
+
+### Categorias
+
+A lista agora reúne as categorias que mais sustentam um critério de pesquisa:
+
+| Antes                | Agora                  | O que isso significa                                                                                            |
+| -------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Sintomas             | **Achado clínico**     | Reúne o que o paciente relata e o que o exame físico descreve — um único lugar para sintomas e achados          |
+| Sinais vitais        | _categoria removida_   | Medições pontuais mudam o tempo todo, e a captura de valores específicos não sustentava um critério de pesquisa |
+| Suporte ventilatório | **Dispositivo médico** | Passa a integrar a categoria mais ampla dos elementos usados no cuidado                                         |
+
+As demais categorias — doença, fármaco, procedimento, exame, biomarcador e as outras da tabela da busca — seguem iguais.
+
+### Protocolos já salvos
+
+Os protocolos que usavam categorias removidas ou reorganizadas **foram ajustados** para a nova taxonomia e continuam funcionando normalmente.
+
+As contagens, no entanto, serão atualizadas. A captura de entidades evoluiu — mais termos reconhecidos, contexto mais preciso — e os números da coorte passam a refletir essa leitura. Se o tamanho de um protocolo mudar, é o reflexo da extração mais completa, não de um critério quebrado.
 
 ---
 
@@ -108,19 +130,19 @@ A tela tem duas colunas de elegibilidade:
 
 Cada critério começa pela **categoria** do termo:
 
-| Categoria | O que representa | Exemplos |
-| --- | --- | --- |
-| Achado clínico | Sintomas e achados do exame físico | Dor de cabeça, Febre, Edema |
-| Lesão | Lesões físicas ou envenenamentos | Fratura, Queda, Alergia |
-| Doença | Condições médicas ou patológicas | Diabetes, Hipertensão, Neoplasia |
-| Fármaco | Substâncias usadas em tratamento | Dipirona, Cefepime, Morfina |
-| Procedimento | Procedimentos diagnósticos ou terapêuticos | Tomografia, Biópsia, Quimioterapia |
-| Exame laboratorial | Resultados de testes laboratoriais | Hemograma, glicemia em jejum |
-| Biomarcador | Indicadores biológicos de saúde ou doença | KI67, HER2, PSA, EGFR |
-| Estadiamento | Estágio de uma condição | EC IV, EC IIA |
-| Escala | Escalas padrão de avaliação | ECOG, Glasgow, RASS |
-| Dispositivo médico | Dispositivos usados em procedimentos | Cateter venoso, Dreno, Prótese |
-| Parte do corpo | Órgãos e componentes anatômicos | Mama, Pulmão, Próstata |
+| Categoria          | O que representa                              | Exemplos                                   |
+| ------------------ | --------------------------------------------- | ------------------------------------------ |
+| Achado clínico     | Sintomas relatados e achados do exame físico  | Dor de cabeça, Febre, Edema                |
+| Lesão              | Lesões físicas ou envenenamentos              | Fratura, Queda, Alergia                    |
+| Doença             | Condições médicas ou patológicas              | Diabetes, Hipertensão, Neoplasia           |
+| Fármaco            | Substâncias usadas em tratamento              | Dipirona, Cefepime, Morfina                |
+| Procedimento       | Procedimentos diagnósticos ou terapêuticos    | Tomografia, Biópsia, Quimioterapia         |
+| Exame laboratorial | Resultados de testes laboratoriais            | Hemograma, glicemia em jejum               |
+| Biomarcador        | Indicadores biológicos de saúde ou doença     | KI67, HER2, PSA, EGFR                      |
+| Estadiamento       | Estágio de uma condição                       | EC IV, EC IIA                              |
+| Escala             | Escalas padrão de avaliação                   | ECOG, Glasgow, RASS                        |
+| Dispositivo médico | Dispositivos e equipamentos usados no cuidado | Cateter venoso, Dreno, Ventilação mecânica |
+| Parte do corpo     | Órgãos e componentes anatômicos               | Mama, Pulmão, Próstata                     |
 
 **Escreva como o prontuário escreve.** Use sinônimos, siglas e abreviações. Vários termos no mesmo critério, separados por ponto e vírgula (`diabetes tipo 2; DM2`), são sempre alternativos entre si.
 
@@ -132,13 +154,13 @@ Duas categorias têm campos extras: **Biomarcador** aceita resultado e valor num
 
 Para Achado clínico, Lesão, Doença, Fármaco, Procedimento e Dispositivo médico, você pode exigir **em que contexto** o termo deve aparecer no texto:
 
-| Contexto | Quando usar |
-| --- | --- |
-| **Presente** | A condição está ativa no paciente naquele momento |
-| **Em investigação** | Hipótese ou diagnóstico em apuração, sem confirmação |
-| **Histórico** | Esteve presente no passado, pode não estar mais ativo |
-| **Histórico familiar** | Refere-se a um familiar, não ao paciente |
-| **Ausente** | O termo aparece negado no texto |
+| Contexto               | Quando usar                                           |
+| ---------------------- | ----------------------------------------------------- |
+| **Presente**           | A condição está ativa no paciente naquele momento     |
+| **Em investigação**    | Hipótese ou diagnóstico em apuração, sem confirmação  |
+| **Histórico**          | Esteve presente no passado, pode não estar mais ativo |
+| **Histórico familiar** | Refere-se a um familiar, não ao paciente              |
+| **Ausente**            | O termo aparece negado no texto                       |
 
 Deixar o contexto em branco aceita qualquer um. É aqui que a evolução dos modelos rende mais: você consegue perguntar pela **jornada**, e não apenas pela presença do termo.
 
@@ -192,7 +214,7 @@ A lista se organiza em **Meus protocolos**, **Compartilhados comigo**, **Favorit
 
 **Notificações.** Com elas ativadas no protocolo, você recebe um e-mail diário com a movimentação de pacientes naquela coorte — sem precisar reabrir a plataforma para saber que algo mudou. É o recurso que mantém uma coorte viva entre uma análise e outra.
 
-**Compartilhamento.** Compartilhar é uma ação dentro da plataforma: você escolhe as pessoas pelo nome ou e-mail, e o protocolo passa a aparecer para elas na aba *Compartilhados comigo*. A mesma tela mostra quem já tem acesso e permite removê-lo.
+**Compartilhamento.** Compartilhar é uma ação dentro da plataforma: você escolhe as pessoas pelo nome ou e-mail, e o protocolo passa a aparecer para elas na aba _Compartilhados comigo_. A mesma tela mostra quem já tem acesso e permite removê-lo.
 
 É o módulo que transforma uma consulta pontual em **acompanhamento de coorte ao longo do tempo** — central para estudo longitudinal e para monitorar elegibilidade.
 
@@ -211,7 +233,7 @@ Salvar protocolo    →  acompanhe e compartilhe a coorte
 
 Busca e protocolo abrem exatamente a mesma tela de resultados, e o endereço da página guarda de onde você veio — o que facilita navegar e voltar sem perder o contexto.
 
-**Para levar uma coorte a outra pessoa, o caminho é o protocolo.** Salve a busca como protocolo e use a ação **Compartilhar** para dar acesso a quem precisa: só assim o protocolo aparece para essa pessoa, na aba *Compartilhados comigo*. Enviar a URL por fora não concede acesso.
+**Para levar uma coorte a outra pessoa, o caminho é o protocolo.** Salve a busca como protocolo e use a ação **Compartilhar** para dar acesso a quem precisa: só assim o protocolo aparece para essa pessoa, na aba _Compartilhados comigo_. Enviar a URL por fora não concede acesso.
 
 ---
 
@@ -219,7 +241,7 @@ Busca e protocolo abrem exatamente a mesma tela de resultados, e o endereço da 
 
 - **Pense primeiro no critério clínico**, depois nos filtros de cadastro e instituição.
 - **Sinônimos e siglas vão juntos** no mesmo critério; exigências diferentes vão em critérios separados, ligados por **E**.
-- **Use o contexto quando a pergunta depende dele** — só **Presente** se você não quer histórico nem hipótese; **Ausente** para excluir o que foi explicitamente negado.
+- **Use o contexto quando a pergunta depende dele** — só **Presente** se você não quer histórico nem hipótese; **Em investigação** para hipóteses e suspeitas; **Ausente** para excluir o que foi explicitamente negado.
 - **Comece amplo e vá apertando.** Rode a busca, olhe o tamanho da coorte e acrescente um critério de cada vez: é a forma mais rápida de entender o efeito de cada exigência.
 - **Salve cedo.** Um protocolo custa nada e evita remontar a mesma busca na semana seguinte.
 
