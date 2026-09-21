@@ -10,7 +10,7 @@ hide_title: true
 
 Grande parte da informação clínica mais rica está escrita em texto livre: evoluções, laudos, sumários de alta, pareceres. A plataforma iHealth lê esses documentos com modelos de inteligência artificial, estrutura e normaliza o que está ali dentro, e coloca tudo isso ao seu alcance em linguagem clínica — para você montar coortes, avaliar viabilidade e sustentar análises de mundo real, da doença rara ao perfil assistencial da instituição.
 
-Nesta versão, a plataforma ganha uma interface nova e uma camada de leitura clínica ainda mais apurada. Tudo o que você já fazia continua aqui: busca estruturada, protocolos, funil e painéis.
+Nesta versão, a plataforma ganha uma interface nova e uma camada de leitura clínica ainda mais apurada. Tudo o que você já fazia continua aqui: busca estruturada, protocolos e painéis.
 
 ---
 
@@ -24,6 +24,10 @@ O produto foi redesenhado por inteiro, com foco em clareza e ritmo de trabalho.
 - **Telas mais respiráveis** — gráficos maiores, tabelas legíveis, filtros sempre à mão.
 - **Mais fluidez** — as telas carregam por partes, os filtros recortam o resultado sem refazer a busca, e voltar de um paciente devolve você exatamente onde estava.
 - **Ajuda no lugar certo** — o ícone de ajuda na busca abre as orientações sem tirar você da tela.
+
+### Análise de Funil
+
+Novo módulo disponível nesta versão. Quando um único conjunto de critérios não descreve a coorte, o funil a constrói em etapas e mostra o número de cada uma — o desenho de um critério de elegibilidade de estudo.
 
 ### Modelos de IA ainda mais apurados
 
@@ -42,8 +46,9 @@ Junto com isso, **a lista de categorias foi revisada** e passa a reunir as que m
 - **Mais alcance** — buscas que acompanham a linguagem corrente dos prontuários, incluindo o vocabulário mais atual.
 - **Mais controle** — contextos que permitem perguntar pela jornada: o que o paciente tem agora, o que já teve, o que está em investigação, o que foi descartado e o que vem da família.
 - **Mais profundidade** — relações que mostram como os termos se conectam dentro do documento, não apenas que eles aparecem.
+- **Mais visibilidade** — o funil mostra o tamanho da coorte a cada etapa do critério, não só no resultado final.
 
-Na prática: coortes mais aderentes à pergunta clínica e uma leitura de jornada que você consegue sustentar em um estudo.
+Na prática: coortes mais aderentes à pergunta clínica, uma leitura de jornada que você consegue sustentar em um estudo, e o número de cada etapa do critério à vista.
 
 ---
 
@@ -66,11 +71,11 @@ O papel de cada menção no texto ficou mais preciso — e o conjunto mudou em d
 
 A lista agora reúne as categorias que mais sustentam um critério de pesquisa:
 
-| Antes                | Agora                  | O que isso significa                                                                                            |
-| -------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Sintomas             | **Achado clínico**     | Reúne o que o paciente relata e o que o exame físico descreve — um único lugar para sintomas e achados          |
-| Sinais vitais        | _categoria removida_   | Medições pontuais mudam o tempo todo, e a captura de valores específicos não sustentava um critério de pesquisa |
-| Suporte ventilatório | **Dispositivo médico** | Passa a integrar a categoria mais ampla dos elementos usados no cuidado                                         |
+| Antes                | Agora                                      | O que isso significa                                                                                                                                                   |
+| -------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sintomas             | **Achado clínico**                         | Reúne o que o paciente relata e o que o exame físico descreve — um único lugar para sintomas e achados                                                                 |
+| Sinais vitais        | _categoria removida_                       | Medições pontuais mudam o tempo todo, e a captura de valores específicos não sustentava um critério de pesquisa                                                        |
+| Suporte ventilatório | **Dispositivo médico** ou **Procedimento** | O texto decide: um ventilador ou um CPAP entra em **Dispositivo médico**; a ventilação descrita como ato — ventilação manual, por exemplo — entra em **Procedimento**. |
 
 As demais categorias — doença, fármaco, procedimento, exame, biomarcador e as outras da tabela da busca — seguem iguais.
 
@@ -82,40 +87,13 @@ As contagens, no entanto, serão atualizadas. A captura de entidades evoluiu —
 
 ---
 
-## Seu acesso: o que você vê
-
-A plataforma serve a dois públicos, e a tela se ajusta ao seu acesso. Se algo descrito aqui não aparecer para você, quase sempre é por isso: o menu e alguns filtros mudam conforme a permissão. Se a tela não corresponder ao que você espera, fale com quem administra a sua conta.
-
-### Acesso ao datalake completo — indústria farmacêutica e consultorias
-
-Você enxerga a **base inteira**, agregada por rede, instituição, região e estado. A ênfase é populacional: dimensionar coorte, comparar territórios, avaliar viabilidade.
-
-- Painel Geral na visão **Rede / datalake**, com mapa, pirâmide etária, fonte pagadora e a lista completa de instituições da base.
-- Busca, funil e protocolos sobre toda a base.
-- Análise sobre **dados agregados e desidentificados**: a leitura é de população, não de indivíduo.
-- O nome da instituição depende do seu contrato. Sem essa permissão, a plataforma mostra o **tipo de prestador** no lugar do nome, e os filtros de rede, instituição e setor não aparecem.
-
-### Acesso hospitalar — instituições de saúde
-
-Você enxerga o **recorte da sua instituição**, com o detalhe assistencial que a visão populacional não comporta.
-
-- Painel Geral na visão **Hospital**: tipo de atendimento, setor de origem, fonte pagadora e a distribuição de pacientes por mês.
-- Busca, funil e protocolos sobre a base do hospital.
-- **Identificação do paciente disponível**, com marcação de pacientes no protocolo e exportação da lista selecionada.
-- **Acesso ao documento clínico completo**, com o texto e as entidades extraídas dele.
-- Nome de instituição e setor visíveis nos filtros e nas tabelas.
-
-:::info Por que a tela muda
-O que você acessa vem da permissão da sua conta. O texto clínico e a identificação do paciente são dado sensível, e por isso ficam restritos a quem tem vínculo assistencial com aquele registro — hoje, o acesso hospitalar. Nada do que você vê está incompleto por erro.
-:::
-
----
-
 ## Tour pelos módulos
+
+Menu, filtros e alguns recortes acompanham a permissão da sua conta. Se algo descrito aqui não aparecer na sua tela, é por isso — não por erro. Texto clínico e identificação do paciente são dado sensível e ficam no acesso hospitalar.
 
 ### Painel Geral
 
-O retrato da base disponível para pesquisa: quantos pacientes, quantos documentos clínicos, quantas instituições, desde quando há cobertura.
+O retrato da base disponível para pesquisa: quantos pacientes, quantos documentos clínicos, a cobertura no tempo.
 
 Os filtros do topo valem para todos os gráficos ao mesmo tempo — e você também pode **clicar em um segmento do gráfico** para recortar a tela por ele. É um bom lugar para começar: antes de montar critério, veja o tamanho e a forma da população disponível.
 
@@ -166,7 +144,7 @@ Deixar o contexto em branco aceita qualquer um. É aqui que a evolução dos mod
 
 #### Filtros complementares
 
-Recortam por dados estruturados do atendimento: período, sexo, idade, óbito, tipo de fonte pagadora, região, estado, rede, instituição e setor. Alguns só aparecem quando a base tem dado para eles ou conforme a sua permissão.
+Recortam por dados estruturados do atendimento: período, sexo, idade, óbito, tipo de fonte pagadora, região, estado, rede, instituição e setor. Filtros de rede, instituição e setor só aparecem conforme a sua permissão e quando a base tem dado para eles. Sem a permissão do nome da instituição, a plataforma mostra o tipo de prestador no lugar.
 
 As **Buscas recentes** guardam o que você rodou nos últimos três dias.
 
@@ -180,7 +158,7 @@ Depois de buscar — ou ao abrir um protocolo — a coorte aparece em duas abas.
 Os gráficos de menção contam **pacientes que têm aquela menção**. Um mesmo paciente aparece em vários termos — use a lista para comparar relevância, nunca para somar o tamanho da coorte.
 :::
 
-**Detalhes dos pacientes** lista a coorte com instituição, sexo, idade e óbito. A exportação gera CSV da lista e, no protocolo, XLSX dos pacientes marcados.
+**Detalhes dos pacientes** lista a coorte com instituição, sexo, idade e óbito. A exportação gera CSV da lista e, no protocolo, XLSX dos pacientes marcados. Identificação do paciente, marcação no protocolo e exportação da lista selecionada ficam no acesso hospitalar; no acesso ao datalake, a leitura permanece agregada e desidentificada.
 
 Filtrar ou clicar em um gráfico recorta o resultado **sem refazer a busca**. E, a qualquer momento, você pode salvar a busca como protocolo ou reutilizar os critérios para começar outra.
 
@@ -200,7 +178,7 @@ Clicar no termo da lista destaca a passagem correspondente no texto.
 
 ### Análise de Funil
 
-Quando a coorte não se descreve em um único conjunto de critérios, o funil a constrói em **níveis sequenciais**: cada nível filtra apenas quem sobreviveu ao anterior. O primeiro nível é a rede completa, o seu 100%.
+Quando a coorte não se descreve em um único conjunto de critérios, o funil a constrói em **níveis sequenciais**: cada nível filtra apenas quem sobreviveu ao anterior. O primeiro nível é a base disponível no seu acesso, o seu 100%.
 
 Em cada nível você usa os mesmos critérios e filtros da busca, e pode **importar um protocolo** — só os critérios, ou critérios e filtros. A tabela mostra quantos pacientes e instituições restam a cada etapa e o quanto isso representa do nível acima.
 
