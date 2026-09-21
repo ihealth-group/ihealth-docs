@@ -10,14 +10,17 @@ A documentação está organizada na pasta `docs/` com a seguinte estrutura:
 
 ```
 docs/
+├── intro.md                     # Página inicial da documentação
+├── plataforma/
+│   └── boas-vindas.md           # Boas-vindas da Plataforma iHealth
 └── clinical-data-extraction/
     ├── intro.md                 # Introdução à Extração de Dados Clínicos
     ├── data-structure.md        # Estrutura dos dados
-    ├── delivery.md             # Entrega dos dados em lotes
-    ├── csv-format.md           # Formato CSV
-    ├── jsonl-format.md         # Formato JSONL
-    ├── analysis-guidelines.md  # Diretrizes de análise
-    └── limitations.md          # Limitações e considerações
+    ├── delivery.md              # Entrega dos dados em lotes
+    ├── csv-format.md            # Formato CSV
+    ├── jsonl-format.md          # Formato JSONL
+    ├── analysis-guidelines.md   # Diretrizes de análise
+    └── limitations.md           # Limitações e considerações
 ```
 
 ### Configuração
@@ -56,6 +59,14 @@ Personalize as cores e estilos em:
 
 ## Estrutura da Documentação
 
+A navegação lateral é configurada no `sidebars.js` e organiza a documentação em duas categorias.
+
+### Plataforma iHealth
+
+Apresentação da plataforma: interface, modelos de IA, busca estruturada, análise de funil, protocolos e tour pelos módulos.
+
+- **Boas-vindas**: `docs/plataforma/boas-vindas.md`
+
 ### Extração de Dados Clínicos
 
 A documentação da Extração de Dados Clínicos está dividida em seções lógicas:
@@ -67,10 +78,6 @@ A documentação da Extração de Dados Clínicos está dividida em seções ló
 5. **Estrutura dos Dados**: Campos e categorias disponíveis
 6. **Diretrizes de Análise**: Boas práticas e exemplos
 7. **Limitações**: Considerações importantes
-
-### Navegação
-
-A navegação lateral é configurada no `sidebars.js` e organiza a documentação por categorias.
 
 ## Adicionando Nova Documentação
 
