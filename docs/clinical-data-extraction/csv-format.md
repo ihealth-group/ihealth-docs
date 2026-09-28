@@ -32,6 +32,8 @@ No exemplo, o câncer de mama e o biomarcador HER2 estão ligados pela relação
 
 ## Trabalhando com CSV
 
+> Os exemplos desta página são sequenciais: cada bloco usa os imports e as variáveis (`df`, `entities`) criados nos blocos anteriores.
+
 ### Carregando Dados
 
 ```python
@@ -121,6 +123,12 @@ print(relation_types)
 # Entidades mais relacionadas (como tail)
 related_entities = relations['relation_entity'].value_counts()
 print(related_entities)
+
+# Uma linha por relação, no mesmo formato do JSONL (head → tail)
+relations_table = relations[['document_id', 'relation_type', 'entity', 'relation_entity']].rename(
+    columns={'entity': 'head_entity', 'relation_entity': 'tail_entity'}
+)
+print(relations_table.head())
 ```
 
 ## Considerações Importantes

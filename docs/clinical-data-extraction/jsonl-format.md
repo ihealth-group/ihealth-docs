@@ -164,6 +164,8 @@ O JSONL organiza as entidades em grupos dentro do objeto `preds`:
 
 ## Trabalhando com JSONL
 
+> Os exemplos desta página são sequenciais: cada bloco usa a variável `data` criada em "Carregando Dados".
+
 ### Carregando Dados
 
 ```python
@@ -268,30 +270,33 @@ for doc in data:
     print("---")
 ```
 
-### Extraindo Dados para Análise
+### Convertendo para DataFrames
+
+Para análises tabulares, cada grupo de `preds` pode virar um DataFrame, com os dados do documento em cada linha:
 
 ```python
-# Extrair todos os biomarcadores
-all_biomarkers = []
-for doc in data:
-    for biomarker in doc['preds']['biomarkers']:
-        biomarker_data = {
-            'document_id': doc['document_id'],
-            'patient_id': doc['patient_id'],
-            'entity_id': biomarker['entity_id'],
-            'entity': biomarker['entity'],
-            'normalized_entity': biomarker['normalized_entity'],
-            'method': biomarker['method']
-        }
-
-        if 'result' in biomarker:
-            biomarker_data.update(biomarker['result'])
-
-        all_biomarkers.append(biomarker_data)
-
-# Converter para DataFrame
 import pandas as pd
-biomarkers_df = pd.DataFrame(all_biomarkers)
+
+def to_dataframe(data, group):
+    """Transforma um grupo de preds (ex.: 'biomarkers') em DataFrame."""
+    df = pd.json_normalize(
+        data,
+        record_path=['preds', group],
+        meta=['document_id', 'document_date', 'patient_id'],
+    )
+    # Remove o prefixo "result." dos campos estruturados
+    df.columns = [col.replace('result.', '') for col in df.columns]
+    return df
+
+clinical_df = to_dataframe(data, 'clinical_entities')
+biomarkers_df = to_dataframe(data, 'biomarkers')
+lab_tests_df = to_dataframe(data, 'lab_tests')
+relations_df = to_dataframe(data, 'entities_relations')
+
+# No JSONL, campos vazios vêm como "": converta os valores numéricos antes de analisar
+biomarkers_df['numeric_value'] = pd.to_numeric(biomarkers_df['numeric_value'], errors='coerce')
+lab_tests_df['numeric_value'] = pd.to_numeric(lab_tests_df['numeric_value'], errors='coerce')
+
 print(biomarkers_df.head())
 ```
 

@@ -16,6 +16,8 @@ Os **dados extraídos** representam uma seleção de documentos médicos do noss
 
 ## Preparação dos Dados
 
+> Os exemplos desta página são sequenciais: cada bloco usa os imports e as variáveis (`df`, `entities`) criados nos blocos anteriores.
+
 ### Limpeza e Validação
 
 #### Para CSV

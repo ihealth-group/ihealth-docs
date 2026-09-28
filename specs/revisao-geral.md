@@ -43,10 +43,10 @@ Na v1, as correções usam os valores do schema v1 (ex.: `PRESENTE` em vez de `P
 
 ## 3. Código: melhorias sugeridas (úteis e básicas)
 
-- [ ] **M1 — JSONL → DataFrame.** Adicionar um exemplo que achata `clinical_entities`, `biomarkers` e `lab_tests` em DataFrames (com `pd.json_normalize`), já com `document_id`/`patient_id`. É o passo que quase todo analista vai precisar.
-- [ ] **M2 — Reconstruir relações a partir do CSV.** Exemplo filtrando `relation_position == 'head'` para obter uma linha por relação (equivalente ao `entities_relations` do JSONL).
-- [ ] **M3 — `lote_id` no processamento sequencial** (`delivery`), que é o exemplo principal; hoje só o paralelo tem.
-- [ ] **M4 — Imports em todos os blocos** que usam `pd`, `json`, `glob` e `plt`, para que cada bloco funcione copiado sozinho.
+- [x] **M1 — JSONL → DataFrame.** Adicionar um exemplo que achata `clinical_entities`, `biomarkers` e `lab_tests` em DataFrames (com `pd.json_normalize`), já com `document_id`/`patient_id`. É o passo que quase todo analista vai precisar.
+- [x] **M2 — Reconstruir relações a partir do CSV.** Exemplo filtrando `relation_position == 'head'` para obter uma linha por relação (equivalente ao `entities_relations` do JSONL).
+- [x] **M3 — `lote_id` no processamento sequencial** (`delivery`), que é o exemplo principal; hoje só o paralelo tem.
+- [x] **M4 — Imports em todos os blocos** que usam `pd`, `json`, `glob` e `plt`, para que cada bloco funcione copiado sozinho. Aplicado nos blocos independentes (validação de integridade em `delivery`); nas páginas com exemplos sequenciais, entrou uma nota explicando que os blocos usam imports e variáveis dos anteriores.
 
 ## 4. Estrutura e duplicações
 

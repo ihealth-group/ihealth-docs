@@ -86,6 +86,8 @@ all_data = []
 for file in csv_files:
     print(f"Processando {file}...")
     df = pd.read_csv(file)
+    # Identificar o lote: "projectname_patients_part_001.csv" -> "001"
+    df['lote_id'] = file.split('_')[-1].split('.')[0]
     all_data.append(df)
 
 # Combinar todos os dados
@@ -150,6 +152,10 @@ print(f"Total de documentos: {len(all_documents)}")
 #### Verificação de Lotes
 
 ```python
+import glob
+import json
+import pandas as pd
+
 def validate_batch_integrity(csv_file, jsonl_file):
     """Valida integridade entre arquivos CSV e JSONL do mesmo lote"""
 
