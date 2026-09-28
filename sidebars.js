@@ -21,7 +21,7 @@ const sidebars = {
     {
       type: "category",
       label: "Plataforma iHealth",
-      items: ["plataforma/boas-vindas"],
+      items: ["platform/welcome"],
     },
     {
       type: "category",

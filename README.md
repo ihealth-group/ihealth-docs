@@ -11,8 +11,8 @@ A documentação está organizada na pasta `docs/` com a seguinte estrutura:
 ```
 docs/
 ├── intro.md                     # Página inicial da documentação
-├── plataforma/
-│   └── boas-vindas.md           # Boas-vindas da Plataforma iHealth
+├── platform/
+│   └── welcome.md               # Boas-vindas da Plataforma iHealth
 └── clinical-data-extraction/
     ├── intro.md                 # Introdução à Extração de Dados Clínicos
     ├── data-structure.md        # Estrutura dos dados
@@ -66,7 +66,7 @@ A navegação lateral é configurada no `sidebars.js` e organiza a documentaçã
 
 Apresentação da plataforma: interface, modelos de IA, busca estruturada, análise de funil, protocolos e tour pelos módulos.
 
-- **Boas-vindas**: `docs/plataforma/boas-vindas.md`
+- **Boas-vindas**: `docs/platform/welcome.md`
 
 ### Extração de Dados Clínicos
 

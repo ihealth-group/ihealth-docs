@@ -91,7 +91,7 @@ const config = {
               },
               {
                 label: "Plataforma iHealth",
-                to: "/plataforma/boas-vindas",
+                to: "/platform/welcome",
               },
               {
                 label: "Extração de Dados Clínicos",

@@ -30,7 +30,7 @@ A **Plataforma iHealth** lê evoluções, laudos, sumários de alta e pareceres 
 - **Protocolos clínicos** para acompanhar e compartilhar coortes ao longo do tempo
 - **Estudos de RWE / RWD**, viabilidade e recrutamento
 
-[**Ver documentação da Plataforma →**](./plataforma/boas-vindas)
+[**Ver documentação da Plataforma →**](./platform/welcome.md)
 
 ### Extração de Dados Clínicos
 
