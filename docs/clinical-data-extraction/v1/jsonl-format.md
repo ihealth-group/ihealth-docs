@@ -363,23 +363,25 @@ print(biomarkers_df.head())
 ### Análise de Comorbidades
 
 ```python
-# Identificar pacientes com múltiplas condições
-patient_conditions = {}
-for doc in data:
-    patient_id = doc['patient_id']
-    conditions = []
+from collections import Counter, defaultdict
+from itertools import combinations
 
+# Doenças confirmadas por paciente.
+# Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
+# (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+patient_diseases = defaultdict(set)
+for doc in data:
     for entity in doc['preds']['clinical_entities']:
         if entity['label'] == 'DISEASE' and entity.get('assertion') == 'PRESENTE':
-            conditions.append(entity['entity'])
+            patient_diseases[doc['patient_id']].add(entity['entity'].lower())
 
-    if patient_id not in patient_conditions:
-        patient_conditions[patient_id] = []
-    patient_conditions[patient_id].extend(conditions)
+multi = {p: d for p, d in patient_diseases.items() if len(d) > 1}
+print(f"Pacientes com mais de uma doença: {len(multi)}")
 
-# Pacientes com múltiplas condições
-comorbidities = {k: v for k, v in patient_conditions.items() if len(set(v)) > 1}
-print(f"Pacientes com comorbidades: {len(comorbidities)}")
+# Pares de doenças mais frequentes no mesmo paciente
+pair_counts = Counter(pair for d in multi.values() for pair in combinations(sorted(d), 2))
+for (a, b), n in pair_counts.most_common(10):
+    print(f"  {a} + {b}: {n} pacientes")
 ```
 
 ## Diferenças entre CSV e JSONL

@@ -96,10 +96,10 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 
 ### Campos de Relação (quando aplicável)
 
-| Campo               | Tipo   | Descrição                          |
-| ------------------- | ------ | ---------------------------------- |
-| `relation_type`     | string | Tipo de relação com outra entidade |
-| `relation_entity`   | string | Entidade relacionada               |
+| Campo               | Tipo   | Descrição                                            |
+| ------------------- | ------ | ---------------------------------------------------- |
+| `relation_type`     | string | Tipo de relação com outra entidade                   |
+| `relation_entity`   | string | Entidade relacionada                                 |
 | `relation_position` | string | Posição da entidade da linha na relação (head, tail) |
 
 ## Campos Estruturados para Exames e Biomarcadores
@@ -109,7 +109,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | Campo               | Tipo   | Categorias Aplicáveis             | Descrição                                                         |
 | ------------------- | ------ | --------------------------------- | ----------------------------------------------------------------- |
 | `normalized_entity` | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Versão padronizada da entidade (quando normalização foi possível) |
-| `numeric_value`     | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Valor numérico extraído (quando disponível)                       |
+| `numeric_value`     | número | BIOMARKER, LAB_TEST, CLINICAL_ATT | Valor numérico extraído                                           |
 | `unit`              | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Unidade de medida (quando disponível)                             |
 | `specific_marker`   | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Marcador específico de resultado                                  |
 | `detection_status`  | string | BIOMARKER, LAB_TEST               | Status de detecção do resultado                                   |

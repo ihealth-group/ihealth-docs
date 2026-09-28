@@ -55,8 +55,12 @@ df = df[df['document_id'].notna()]
 df['document_date'] = pd.to_datetime(df['document_date'])
 df['birthdate'] = pd.to_datetime(df['birthdate'])
 
+# Uma entidade com mais de uma relação aparece em mais de uma linha (mesmo entity_id).
+# Para contar entidades, use uma linha por entity_id.
+entities = df.drop_duplicates('entity_id')
+
 # Verificar valores únicos
-print("Labels disponíveis:", df['label'].unique())
+print("Labels disponíveis:", entities['label'].unique())
 ```
 
 ### Análises Básicas
@@ -65,11 +69,11 @@ print("Labels disponíveis:", df['label'].unique())
 
 ```python
 # Distribuição por tipo de entidade
-entity_distribution = df['label'].value_counts()
+entity_distribution = entities['label'].value_counts()
 print(entity_distribution)
 
 # Entidades mais frequentes
-top_entities = df['entity'].value_counts().head(20)
+top_entities = entities['entity'].value_counts().head(20)
 print(top_entities)
 ```
 
@@ -93,30 +97,29 @@ print(region_distribution)
 ### Análise de Biomarcadores e Exames
 
 ```python
-# Filtrar apenas entidades com valores numéricos
-numeric_entities = df[
-    (df['label'].isin(['BIOMARKER', 'LAB_TEST'])) &
-    (df['numeric_value'] != '') &
-    (df['numeric_value'].notna())
-].copy()
+# Filtrar biomarcadores e exames com valor numérico
+numeric_entities = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])].copy()
+numeric_entities['numeric_value'] = pd.to_numeric(numeric_entities['numeric_value'], errors='coerce')
+numeric_entities = numeric_entities[numeric_entities['numeric_value'].notna()]
 
-# Converter valores numéricos
-numeric_entities['numeric_value'] = pd.to_numeric(numeric_entities['numeric_value'])
-
-# Estatísticas por tipo de exame
-biomarker_stats = numeric_entities.groupby('normalized_entity')['numeric_value'].describe()
+# Estatísticas por exame e unidade (a mesma medida pode vir em unidades diferentes)
+biomarker_stats = numeric_entities.groupby(['normalized_entity', 'unit'], dropna=False)['numeric_value'].describe()
 print(biomarker_stats)
 ```
 
 ### Análise de Relações
 
 ```python
+# Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
+# Para contar relações, use só as linhas da head.
+relations = df[df['relation_position'] == 'head']
+
 # Relações mais comuns
-relation_types = df[df['relation_type'] != '']['relation_type'].value_counts()
+relation_types = relations['relation_type'].value_counts()
 print(relation_types)
 
-# Entidades mais relacionadas
-related_entities = df[df['relation_entity'] != '']['relation_entity'].value_counts()
+# Entidades mais relacionadas (como tail)
+related_entities = relations['relation_entity'].value_counts()
 print(related_entities)
 ```
 
@@ -130,26 +133,27 @@ print(related_entities)
 ### 2. Campos Vazios
 
 - Nem todas as entidades possuem todos os campos preenchidos
-- Campos vazios são representados como strings vazias ("")
+- No arquivo, campos vazios ficam em branco. Ao carregar com pandas, eles viram `NaN`: use `.isna()` e `.notna()` para verificá-los
 - Valide a presença de dados antes de análises
 
 ### 3. Relações
 
-- Entidades com relações geram linhas adicionais
-- Use `relation_type` e `relation_entity` para análise de relacionamentos
+- Uma entidade com mais de uma relação aparece em uma linha por relação, com o mesmo `entity_id`
+- Cada relação aparece em duas linhas: a da entidade `head` e a da entidade `tail` (`relation_position`)
+- Para contar entidades, remova as duplicatas por `entity_id`; para contar relações, use só as linhas com `relation_position == 'head'`
 
 ### 4. Agregações
 
 ```python
 # Agrupar por documento
 doc_entities = df.groupby('document_id').agg({
-    'entity_id': 'count',
+    'entity_id': 'nunique',
     'label': lambda x: list(x.unique()),
     'patient_id': 'first'
 })
 
 # Contar entidades por documento
-entities_per_doc = df.groupby('document_id')['entity_id'].count()
+entities_per_doc = df.groupby('document_id')['entity_id'].nunique()
 ```
 
 ## Exemplo de Análise Completa
@@ -163,7 +167,7 @@ df = pd.read_csv('dados_extraidos.csv')
 
 # Análise de distribuição
 plt.figure(figsize=(12, 6))
-df['label'].value_counts().plot(kind='bar')
+df.drop_duplicates('entity_id')['label'].value_counts().plot(kind='bar')
 plt.title('Distribuição de Entidades por Tipo')
 plt.xlabel('Tipo de Entidade')
 plt.ylabel('Quantidade')

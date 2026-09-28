@@ -71,34 +71,34 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 
 ### Campos Básicos da Entidade
 
-| Campo       | Tipo   | Descrição                                                                                              |
-| ----------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| `entity_id` | string | ID único da entidade (document_id + posição)                                                           |
-| `entity`    | string | Termo clínico extraído do texto                                                                        |
-| `label`     | string | Categoria da entidade clínica. [Ver categorias](#categorias-de-entidades-clinicas).                    |
-| `assertion` | string | Contexto em que a entidade foi mencionada (quando aplicável). [Ver valores](#campo-assertion).         |
+| Campo       | Tipo   | Descrição                                                                                      |
+| ----------- | ------ | ---------------------------------------------------------------------------------------------- |
+| `entity_id` | string | ID único da entidade (document_id + posição)                                                   |
+| `entity`    | string | Termo clínico extraído do texto                                                                |
+| `label`     | string | Categoria da entidade clínica. [Ver categorias](#categorias-de-entidades-clinicas).            |
+| `assertion` | string | Contexto em que a entidade foi mencionada (quando aplicável). [Ver valores](#campo-assertion). |
 
 ### Campos de Relação (quando aplicável)
 
-| Campo               | Tipo   | Descrição                                                                  |
-| ------------------- | ------ | -------------------------------------------------------------------------- |
-| `relation_type`     | string | Tipo de relação com outra entidade. [Ver tipos](#tipos-de-relacao).         |
-| `relation_entity`   | string | A outra entidade da relação                                                |
-| `relation_position` | string | Posição da entidade da linha na relação (`head` ou `tail`)                 |
+| Campo               | Tipo   | Descrição                                                           |
+| ------------------- | ------ | ------------------------------------------------------------------- |
+| `relation_type`     | string | Tipo de relação com outra entidade. [Ver tipos](#tipos-de-relacao). |
+| `relation_entity`   | string | A outra entidade da relação                                         |
+| `relation_position` | string | Posição da entidade da linha na relação (`head` ou `tail`)          |
 
 ## Campos Estruturados de Biomarcadores e Exames
 
 Os campos abaixo se aplicam **apenas** às categorias `BIOMARKER` e `LAB_TEST`, e são preenchidos quando foi possível normalizar e estruturar a entidade.
 
-| Campo               | Tipo   | `BIOMARKER` | `LAB_TEST` | Descrição                                                         |
-| ------------------- | ------ | :---------: | :--------: | ----------------------------------------------------------------- |
-| `normalized_entity` | string | ✓           | ✓          | Versão padronizada da entidade                                    |
-| `specific_marker`   | string | ✓           | ✓          | Marcador específico do resultado                                  |
-| `method`            | string | ✓           | ✓          | Método utilizado para obter o resultado                           |
-| `detection_status`  | string | ✓           | ✓          | Status de detecção do resultado                                   |
-| `score`             | string | ✓           |            | Escore do resultado do biomarcador                                |
-| `numeric_value`     | string | ✓           | ✓          | Valor numérico extraído                                           |
-| `unit`              | string | ✓           | ✓          | Unidade de medida                                                 |
+| Campo               | Tipo   | `BIOMARKER` | `LAB_TEST` | Descrição                               |
+| ------------------- | ------ | :---------: | :--------: | --------------------------------------- |
+| `normalized_entity` | string |      ✓      |     ✓      | Versão padronizada da entidade          |
+| `specific_marker`   | string |      ✓      |     ✓      | Marcador específico do resultado        |
+| `method`            | string |      ✓      |     ✓      | Método utilizado para obter o resultado |
+| `detection_status`  | string |      ✓      |     ✓      | Status de detecção do resultado         |
+| `score`             | string |      ✓      |            | Escore do resultado do biomarcador      |
+| `numeric_value`     | número |      ✓      |     ✓      | Valor numérico extraído                 |
+| `unit`              | string |      ✓      |     ✓      | Unidade de medida                       |
 
 No JSONL, `normalized_entity`, `specific_marker` e `method` ficam no nível da entidade, e os demais campos ficam dentro do objeto `result`. Veja [Formato JSONL](./jsonl-format.md).
 
@@ -110,14 +110,14 @@ O campo `assertion` indica o **contexto clínico** em que uma entidade foi menci
 
 #### Valores Possíveis
 
-| Valor            | Nome               | Descrição                                                                                                   | Exemplo                                            |
-| ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `PRESENT`        | Presente           | Condição ativa no paciente naquele momento                                                                  | "Paciente apresenta diabetes tipo 2"               |
-| `INVESTIGATION`  | Em investigação    | Hipótese, suspeita ou diagnóstico em apuração                                                               | "Suspeita de pneumonia"                            |
-| `HISTORY`        | Histórico          | Esteve presente no passado e pode não estar mais ativo                                                      | "Histórico de cirurgia cardíaca em 2020"           |
-| `FAMILY_HISTORY` | Histórico familiar | Refere-se a um familiar, não ao paciente                                                                    | "Mãe com câncer de mama"                           |
-| `ABSENT`         | Ausente            | Termo negado no texto                                                                                       | "Paciente nega hipertensão"                        |
-| `OTHER`          | Outro              | Menção fora da jornada clínica do paciente, como uma doença citada como referência, em estudo ou em documento de apoio | "Protocolo de rastreamento para câncer de colo"    |
+| Valor            | Nome               | Descrição                                                                                                              | Exemplo                                         |
+| ---------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `PRESENT`        | Presente           | Condição ativa no paciente naquele momento                                                                             | "Paciente apresenta diabetes tipo 2"            |
+| `INVESTIGATION`  | Em investigação    | Hipótese, suspeita ou diagnóstico em apuração                                                                          | "Suspeita de pneumonia"                         |
+| `HISTORY`        | Histórico          | Esteve presente no passado e pode não estar mais ativo                                                                 | "Histórico de cirurgia cardíaca em 2020"        |
+| `FAMILY_HISTORY` | Histórico familiar | Refere-se a um familiar, não ao paciente                                                                               | "Mãe com câncer de mama"                        |
+| `ABSENT`         | Ausente            | Termo negado no texto                                                                                                  | "Paciente nega hipertensão"                     |
+| `OTHER`          | Outro              | Menção fora da jornada clínica do paciente, como uma doença citada como referência, em estudo ou em documento de apoio | "Protocolo de rastreamento para câncer de colo" |
 
 #### Importância para Análise de Dados
 
@@ -167,20 +167,20 @@ Nas demais categorias, o campo `assertion` vem vazio. Essas entidades são trata
 
 Cada relação liga duas entidades: a primeira (`head`) e a segunda (`tail`), nessa ordem.
 
-| Relation type                       | Descrição                                            | Exemplo (head → tail)                       |
-| ----------------------------------- | ---------------------------------------------------- | ------------------------------------------- |
-| `is_date_of`                        | Associa uma data a um evento clínico                 | "15/01/2024" → "cirurgia"                   |
-| `finding_has_anatomic_site`         | Liga um achado clínico ao local anatômico            | "edema" → "membros inferiores"              |
-| `may_treat`                         | Indica que um fármaco pode tratar uma condição       | "metformina" → "diabetes"                   |
-| `procedure_has_target_anatomy`      | Define o alvo anatômico de um procedimento           | "biópsia" → "fígado"                        |
-| `disease_has_anatomic_site`         | Liga uma doença ao local anatômico                   | "pneumonia" → "pulmão"                      |
-| `disease_has_associated_disease`    | Liga uma doença a outra doença associada             | "diabetes" → "retinopatia"                  |
-| `disease_has_biomarker`             | Liga uma doença a um biomarcador                     | "câncer de mama" → "HER2"                   |
-| `disease_has_scale`                 | Liga uma doença a uma escala de avaliação            | "câncer de pulmão" → "ECOG"                 |
-| `disease_has_stage`                 | Liga uma doença ao estadiamento                      | "câncer de mama" → "EC IIA"                 |
-| `injury_has_anatomic_site`          | Liga uma lesão ao local anatômico                    | "fratura" → "fêmur"                         |
-| `procedure_has_associated_device`   | Liga um procedimento ao dispositivo utilizado        | "angioplastia" → "stent"                    |
-| `medical_device_has_target_anatomy` | Define o alvo anatômico de um dispositivo médico     | "cateter venoso central" → "veia jugular"   |
-| `disease_has_oncologic_finding`     | Liga uma doença oncológica a um achado oncológico    | "adenocarcinoma de pulmão" → "metástase"    |
+| Relation type                       | Descrição                                         | Exemplo (head → tail)                     |
+| ----------------------------------- | ------------------------------------------------- | ----------------------------------------- |
+| `is_date_of`                        | Associa uma data a um evento clínico              | "15/01/2024" → "cirurgia"                 |
+| `finding_has_anatomic_site`         | Liga um achado clínico ao local anatômico         | "edema" → "membros inferiores"            |
+| `may_treat`                         | Indica que um fármaco pode tratar uma condição    | "metformina" → "diabetes"                 |
+| `procedure_has_target_anatomy`      | Define o alvo anatômico de um procedimento        | "biópsia" → "fígado"                      |
+| `disease_has_anatomic_site`         | Liga uma doença ao local anatômico                | "pneumonia" → "pulmão"                    |
+| `disease_has_associated_disease`    | Liga uma doença a outra doença associada          | "diabetes" → "retinopatia"                |
+| `disease_has_biomarker`             | Liga uma doença a um biomarcador                  | "câncer de mama" → "HER2"                 |
+| `disease_has_scale`                 | Liga uma doença a uma escala de avaliação         | "câncer de pulmão" → "ECOG"               |
+| `disease_has_stage`                 | Liga uma doença ao estadiamento                   | "câncer de mama" → "EC IIA"               |
+| `injury_has_anatomic_site`          | Liga uma lesão ao local anatômico                 | "fratura" → "fêmur"                       |
+| `procedure_has_associated_device`   | Liga um procedimento ao dispositivo utilizado     | "angioplastia" → "stent"                  |
+| `medical_device_has_target_anatomy` | Define o alvo anatômico de um dispositivo médico  | "cateter venoso central" → "veia jugular" |
+| `disease_has_oncologic_finding`     | Liga uma doença oncológica a um achado oncológico | "adenocarcinoma de pulmão" → "metástase"  |
 
 > **Importante**: a extração contém apenas os pacientes e documentos que atendem aos critérios definidos para o projeto, representando uma amostra selecionada da nossa base, com ampla cobertura e representatividade.

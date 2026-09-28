@@ -33,6 +33,10 @@ df = df[df['document_id'].notna()]
 df['document_date'] = pd.to_datetime(df['document_date'])
 df['birthdate'] = pd.to_datetime(df['birthdate'])
 
+# Uma entidade com mais de uma relação aparece em mais de uma linha (mesmo entity_id).
+# Para contar entidades, use uma linha por entity_id.
+entities = df.drop_duplicates('entity_id')
+
 # Verificar estrutura
 print("Shape:", df.shape)
 print("Colunas:", df.columns.tolist())
@@ -60,28 +64,16 @@ if data:
 
 ### Tratamento de Valores Ausentes
 
-- **Campos vazios**: Representados como strings vazias ("")
+- **Campos vazios**: ficam em branco no CSV e viram `NaN` ao carregar com pandas
 - **Valores numéricos ausentes**: Campo `numeric_value` vazio
 - **Campos estruturados**: preenchidos apenas em `BIOMARKER` e `LAB_TEST`, quando a normalização foi possível
 - **Assertion**: vazio nas categorias em que o contexto não é inferido
 - **Relações**: Nem todas as entidades possuem relações
 
 ```python
-# Ao ler o CSV, o pandas converte campos vazios em NaN.
-# Esta função trata NaN e strings vazias da mesma forma.
-def preenchido(serie):
-    return serie.notna() & (serie.astype(str).str.strip() != '')
-
 # Verificar campos vazios por coluna
-empty_fields = {}
-for col in df.columns:
-    empty_count = (~preenchido(df[col])).sum()
-    if empty_count > 0:
-        empty_fields[col] = empty_count
-
-print("Campos vazios:")
-for field, count in empty_fields.items():
-    print(f"  {field}: {count}")
+print("Campos vazios por coluna:")
+print(df.isna().sum())
 ```
 
 ## Análises Recomendadas
@@ -92,7 +84,7 @@ for field, count in empty_fields.items():
 
 ```python
 # Distribuição por tipo de entidade
-entity_distribution = df['label'].value_counts()
+entity_distribution = entities['label'].value_counts()
 print("Distribuição de entidades:")
 print(entity_distribution)
 
@@ -111,17 +103,26 @@ plt.show()
 #### Entidades Mais Frequentes
 
 ```python
+# Desconsiderar menções negadas, de familiares ou fora da jornada do paciente
+patient_entities = entities[~entities['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER'])]
+
 # Top 20 entidades mais frequentes
-top_entities = df['entity'].value_counts().head(20)
+top_entities = patient_entities['entity'].value_counts().head(20)
 print("Entidades mais frequentes:")
 print(top_entities)
 
 # Entidades por categoria
-for label in df['label'].unique():
-    if pd.notna(label):
-        print(f"\n{label}:")
-        top_in_category = df[df['label'] == label]['entity'].value_counts().head(10)
-        print(top_in_category)
+for label in patient_entities['label'].dropna().unique():
+    print(f"\n{label}:")
+    top_in_category = patient_entities[patient_entities['label'] == label]['entity'].value_counts().head(10)
+    print(top_in_category)
+```
+
+#### Contexto das Entidades
+
+```python
+# Quantidade de menções por categoria e contexto (assertion)
+print(pd.crosstab(entities['label'], entities['assertion']))
 ```
 
 ### 2. Análise Temporal
@@ -159,13 +160,17 @@ print(region_distribution)
 ### 4. Análise de Relações
 
 ```python
+# Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
+# Para contar relações, use só as linhas da head.
+relations = df[df['relation_position'] == 'head']
+
 # Relações mais comuns
-relation_types = df[df['relation_type'] != '']['relation_type'].value_counts()
+relation_types = relations['relation_type'].value_counts()
 print("Tipos de relação mais comuns:")
 print(relation_types)
 
-# Entidades mais relacionadas
-related_entities = df[df['relation_entity'] != '']['relation_entity'].value_counts()
+# Entidades mais relacionadas (como tail)
+related_entities = relations['relation_entity'].value_counts()
 print("Entidades mais relacionadas:")
 print(related_entities.head(20))
 ```
@@ -175,24 +180,22 @@ print(related_entities.head(20))
 ### 1. Análise de Biomarcadores
 
 ```python
-# Filtrar apenas biomarcadores com valores numéricos
-biomarkers = df[
-    (df['label'].isin(['BIOMARKER', 'LAB_TEST'])) &
-    (df['numeric_value'] != '') &
-    (df['numeric_value'].notna())
-].copy()
+# Filtrar biomarcadores e exames com valor numérico
+biomarkers = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])].copy()
+biomarkers['numeric_value'] = pd.to_numeric(biomarkers['numeric_value'], errors='coerce')
+biomarkers = biomarkers[biomarkers['numeric_value'].notna()]
 
-# Converter valores numéricos
-biomarkers['numeric_value'] = pd.to_numeric(biomarkers['numeric_value'])
+# Identificar cada medida pelo nome e pela unidade, para não misturar unidades diferentes
+biomarkers['marker'] = biomarkers['normalized_entity'] + ' (' + biomarkers['unit'].fillna('sem unidade') + ')'
 
-# Estatísticas por biomarcador
-biomarker_stats = biomarkers.groupby('normalized_entity')['numeric_value'].describe()
-print("Estatísticas por biomarcador:")
+# Estatísticas por medida
+biomarker_stats = biomarkers.groupby('marker')['numeric_value'].describe()
+print("Estatísticas por medida:")
 print(biomarker_stats)
 
 # Análise por status de detecção
-detection_analysis = df[
-    df['label'].isin(['BIOMARKER', 'LAB_TEST'])
+detection_analysis = entities[
+    entities['label'].isin(['BIOMARKER', 'LAB_TEST'])
 ].groupby(['normalized_entity', 'detection_status']).size().unstack(fill_value=0)
 
 print("Análise por status de detecção:")
@@ -202,39 +205,33 @@ print(detection_analysis)
 ### 2. Análise de Comorbidades
 
 ```python
-# Considerar apenas doenças confirmadas no paciente
-diseases = df[(df['label'] == 'DISEASE') & (df['assertion'] == 'PRESENT')]
+from collections import Counter
+from itertools import combinations
 
-# Identificar pacientes com múltiplas condições
-patient_conditions = diseases.groupby('patient_id')['entity'].apply(lambda x: set(x.str.lower()))
-comorbidities = patient_conditions[patient_conditions.apply(len) > 1]
+# Doenças confirmadas no paciente.
+# Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
+# (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+diseases = entities[(entities['label'] == 'DISEASE') & (entities['assertion'] == 'PRESENT')]
+patient_diseases = diseases.groupby('patient_id')['entity'].apply(lambda x: sorted(set(x.str.lower())))
 
-print(f"Pacientes com múltiplas condições: {len(comorbidities)}")
+multi = patient_diseases[patient_diseases.apply(len) > 1]
+print(f"Pacientes com mais de uma doença: {len(multi)}")
 
-# Análise de padrões de comorbidade
-comorbidity_patterns = {}
-for patient, conditions in comorbidities.items():
-    conditions_set = set(conditions)
-    if len(conditions_set) > 1:
-        pattern = tuple(sorted(conditions_set))
-        if pattern not in comorbidity_patterns:
-            comorbidity_patterns[pattern] = 0
-        comorbidity_patterns[pattern] += 1
-
-# Padrões mais comuns
-common_patterns = sorted(comorbidity_patterns.items(), key=lambda x: x[1], reverse=True)
-print("Padrões de comorbidade mais comuns:")
-for pattern, count in common_patterns[:10]:
-    print(f"  {pattern}: {count} pacientes")
+# Pares de doenças mais frequentes no mesmo paciente
+pair_counts = Counter(pair for d in multi for pair in combinations(d, 2))
+print("Pares de doenças mais comuns:")
+for (a, b), n in pair_counts.most_common(10):
+    print(f"  {a} + {b}: {n} pacientes")
 ```
 
 ### 3. Análise de Padrões de Tratamento
 
 ```python
-# Relacionar medicamentos a condições
+# Relacionar medicamentos a condições (sem menções negadas)
 treatment_patterns = df[
     (df['label'] == 'PHARM_SUBSTANCE') &
-    (df['relation_type'] == 'may_treat')
+    (df['relation_type'] == 'may_treat') &
+    (~df['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER']))
 ].groupby(['entity', 'relation_entity']).size().sort_values(ascending=False)
 
 print("Padrões de tratamento mais comuns:")
@@ -245,9 +242,9 @@ print(treatment_patterns.head(20))
 
 ```python
 # Verificar consistência entre entity e normalized_entity
-inconsistent_entities = df[
-    preenchido(df['normalized_entity']) &
-    (df['entity'] != df['normalized_entity'])
+inconsistent_entities = entities[
+    entities['normalized_entity'].notna() &
+    (entities['entity'] != entities['normalized_entity'])
 ][['entity', 'normalized_entity', 'label']].drop_duplicates()
 
 print("Entidades com normalização:")
@@ -256,9 +253,9 @@ print(inconsistent_entities.head(10))
 # Verificar preenchimento dos campos estruturados
 structured_fields = ['normalized_entity', 'specific_marker', 'method',
                      'detection_status', 'score', 'numeric_value', 'unit']
-structured = df[df['label'].isin(['BIOMARKER', 'LAB_TEST'])]
+structured = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])]
 coverage = structured.groupby('label')[structured_fields].agg(
-    lambda col: preenchido(col).mean()
+    lambda col: col.notna().mean()
 )
 
 print("Preenchimento dos campos estruturados por categoria (%):")
@@ -287,23 +284,23 @@ print("Verificações de qualidade:")
 
 # 1. Documentos sem entidades (todas as linhas com entity_id vazio)
 docs_without_entities = df.groupby('document_id')['entity_id'].apply(
-    lambda ids: not preenchido(ids).any()
+    lambda ids: ids.isna().all()
 )
 print(f"Documentos sem entidades: {docs_without_entities.sum()}")
 
 # 2. Entidades sem assertion (apenas nas categorias em que ela é inferida)
 labels_com_assertion = ['FINDING', 'INJURY', 'DISEASE', 'PHARM_SUBSTANCE',
                         'PROCEDURE', 'MEDICAL_DEVICE']
-entities_without_assertion = df[
-    df['label'].isin(labels_com_assertion) &
-    ~preenchido(df['assertion'])
+entities_without_assertion = entities[
+    entities['label'].isin(labels_com_assertion) &
+    entities['assertion'].isna()
 ].shape[0]
 print(f"Entidades sem assertion: {entities_without_assertion}")
 
 # 3. Relações órfãs
 orphan_relations = df[
-    preenchido(df['relation_type']) &
-    ~preenchido(df['relation_entity'])
+    df['relation_type'].notna() &
+    df['relation_entity'].isna()
 ].shape[0]
 print(f"Relações órfãs: {orphan_relations}")
 ```
@@ -313,7 +310,7 @@ print(f"Relações órfãs: {orphan_relations}")
 ```python
 # Análise por documento
 doc_analysis = df.groupby('document_id').agg({
-    'entity_id': 'count',
+    'entity_id': 'nunique',
     'label': lambda x: list(x.unique()),
     'patient_id': 'first'
 })
@@ -335,7 +332,7 @@ print(richest_docs.head(10))
 # Correlação entre biomarcadores (exemplo)
 biomarker_correlation = biomarkers.pivot_table(
     index='patient_id',
-    columns='normalized_entity',
+    columns='marker',
     values='numeric_value',
     aggfunc='mean'
 ).corr()
@@ -349,51 +346,26 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 2. Análise de Clusters
-
-```python
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-
-# Preparar dados para clustering
-biomarker_pivot = biomarkers.pivot_table(
-    index='patient_id',
-    columns='normalized_entity',
-    values='numeric_value',
-    aggfunc='mean'
-).fillna(0)
-
-# Normalizar dados
-scaler = StandardScaler()
-biomarker_scaled = scaler.fit_transform(biomarker_pivot)
-
-# Aplicar K-means
-kmeans = KMeans(n_clusters=3, random_state=42)
-clusters = kmeans.fit_predict(biomarker_scaled)
-
-# Adicionar clusters ao DataFrame
-biomarker_pivot['cluster'] = clusters
-print("Distribuição de clusters:")
-print(biomarker_pivot['cluster'].value_counts())
-```
-
-### 3. Análise de Séries Temporais
+### 2. Análise de Séries Temporais
 
 ```python
 # Análise temporal de biomarcadores
 temporal_biomarkers = biomarkers.copy()
 temporal_biomarkers['date'] = pd.to_datetime(temporal_biomarkers['document_date'])
 
-# Agrupar por mês e biomarcador
+# Agrupar por mês e medida
 monthly_biomarkers = temporal_biomarkers.groupby([
     temporal_biomarkers['date'].dt.to_period('M'),
-    'normalized_entity'
+    'marker'
 ])['numeric_value'].mean().unstack()
 monthly_biomarkers.index = monthly_biomarkers.index.to_timestamp()
 
+# As 5 medidas com mais registros
+top_markers = biomarkers['marker'].value_counts().head(5).index
+
 # Visualizar tendências
 plt.figure(figsize=(15, 8))
-for biomarker in monthly_biomarkers.columns[:5]:  # Top 5 biomarcadores
+for biomarker in top_markers:
     plt.plot(monthly_biomarkers.index, monthly_biomarkers[biomarker],
              label=biomarker, marker='o')
 

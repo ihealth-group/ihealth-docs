@@ -4,36 +4,41 @@ Revisão de linguagem, estrutura e exemplos de código da Extração de Dados Cl
 
 Todos os itens foram considerados pertinentes. Nada aplicado ainda.
 
+## Decisões
+
+- **Critério para os exemplos de análise:** os códigos são só um norte para o analista. Exemplos são corrigidos para dar resultados coerentes; análises ambíguas ou de pouco valor, e qualquer item com proposta de remoção, são **removidos**.
+- **Formatos (L6):** o cliente escolhe o formato; a maioria pede CSV e JSONL, mas pode receber só um.
+
 ## Escopo por versão
 
-| Grupo                                    | v2 | v1 | Motivo                                                                                       |
-| ---------------------------------------- | :-: | :-: | -------------------------------------------------------------------------------------------- |
-| 1. Código que gera resultado errado (R)  | ✓  | ✓  | Clientes da v1 ainda usam os exemplos; a v1 recebe correções (sem mudar o schema v1).        |
-| 2. Exemplos de pouco valor (B)           | ✓  |    | Enxugamento de conteúdo; a v1 não recebe mudanças de conteúdo.                               |
-| 3. Melhorias (M)                         | ✓  |    | Conteúdo novo.                                                                               |
-| 4. Estrutura e duplicações (E)           | ✓  |    | Reorganização de conteúdo.                                                                   |
-| 5. Linguagem e conteúdo (L)              | ✓  |    | Revisão de texto.                                                                            |
+| Grupo                                    | v2 | v1 | Motivo                                                                                     |
+| ---------------------------------------- | :-: | :-: | ------------------------------------------------------------------------------------------ |
+| 1. Código que gera resultado errado (R)  | ✓  | ✓  | Clientes da v1 ainda usam os exemplos; a v1 recebe correções (sem mudar o schema v1).      |
+| 2. Exemplos de pouco valor (B)           | ✓  | ✓  | Enxugar as análises vale para as duas versões.                                             |
+| 3. Melhorias (M)                         | ✓  |    | Conteúdo novo.                                                                             |
+| 4. Estrutura e duplicações (E)           | ✓  |    | Reorganização de conteúdo.                                                                 |
+| 5. Linguagem e conteúdo (L)              | ✓  |    | Revisão de texto.                                                                          |
 
-Na v1, as correções de R usam os valores do schema v1 (ex.: `PRESENTE` em vez de `PRESENT`; `CLINICAL_ATT` continua nas listas de categorias numéricas).
+Na v1, as correções usam os valores do schema v1 (ex.: `PRESENTE` em vez de `PRESENT`; `CLINICAL_ATT` continua nas listas de categorias numéricas).
 
 ## 1. Código: problemas que geram resultado errado (v2 e v1)
 
-- [ ] **R1 — Entidades contadas mais de uma vez no CSV.** Uma entidade com várias relações aparece em várias linhas (mesmo `entity_id`). Contagens por `label`/`entity`, entidades por documento e estatísticas numéricas ficam infladas. Proposta: criar `entities = df.drop_duplicates('entity_id')` logo após o carregamento e usá-lo em todas as análises de entidade; nas agregações por documento, usar `nunique` em vez de `count`. Afeta `csv-format` (distribuição, biomarcadores, agregações, exemplo completo) e `analysis-guidelines` (descritiva, biomarcadores, contexto clínico).
-- [ ] **R2 — `assertion` ignorado nas análises.** A documentação insiste na importância do contexto, mas distribuição, top entidades e padrões de tratamento contam também `ABSENT`, `FAMILY_HISTORY` e `OTHER` (ex.: "nega uso de metformina" entra como tratamento). Proposta: incluir um exemplo `pd.crosstab(entities['label'], entities['assertion'])` e filtrar `PRESENT` (ou excluir `ABSENT`/`FAMILY_HISTORY`/`OTHER`) nos exemplos clínicos.
-- [ ] **R3 — Estatísticas numéricas misturam unidades.** `groupby('normalized_entity')` junta, por ex., glicose em mg/dL e mmol/L. Proposta: agrupar por `['normalized_entity', 'unit']`.
-- [ ] **R4 — Clusters com `fillna(0)`.** Preencher exame ausente com 0 cria um valor clínico falso e distorce o K-means. Proposta: remover o exemplo de clusters (recomendado) ou reescrevê-lo mantendo só marcadores com boa cobertura e imputando pela mediana.
-- [ ] **R5 — Comorbidades pelo texto bruto.** `DISEASE` não tem `normalized_entity`, então "diabetes", "DM2" e "diabetes mellitus" contam como doenças diferentes, e quase todo paciente vira "multimórbido". O padrão por tupla completa gera combinações únicas, pouco úteis. Proposta: avisar no comentário que o texto não é normalizado e trocar o padrão completo por **pares de doenças que coocorrem** (`itertools.combinations`). Vale para `analysis-guidelines` e `jsonl-format`.
-- [ ] **R6 — "Top 5 biomarcadores" na série temporal** pega as 5 primeiras colunas em ordem alfabética, não as mais frequentes. Proposta: selecionar pelos marcadores com mais registros.
-- [ ] **R7 — Tipo de `numeric_value`.** `data-structure` diz `string`, mas o JSONL traz número (`25`, `150000.0`) ou `""`. Proposta: descrever como "número (vazio quando ausente)" e usar `pd.to_numeric(..., errors='coerce')` nos exemplos.
-- [ ] **R8 — Campos vazios: texto × código.** `csv-format` diz que vazios são `""`, mas o pandas lê como `NaN`, e parte do código compara com `''`. Proposta: padronizar o carregamento em um único ponto, com `pd.read_csv(..., dtype=str, keep_default_na=False)`, e explicar isso na página. Com isso as comparações com `''` funcionam e a função `preenchido()` deixa de ser necessária.
+- [x] **R1 — Entidades contadas mais de uma vez no CSV.** Uma entidade com várias relações aparece em várias linhas (mesmo `entity_id`). Contagens por `label`/`entity`, entidades por documento e estatísticas numéricas ficam infladas. Proposta: criar `entities = df.drop_duplicates('entity_id')` logo após o carregamento e usá-lo em todas as análises de entidade; nas agregações por documento, usar `nunique` em vez de `count`. Aplicado também às relações: cada relação aparece em duas linhas (head e tail), então as contagens de relações passam a usar só `relation_position == 'head'`. Afeta `csv-format` (distribuição, biomarcadores, agregações, exemplo completo) e `analysis-guidelines` (descritiva, biomarcadores, contexto clínico).
+- [x] **R2 — `assertion` ignorado nas análises.** A documentação insiste na importância do contexto, mas distribuição, top entidades e padrões de tratamento contam também `ABSENT`, `FAMILY_HISTORY` e `OTHER` (ex.: "nega uso de metformina" entra como tratamento). Proposta: incluir um exemplo `pd.crosstab(entities['label'], entities['assertion'])` e filtrar `PRESENT` (ou excluir `ABSENT`/`FAMILY_HISTORY`/`OTHER`) nos exemplos clínicos.
+- [x] **R3 — Estatísticas numéricas misturam unidades.** `groupby('normalized_entity')` junta, por ex., glicose em mg/dL e mmol/L. Proposta: agrupar por `['normalized_entity', 'unit']`.
+- [x] **R4 — Clusters com `fillna(0)`.** Preencher exame ausente com 0 cria um valor clínico falso e distorce o K-means. Decisão: remover o exemplo de clusters.
+- [x] **R5 — Comorbidades pelo texto bruto.** `DISEASE` não tem `normalized_entity`, então "diabetes", "DM2" e "diabetes mellitus" contam como doenças diferentes, e quase todo paciente vira "multimórbido". O padrão por tupla completa gera combinações únicas, pouco úteis. Proposta: avisar no comentário que o texto não é normalizado e trocar o padrão completo por **pares de doenças que coocorrem** (`itertools.combinations`). Vale para `analysis-guidelines` e `jsonl-format`.
+- [x] **R6 — "Top 5 biomarcadores" na série temporal** pega as 5 primeiras colunas em ordem alfabética, não as mais frequentes. Proposta: selecionar pelos marcadores com mais registros.
+- [x] **R7 — Tipo de `numeric_value`.** `data-structure` diz `string`, mas o JSONL traz número (`25`, `150000.0`) ou `""`. Proposta: descrever como "número (vazio quando ausente)" e usar `pd.to_numeric(..., errors='coerce')` nos exemplos.
+- [x] **R8 — Campos vazios: texto × código.** `csv-format` diz que vazios são `""`, mas o pandas lê como `NaN`, e parte do código compara com `''`. Decisão: manter o carregamento padrão do pandas (vazios viram `NaN`), explicar isso na página e usar `.isna()`/`.notna()` em todo o código, sem a função `preenchido()`.
 
-## 2. Código: exemplos de pouco valor como sugestão básica
+## 2. Código: exemplos de pouco valor como sugestão básica (v2 e v1)
 
 - [ ] **B1 — "Verificar anonimização"** (imprime 5 IDs): não verifica nada. Remover o bloco e manter só os bullets.
 - [ ] **B2 — Verificações de qualidade** "documentos sem entidades" e "relações órfãs": checam detalhes internos do pipeline, o cliente não tem o que fazer com o resultado e, no CSV, tendem a dar sempre 0. Proposta: manter só a tabela de preenchimento dos campos estruturados e a contagem de `assertion` vazio.
 - [ ] **B3 — `delivery`: "Processamento com Chunking"** adiciona uma coluna `processed_date` sem utilidade e o contador de progresso é aproximado; **"Processamento Incremental"** grava CSVs intermediários sem transformação. Proposta: remover os dois ou fundir em um único exemplo de leitura em partes para arquivos grandes.
 - [ ] **B4 — `delivery`: exemplo de logging.** Genérico, não é específico dos dados. Proposta: remover.
-- [ ] **B5 — Correlação entre biomarcadores.** Heatmap com `annot=True` fica ilegível com muitos marcadores, e a média de todos os tempos por paciente mistura momentos diferentes. Proposta: limitar aos marcadores mais frequentes (ex.: 10) ou remover junto com os clusters (R4).
+- [ ] **B5 — Correlação entre biomarcadores.** Heatmap com `annot=True` fica ilegível com muitos marcadores, e a média de todos os tempos por paciente mistura momentos diferentes. Decisão: remover.
 - [ ] **B6 — Reprodutibilidade** (seed + dicionário de config com `python_version: '3.8+'`): pouco útil como código. Proposta: manter só como lista de boas práticas.
 
 ## 3. Código: melhorias sugeridas (úteis e básicas)
@@ -58,5 +63,5 @@ Na v1, as correções de R usam os valores do schema v1 (ex.: `PRESENTE` em vez 
 - [ ] **L3 — `limitations`, "Validação Clínica".** "Estabeleça thresholds de confiança" não se aplica (os dados não têm score de confiança). Os exemplos "verificar se diabéticos apresentam poliúria" sugerem que a ausência de sintoma indica erro de extração, o que não é verdade. Proposta: reescrever com exemplos que fazem sentido (ex.: conferir amostras de entidades contra o texto esperado, comparar prevalências com a literatura).
 - [ ] **L4 — Limitações próprias da v2 ausentes.** Não há menção a erros de inferência de `assertion`, a `OTHER` nem ao fato de os campos estruturados só virem quando a normalização é possível. Proposta: acrescentar em "Qualidade da Extração".
 - [ ] **L5 — `delivery`, "Suporte".** "Esta documentação já contém todas as informações necessárias" soa categórico, e "entre em contato com nossa equipe técnica" não diz como. Proposta: frase neutra + e-mail de contato.
-- [ ] **L6 — `delivery`, "Cada lote contém arquivos nos dois formatos".** Confirmar com produto se todo cliente recebe CSV **e** JSONL ou se depende do contrato.
+- [ ] **L6 — `delivery`, "Cada lote contém arquivos nos dois formatos".** Respondido: o cliente escolhe; a maioria pede os dois. Ajustar o texto.
 - [ ] **L7 — `limitations`, "Contexto temporal".** Diz que relações temporais podem não ser preservadas; hoje existe `is_date_of`. Proposta: ajustar para "podem não ser capturadas em todos os casos".
