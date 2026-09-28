@@ -1,10 +1,18 @@
+---
+displayed_sidebar: docsSidebar
+pagination_prev: clinical-data-extraction/v1/jsonl-format
+pagination_next: clinical-data-extraction/v1/analysis-guidelines
+---
+
 # Entrega dos Dados
 
-Esta página explica como os arquivos da extração são organizados e entregues, e traz exemplos de código para processar os lotes. É indicada para quem vai receber os arquivos e montar o carregamento dos dados.
+:::caution Documentação v1
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../delivery.md).
+:::
 
 ## Visão Geral
 
-Os dados extraídos são entregues em **lotes de arquivos**, o que facilita o processamento e o controle do volume de informações. Essa abordagem permite gerenciar os dados com mais eficiência e controlar melhor a qualidade durante a entrega.
+Os dados extraídos são entregues em **lotes de arquivos** para facilitar o processamento e controle adequado do volume de informações. Esta abordagem permite um gerenciamento mais eficiente dos dados e melhor controle de qualidade durante o processo de entrega.
 
 ## Estrutura de Entrega
 

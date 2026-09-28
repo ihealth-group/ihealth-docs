@@ -1,34 +1,38 @@
+---
+displayed_sidebar: docsSidebar
+pagination_prev: clinical-data-extraction/v1/data-structure
+pagination_next: clinical-data-extraction/v1/jsonl-format
+---
+
 # Formato CSV
 
-Esta página descreve o arquivo CSV da extração e traz exemplos de código em Python (pandas) para carregar, validar e analisar os dados. É indicada para quem vai trabalhar com os dados em formato tabular.
+:::caution Documentação v1
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../csv-format.md).
+:::
 
 ## Características
 
-- **Granularidade**: cada linha corresponde a 1 entidade clínica
-- **Estrutura**: dados "achatados" em colunas
-- **Uso recomendado**: análises de entidades individuais e estatísticas por tipo de entidade
+- **Granularidade**: Cada linha = 1 entidade clínica
+- **Estrutura**: Dados "achatados" em colunas
+- **Uso recomendado**: Análises de entidades individuais, estatísticas por tipo de entidade
 
 ## Estrutura do Arquivo CSV
 
 ### Cabeçalho
 
 ```csv
-document_id,document_date,patient_id,case_id,gender,birthdate,death,provider_state_code,provider_type,entity_id,entity,label,assertion,normalized_entity,specific_marker,method,detection_status,score,numeric_value,unit,relation_type,relation_entity,relation_position
+document_id,document_date,patient_id,case_id,gender,birthdate,death,provider_state_code,provider_type,entity_id,entity,label,assertion,normalized_entity,specific_marker,detection_status,condition,numeric_value,unit,loinc_code,terminology,term_code,term_desc,relation_type,relation_entity,relation_position
 ```
-
-Os campos `normalized_entity` a `unit` são os [campos estruturados](./data-structure.md#campos-estruturados-de-biomarcadores-e-exames) e só vêm preenchidos em `BIOMARKER` e `LAB_TEST`.
 
 ### Exemplo de Dados
 
 ```csv
-doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,FEMALE,1980-05-15 00:00:00,N,SP,Público,doc_123_45,câncer de mama,DISEASE,PRESENT,,,,,,,,disease_has_biomarker,HER2 3+,head
-doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,FEMALE,1980-05-15 00:00:00,N,SP,Público,doc_123_120,HER2 3+,BIOMARKER,,HER2,,imuno-histoquímica,POS,3+,,,disease_has_biomarker,câncer de mama,tail
-doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,FEMALE,1980-05-15 00:00:00,N,SP,Público,doc_123_200,plaquetas 150.000/mm³,LAB_TEST,,Plaquetas,,,,,150000.0,mm³,,,
-doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,MALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_78,metformina,PHARM_SUBSTANCE,PRESENT,,,,,,,,may_treat,diabetes,head
-doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,MALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_90,rx tórax,PROCEDURE,PRESENT,,,,,,,,procedure_has_target_anatomy,tórax,head
+doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_45,hipertensão,DISEASE,PRESENTE,,,,,,,,CID-10,I10,Hipertensão arterial essencial,,,
+doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_120,HER2 positivo,BIOMARKER,,HER2,,POS,,,,48676-1,,,,,,
+doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_200,plaquetas 150.000/mm³,LAB_TEST,,Plaquetas,,,,150000.0,mm³,,,,,,,
+doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_78,metformina,PHARM_SUBSTANCE,PRESENTE,,,,,,,,ATC,A10BA02,Metformina,may_treat,diabetes,head
+doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_90,rx toráx,PROCEDURE,PRESENTE,,,,,,,,TUSS,31001001,Radiografia de tórax,procedure_has_target_anatomy,tórax,head
 ```
-
-No exemplo, o câncer de mama e o biomarcador HER2 estão ligados pela relação `disease_has_biomarker`: cada um aparece em uma linha, com a outra entidade em `relation_entity` e a própria posição na relação em `relation_position`.
 
 ## Trabalhando com CSV
 
@@ -95,7 +99,7 @@ print(region_distribution)
 ```python
 # Filtrar apenas entidades com valores numéricos
 numeric_entities = df[
-    (df['label'].isin(['BIOMARKER', 'LAB_TEST'])) &
+    (df['label'].isin(['BIOMARKER', 'LAB_TEST', 'CLINICAL_ATT'])) &
     (df['numeric_value'] != '') &
     (df['numeric_value'].notna())
 ].copy()

@@ -103,8 +103,12 @@ const config = {
             title: "iHealth",
             items: [
               {
+                label: "Acessar a Plataforma",
+                href: "https://plataforma.ihealthgroup.tec.br/",
+              },
+              {
                 label: "Website",
-                href: "https://www.ihealthgroup.com.br/",
+                href: "https://ihealthgroup.com.br/",
               },
               {
                 label: "LinkedIn",

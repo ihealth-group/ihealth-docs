@@ -1,13 +1,15 @@
 # Estrutura dos Dados
 
+Esta página descreve todos os campos da extração: o que cada um significa, quais valores pode assumir e a quais categorias se aplica. É a referência para quem vai carregar, validar ou analisar os dados.
+
 ## Visão Geral
 
-Os dados extraídos de nosso banco clínico são organizados em duas seções principais:
+Os dados extraídos do nosso banco clínico são organizados em duas partes:
 
-1. **Campos de Metadados** - Informações sobre paciente e documento (anonimizadas)
-2. **Campos de Entidades Clínicas** - Dados estruturados extraídos dos documentos médicos
+1. **Campos de metadados**: informações sobre o paciente e o documento (anonimizadas)
+2. **Campos de entidades clínicas**: dados estruturados extraídos dos documentos médicos
 
-> **Nota**: Estes dados representam uma seleção específica de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos, filtrados conforme critérios definidos pelo cliente contratante.
+> **Nota**: os dados representam uma seleção do nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos, filtrada conforme os critérios definidos pelo cliente contratante.
 
 ## Campos de Metadados do Paciente e do Documento
 
@@ -25,13 +27,13 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 
 ## Campos Adicionais
 
-Os campos abaixo podem ser contratados de forma adicional durante o processo de compra do banco de dados.
+Os campos abaixo podem ser contratados à parte, durante a negociação da extração.
 
 | Campo        | Tipo   | Descrição                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `payer_name` | string | Identificador da fonte pagadora associada à nota clínica. Um mesmo paciente ou atendimento pode ter múltiplas fontes pagadoras, conforme os serviços registrados. Campo do tipo string, não normalizado, que representa diversos planos/convênios de saúde, SUS ou privado, podendo conter variações de grafia para uma mesma fonte, o que exige normalização prévia para fins analíticos. |
 
-> **Importante**: Verifique com o time comercial durante as negociações para inclusão do campo.
+> **Importante**: para incluir o campo, fale com o time comercial durante a negociação.
 
 ### Detalhamento dos Campos
 
@@ -69,155 +71,116 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 
 ### Campos Básicos da Entidade
 
-| Campo       | Tipo   | Descrição                                                                                         |
-| ----------- | ------ | ------------------------------------------------------------------------------------------------- |
-| `entity_id` | string | ID único da entidade (document_id + posição)                                                      |
-| `entity`    | string | Termo clínico extraído do texto                                                                   |
-| `label`     | string | Categoria da entidade clínica                                                                     |
-| `assertion` | string | Aserção sobre o contexto da entidade (AUSENTE, PRESENTE, POSSIVEL, HISTORICO) (quando disponível) |
-
-### Campos de Terminologia (quando disponível)
-
-| Campo         | Tipo   | Descrição                                  |
-| ------------- | ------ | ------------------------------------------ |
-| `terminology` | string | Terminologia utilizada (CID-10, ATC, TUSS) |
-| `term_code`   | string | Código da terminologia                     |
-| `term_desc`   | string | Descrição do termo                         |
+| Campo       | Tipo   | Descrição                                                                                              |
+| ----------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| `entity_id` | string | ID único da entidade (document_id + posição)                                                           |
+| `entity`    | string | Termo clínico extraído do texto                                                                        |
+| `label`     | string | Categoria da entidade clínica. [Ver categorias](#categorias-de-entidades-clinicas).                    |
+| `assertion` | string | Contexto em que a entidade foi mencionada (quando aplicável). [Ver valores](#campo-assertion).         |
 
 ### Campos de Relação (quando aplicável)
 
-| Campo               | Tipo   | Descrição                          |
-| ------------------- | ------ | ---------------------------------- |
-| `relation_type`     | string | Tipo de relação com outra entidade |
-| `relation_entity`   | string | Entidade relacionada               |
-| `relation_position` | string | Posição na relação (head, tail)    |
+| Campo               | Tipo   | Descrição                                                                  |
+| ------------------- | ------ | -------------------------------------------------------------------------- |
+| `relation_type`     | string | Tipo de relação com outra entidade. [Ver tipos](#tipos-de-relacao).         |
+| `relation_entity`   | string | A outra entidade da relação                                                |
+| `relation_position` | string | Posição da entidade da linha na relação (`head` ou `tail`)                 |
 
-## Campos Estruturados para Exames e Biomarcadores
+## Campos Estruturados de Biomarcadores e Exames
 
-**Importante**: Os campos abaixo são preenchidos apenas quando foi possível fazer a normalização/estruturação da entidade e se aplicam apenas às categorias especificadas:
+Os campos abaixo se aplicam **apenas** às categorias `BIOMARKER` e `LAB_TEST`, e são preenchidos quando foi possível normalizar e estruturar a entidade.
 
-| Campo               | Tipo   | Categorias Aplicáveis             | Descrição                                                         |
-| ------------------- | ------ | --------------------------------- | ----------------------------------------------------------------- |
-| `normalized_entity` | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Versão padronizada da entidade (quando normalização foi possível) |
-| `numeric_value`     | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Valor numérico extraído (quando disponível)                       |
-| `unit`              | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Unidade de medida (quando disponível)                             |
-| `specific_marker`   | string | BIOMARKER, LAB_TEST, CLINICAL_ATT | Marcador específico de resultado                                  |
-| `detection_status`  | string | BIOMARKER, LAB_TEST               | Status de detecção do resultado                                   |
-| `condition`         | string | CLINICAL_ATT                      | Condições associadas                                              |
-| `loinc_code`        | string | BIOMARKER                         | Código LOINC (quando disponível)                                  |
+| Campo               | Tipo   | `BIOMARKER` | `LAB_TEST` | Descrição                                                         |
+| ------------------- | ------ | :---------: | :--------: | ----------------------------------------------------------------- |
+| `normalized_entity` | string | ✓           | ✓          | Versão padronizada da entidade                                    |
+| `specific_marker`   | string | ✓           | ✓          | Marcador específico do resultado                                  |
+| `method`            | string | ✓           | ✓          | Método utilizado para obter o resultado                           |
+| `detection_status`  | string | ✓           | ✓          | Status de detecção do resultado                                   |
+| `score`             | string | ✓           |            | Escore do resultado do biomarcador                                |
+| `numeric_value`     | string | ✓           | ✓          | Valor numérico extraído                                           |
+| `unit`              | string | ✓           | ✓          | Unidade de medida                                                 |
+
+No JSONL, `normalized_entity`, `specific_marker` e `method` ficam no nível da entidade, e os demais campos ficam dentro do objeto `result`. Veja [Formato JSONL](./jsonl-format.md).
 
 ## Detalhamentos e Informações Adicionais
 
-### Campo de Asserção - Contexto das Entidades
+### Campo assertion – Contexto das Entidades {#campo-assertion}
 
-O campo `assertion` é uma classificação importante que indica o **contexto clínico** em que uma entidade foi mencionada no documento médico. Esta informação é crucial para análises precisas, pois o mesmo termo clínico pode ter significados diferentes dependendo do contexto.
+O campo `assertion` indica o **contexto clínico** em que uma entidade foi mencionada no documento. O mesmo termo pode ter significados diferentes conforme o contexto, por isso esse campo é essencial para análises precisas.
 
-#### Valores Possíveis de Asserção
+#### Valores Possíveis
 
-| Valor       | Descrição                                  | Exemplo de Uso                                |
-| ----------- | ------------------------------------------ | --------------------------------------------- |
-| `PRESENTE`  | A entidade está **confirmada** no paciente | "Paciente apresenta diabetes tipo 2"          |
-| `AUSENTE`   | A entidade está **negada** ou **ausente**  | "Paciente não apresenta hipertensão"          |
-| `POSSIVEL`  | A entidade é **suspeita** ou **possível**  | "Suspeita de pneumonia" ou "Possível infarto" |
-| `HISTORICO` | A entidade é um **histórico** do paciente  | "Histórico de cirurgia cardíaca em 2020"      |
+| Valor            | Nome               | Descrição                                                                                                   | Exemplo                                            |
+| ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `PRESENT`        | Presente           | Condição ativa no paciente naquele momento                                                                  | "Paciente apresenta diabetes tipo 2"               |
+| `INVESTIGATION`  | Em investigação    | Hipótese, suspeita ou diagnóstico em apuração                                                               | "Suspeita de pneumonia"                            |
+| `HISTORY`        | Histórico          | Esteve presente no passado e pode não estar mais ativo                                                      | "Histórico de cirurgia cardíaca em 2020"           |
+| `FAMILY_HISTORY` | Histórico familiar | Refere-se a um familiar, não ao paciente                                                                    | "Mãe com câncer de mama"                           |
+| `ABSENT`         | Ausente            | Termo negado no texto                                                                                       | "Paciente nega hipertensão"                        |
+| `OTHER`          | Outro              | Menção fora da jornada clínica do paciente, como uma doença citada como referência, em estudo ou em documento de apoio | "Protocolo de rastreamento para câncer de colo"    |
 
 #### Importância para Análise de Dados
 
-A asserção é fundamental para análises precisas porque:
-
-- **Evita falsos positivos**: Entidades negadas (`AUSENTE`) não devem ser contadas como presentes
-- **Identifica suspeitas**: Entidades `POSSIVEL` podem indicar casos em investigação
-- **Contextualiza histórico**: Entidades `HISTORICO` fornecem informações sobre o passado do paciente
-- **Melhora precisão**: Permite análises mais refinadas considerando o contexto clínico
+- **Evita falsos positivos**: entidades negadas (`ABSENT`) não devem ser contadas como presentes
+- **Separa o paciente da família**: entidades `FAMILY_HISTORY` não descrevem o próprio paciente
+- **Identifica suspeitas**: entidades `INVESTIGATION` indicam casos em apuração
+- **Contextualiza o histórico**: entidades `HISTORY` descrevem o passado do paciente
+- **Filtra menções de referência**: entidades `OTHER` não fazem parte da jornada clínica do paciente
 
 #### Exemplo Prático
 
 ```text
-Texto: "Paciente nega diabetes, mas apresenta histórico de hipertensão.
+Texto: "Paciente nega diabetes, com histórico de hipertensão. Mãe com câncer de mama.
 Suspeita de insuficiência cardíaca."
 
 Entidades extraídas:
-- "diabetes" → assertion: AUSENTE
-- "hipertensão" → assertion: HISTORICO
-- "insuficiência cardíaca" → assertion: POSSIVEL
+- "diabetes" → assertion: ABSENT
+- "hipertensão" → assertion: HISTORY
+- "câncer de mama" → assertion: FAMILY_HISTORY
+- "insuficiência cardíaca" → assertion: INVESTIGATION
 ```
 
 #### Categorias com Asserção
 
-O modelo de inferência de asserção é aplicado apenas às seguintes categorias de entidades:
+O contexto é inferido apenas para as categorias **`FINDING`**, **`INJURY`**, **`DISEASE`**, **`PHARM_SUBSTANCE`**, **`PROCEDURE`** e **`MEDICAL_DEVICE`**.
 
-**DISEASE**, **PROCEDURE**, **PHARM_SUBSTANCE**, **SYMPTOM**, **FINDING**, **INJURY**, **VENT_SUPPORT**, **MEDICAL_DEVICE**.
+Nas demais categorias, o campo `assertion` vem vazio. Essas entidades são tratadas como presentes no contexto do documento, e o campo vazio não indica falha na inferência.
 
-Nas demais categorias (por exemplo, BIOMARKER, LAB_TEST, CLINICAL_ATT, BODY_PART, TEMPORAL_CONCEPT, entre outras), o modelo de inferência **não é aplicado**. Essas entidades são tratadas como naturalmente presentes no contexto clínico do documento e não demandam classificação adicional. Deste modo, a ausência do campo preenchido não indica falha do modelo na inferência.
+### Categorias de Entidades Clínicas {#categorias-de-entidades-clinicas}
 
-### Campos de Terminologia - Normalização e Codificação
+| Label              | Nome               | Descrição                                     | Exemplo                           |
+| ------------------ | ------------------ | --------------------------------------------- | --------------------------------- |
+| `FINDING`          | Achado clínico     | Sintomas relatados e achados do exame físico  | "dor de cabeça", "febre", "edema" |
+| `INJURY`           | Lesão              | Lesões físicas ou envenenamentos              | "fratura", "queda", "alergia"     |
+| `DISEASE`          | Doença             | Condições médicas ou patológicas              | "diabetes", "hipertensão"         |
+| `PHARM_SUBSTANCE`  | Fármaco            | Substâncias usadas em tratamento              | "metformina", "morfina"           |
+| `PROCEDURE`        | Procedimento       | Procedimentos diagnósticos ou terapêuticos    | "tomografia", "biópsia"           |
+| `STAGE`            | Estadiamento       | Estágio de uma condição                       | "EC IV", "EC IIA"                 |
+| `SCALE`            | Escala             | Escalas padrão de avaliação                   | "ECOG", "Glasgow"                 |
+| `MEDICAL_DEVICE`   | Dispositivo médico | Dispositivos e equipamentos usados no cuidado | "cateter venoso", "dreno"         |
+| `BODY_PART`        | Parte do corpo     | Órgãos e componentes anatômicos               | "mama", "pulmão"                  |
+| `TEMPORAL_CONCEPT` | Conceito temporal  | Datas e expressões de tempo                   | "15/01/2024", "há 2 anos"         |
+| `BIOMARKER`        | Biomarcador        | Indicadores biológicos de saúde ou doença     | "KI67", "HER2", "PSA"             |
+| `LAB_TEST`         | Exame laboratorial | Resultados de testes laboratoriais            | "hemograma", "glicemia em jejum"  |
 
-Os campos de terminologia (`terminology`, `term_code`, `term_desc`) são aplicados apenas para **3 categorias específicas** de entidades, quando foi possível fazer o mapeamento/normalização para terminologias médicas padronizadas.
+### Tipos de Relação {#tipos-de-relacao}
 
-#### Categorias com Terminologia
+Cada relação liga duas entidades: a primeira (`head`) e a segunda (`tail`), nessa ordem.
 
-| Categoria         | Terminologia | Descrição                                   | Exemplo                              |
-| ----------------- | ------------ | ------------------------------------------- | ------------------------------------ |
-| `DISEASE`         | **CID-10**   | Classificação Internacional de Doenças      | "diabetes tipo 2" → CID-10: E11      |
-| `PROCEDURE`       | **TUSS**     | Terminologia Unificada da Saúde Suplementar | "cirurgia cardíaca" → TUSS: 31001001 |
-| `PHARM_SUBSTANCE` | **ATC**      | Anatomical Therapeutic Chemical             | "metformina" → ATC: A10BA02          |
+| Relation type                       | Descrição                                            | Exemplo (head → tail)                       |
+| ----------------------------------- | ---------------------------------------------------- | ------------------------------------------- |
+| `is_date_of`                        | Associa uma data a um evento clínico                 | "15/01/2024" → "cirurgia"                   |
+| `finding_has_anatomic_site`         | Liga um achado clínico ao local anatômico            | "edema" → "membros inferiores"              |
+| `may_treat`                         | Indica que um fármaco pode tratar uma condição       | "metformina" → "diabetes"                   |
+| `procedure_has_target_anatomy`      | Define o alvo anatômico de um procedimento           | "biópsia" → "fígado"                        |
+| `disease_has_anatomic_site`         | Liga uma doença ao local anatômico                   | "pneumonia" → "pulmão"                      |
+| `disease_has_associated_disease`    | Liga uma doença a outra doença associada             | "diabetes" → "retinopatia"                  |
+| `disease_has_biomarker`             | Liga uma doença a um biomarcador                     | "câncer de mama" → "HER2"                   |
+| `disease_has_scale`                 | Liga uma doença a uma escala de avaliação            | "câncer de pulmão" → "ECOG"                 |
+| `disease_has_stage`                 | Liga uma doença ao estadiamento                      | "câncer de mama" → "EC IIA"                 |
+| `injury_has_anatomic_site`          | Liga uma lesão ao local anatômico                    | "fratura" → "fêmur"                         |
+| `procedure_has_associated_device`   | Liga um procedimento ao dispositivo utilizado        | "angioplastia" → "stent"                    |
+| `medical_device_has_target_anatomy` | Define o alvo anatômico de um dispositivo médico     | "cateter venoso central" → "veia jugular"   |
+| `disease_has_oncologic_finding`     | Liga uma doença oncológica a um achado oncológico    | "adenocarcinoma de pulmão" → "metástase"    |
 
-#### Exemplo Prático
-
-```text
-Entidade extraída: "diabetes mellitus tipo 2"
-Categoria: DISEASE
-Terminologia aplicada:
-- terminology: "CID-10"
-- term_code: "E11"
-- term_desc: "Diabetes mellitus não-insulino-dependente"
-```
-
-> **Importante**: Nem todas as entidades das categorias `DISEASE`, `PROCEDURE` e `PHARM_SUBSTANCE` terão campos de terminologia preenchidos. Isso ocorre apenas quando foi possível fazer o mapeamento automático para as terminologias padronizadas.
-
-### Categorias de Entidades Clínicas
-
-#### Labels Disponíveis
-
-| Label              | Descrição                    | Exemplo                           |
-| ------------------ | ---------------------------- | --------------------------------- |
-| `DISEASE`          | Doenças e condições médicas  | "diabetes", "hipertensão"         |
-| `FINDING`          | Achados clínicos observados  | "edema", "icterícia"              |
-| `SYMPTOM`          | Sinais e sintomas            | "dor", "febre"                    |
-| `PHARM_SUBSTANCE`  | Substâncias farmacológicas   | "metformina", "insulina"          |
-| `PROCEDURE`        | Procedimentos médicos        | "cirurgia", "biópsia"             |
-| `STAGE`            | Estágios de progressão       | "estágio 3", "avançado"           |
-| `SCALE`            | Escalas clínicas             | "Glasgow", "APACHE"               |
-| `VENT_SUPPORT`     | Suporte respiratório         | "ventilação mecânica"             |
-| `MEDICAL_DEVICE`   | Dispositivos médicos         | "cateter", "marca-passo"          |
-| `INJURY`           | Lesões e traumas             | "fratura", "laceração"            |
-| `HCARE_ACTIVITY`   | Atividades assistenciais     | "fisioterapia", "enfermagem"      |
-| `TEMPORAL_CONCEPT` | Conceitos temporais          | "ontem", "crônico"                |
-| `BODY_PART`        | Partes anatômicas            | "coração", "fígado"               |
-| `BODY_LOC`         | Localizações específicas     | "ventrículo esquerdo"             |
-| `MORPHOLOGY`       | Características morfológicas | "hiperplasia", "atrofia"          |
-| `BIOMARKER`        | Biomarcadores                | "hemoglobina", "glicose"          |
-| `LAB_TEST`         | Exames laboratoriais         | "hemograma", "urina"              |
-| `CLINICAL_ATT`     | Sinais vitais                | "pressão arterial", "temperatura" |
-
-### Tipos de Relação
-
-| Relation Type                          | Descrição                             | Exemplo                   |
-| -------------------------------------- | ------------------------------------- | ------------------------- |
-| `is_date_of`                           | Associa data a evento                 | "15/01/2024" → "cirurgia" |
-| `is_associated_anatomic_site_of`       | Relaciona entidade a local anatômico  | "tumor" → "fígado"        |
-| `may_treat`                            | Indica tratamento possível            | "metformina" → "diabetes" |
-| `procedure_has_target_anatomy`         | Define alvo anatômico de procedimento | "biópsia" → "fígado"      |
-| `is_qualifier_of`                      | Qualifica ou modifica entidade        | "agudo" → "infarto"       |
-| `may_diagnose`                         | Indica capacidade diagnóstica         | "tomografia" → "tumor"    |
-| `disease_has_primary_anatomic_site`    | Relaciona doença ao local primário    | "hepatite" → "fígado"     |
-| `induced_by`                           | Liga entidade ao fator causador       | "úlcera" → "AINEs"        |
-| `disease_has_finding`                  | Associa doença a achado               | "diabetes" → "poliúria"   |
-| `disease_has_metastatic_anatomic_site` | Define local metastático              | "câncer" → "pulmão"       |
-| `disease_has_associated_anatomic_site` | Relaciona doença a local associado    | "pneumonia" → "pulmão"    |
-
-> **Importante**: A extração de dados disponibilizada contém apenas os pacientes e documentos que atendem aos critérios específicos definidos para o projeto, representando uma amostra selecionada de nossa base, com ampla cobertura e representatividade.
-
----
-
-**Próximo**: [Entrega dos Dados](./delivery.md)
+> **Importante**: a extração contém apenas os pacientes e documentos que atendem aos critérios definidos para o projeto, representando uma amostra selecionada da nossa base, com ampla cobertura e representatividade.

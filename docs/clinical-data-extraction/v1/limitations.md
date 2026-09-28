@@ -1,8 +1,18 @@
+---
+displayed_sidebar: docsSidebar
+pagination_prev: clinical-data-extraction/v1/analysis-guidelines
+pagination_next: null
+---
+
 # Limitações e Considerações
 
-Esta página descreve as limitações dos dados extraídos e os cuidados necessários para interpretar corretamente os resultados das análises. Recomendamos a leitura antes de qualquer análise.
+:::caution Documentação v1
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../limitations.md).
+:::
 
 ## Contexto dos Dados Extraídos
+
+Esta seção descreve as limitações e considerações importantes para análise dos **dados extraídos** de nosso banco clínico. É fundamental entender estas limitações para interpretar corretamente os resultados das análises.
 
 > **Importante**: Os dados disponibilizados representam uma seleção específica de nosso banco de dados clínico, processados com técnicas de Processamento de Linguagem Natural (PLN). As limitações descritas abaixo aplicam-se tanto ao processo de extração quanto à seleção dos dados.
 
@@ -31,7 +41,7 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 | Categoria   | Limitações Principais                                  |
 | ----------- | ------------------------------------------------------ |
 | `DISEASE`   | Pode não capturar todas as condições mencionadas       |
-| `FINDING`   | Sintomas subjetivos podem ser perdidos                 |
+| `SYMPTOM`   | Sintomas subjetivos podem ser perdidos                 |
 | `BIOMARKER` | Valores numéricos podem não ser extraídos corretamente |
 | `PROCEDURE` | Procedimentos complexos podem ser fragmentados         |
 
@@ -83,7 +93,7 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - **Ambiguidade**: Termos médicos podem ter múltiplos significados
 - **Contexto**: Significado pode depender do contexto clínico
 - **Linguagem natural**: Variações na forma de expressar conceitos
-- **Variação de nomenclatura**: o mesmo conceito pode aparecer com nomes, siglas e abreviações diferentes
+- **Terminologia**: Diferentes sistemas de codificação médica
 
 #### Exemplo de Ambiguidade
 
@@ -181,3 +191,8 @@ Para dúvidas sobre limitações ou considerações:
 
 - **Contato**: [oportunidades@ihealthgroup.com.br](mailto:oportunidades@ihealthgroup.com.br)
 - **Suporte Clínico**: Consulte especialistas para validação
+
+---
+
+_Última atualização: Setembro 2026_  
+_Versão: 1.0_

@@ -1,10 +1,18 @@
+---
+displayed_sidebar: docsSidebar
+pagination_prev: clinical-data-extraction/v1/delivery
+pagination_next: clinical-data-extraction/v1/limitations
+---
+
 # Diretrizes para Análise de Dados
 
-Esta página reúne boas práticas e exemplos de análise dos dados extraídos, da preparação às análises avançadas. É indicada para cientistas e analistas de dados que vão explorar a extração.
+:::caution Documentação v1
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../analysis-guidelines.md).
+:::
 
 ## Contexto dos Dados
 
-Os **dados extraídos** representam uma seleção de documentos médicos do nosso banco clínico, com ampla cobertura nacional e representatividade para análises, filtrados conforme os critérios definidos para o projeto.
+Esta documentação fornece diretrizes para análise dos **dados extraídos** de nosso banco clínico. Estes dados representam uma seleção específica de documentos médicos de nossa base, com ampla cobertura nacional e representatividade para análises, filtrados conforme critérios definidos para o projeto.
 
 ### Características Importantes dos Dados Extraídos
 
@@ -62,8 +70,7 @@ if data:
 
 - **Campos vazios**: Representados como strings vazias ("")
 - **Valores numéricos ausentes**: Campo `numeric_value` vazio
-- **Campos estruturados**: preenchidos apenas em `BIOMARKER` e `LAB_TEST`, quando a normalização foi possível
-- **Assertion**: vazio nas categorias em que o contexto não é inferido
+- **Códigos de terminologia**: Podem estar ausentes
 - **Relações**: Nem todas as entidades possuem relações
 
 ```python
@@ -177,7 +184,7 @@ print(related_entities.head(20))
 ```python
 # Filtrar apenas biomarcadores com valores numéricos
 biomarkers = df[
-    (df['label'].isin(['BIOMARKER', 'LAB_TEST'])) &
+    (df['label'].isin(['BIOMARKER', 'LAB_TEST', 'CLINICAL_ATT'])) &
     (df['numeric_value'] != '') &
     (df['numeric_value'].notna())
 ].copy()
@@ -203,7 +210,7 @@ print(detection_analysis)
 
 ```python
 # Considerar apenas doenças confirmadas no paciente
-diseases = df[(df['label'] == 'DISEASE') & (df['assertion'] == 'PRESENT')]
+diseases = df[(df['label'] == 'DISEASE') & (df['assertion'] == 'PRESENTE')]
 
 # Identificar pacientes com múltiplas condições
 patient_conditions = diseases.groupby('patient_id')['entity'].apply(lambda x: set(x.str.lower()))
@@ -253,16 +260,13 @@ inconsistent_entities = df[
 print("Entidades com normalização:")
 print(inconsistent_entities.head(10))
 
-# Verificar preenchimento dos campos estruturados
-structured_fields = ['normalized_entity', 'specific_marker', 'method',
-                     'detection_status', 'score', 'numeric_value', 'unit']
-structured = df[df['label'].isin(['BIOMARKER', 'LAB_TEST'])]
-coverage = structured.groupby('label')[structured_fields].agg(
-    lambda col: preenchido(col).mean()
-)
+# Verificar códigos de terminologia
+terminology_coverage = df[
+    df['terminology'] != ''
+].groupby('label')['terminology'].value_counts()
 
-print("Preenchimento dos campos estruturados por categoria (%):")
-print((coverage * 100).round(1))
+print("Cobertura de terminologia por categoria:")
+print(terminology_coverage)
 ```
 
 ## Considerações Específicas
@@ -292,8 +296,8 @@ docs_without_entities = df.groupby('document_id')['entity_id'].apply(
 print(f"Documentos sem entidades: {docs_without_entities.sum()}")
 
 # 2. Entidades sem assertion (apenas nas categorias em que ela é inferida)
-labels_com_assertion = ['FINDING', 'INJURY', 'DISEASE', 'PHARM_SUBSTANCE',
-                        'PROCEDURE', 'MEDICAL_DEVICE']
+labels_com_assertion = ['DISEASE', 'PROCEDURE', 'PHARM_SUBSTANCE', 'SYMPTOM',
+                        'FINDING', 'INJURY', 'VENT_SUPPORT', 'MEDICAL_DEVICE']
 entities_without_assertion = df[
     df['label'].isin(labels_com_assertion) &
     ~preenchido(df['assertion'])
@@ -429,7 +433,7 @@ np.random.seed(RANDOM_SEED)
 # Salvar configurações
 config = {
     'random_seed': RANDOM_SEED,
-    'data_version': 'v2',
+    'data_version': 'v1.0',
     'analysis_date': pd.Timestamp.now().strftime('%Y-%m-%d'),
     'python_version': '3.8+'
 }

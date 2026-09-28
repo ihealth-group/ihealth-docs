@@ -1,57 +1,57 @@
 # Extração de Dados Clínicos
 
-## Visão Geral
+A **Extração de Dados Clínicos** da iHealth disponibiliza dados estruturados a partir do nosso banco de dados clínico, que tem ampla cobertura nacional, provedores em todas as regiões do Brasil e boa representatividade para estudos e projetos. Cada extração é personalizada conforme os critérios definidos pelo cliente contratante.
 
-A **Extração de Dados Clínicos** da iHealth é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos e projetos, e provedores em todas as regiões do Brasil. Esta extração é personalizada conforme critérios específicos definidos pelo cliente contratante.
+Esta documentação explica como os dados são organizados, entregues e analisados.
+
+:::info Documentação v1
+Recebeu sua extração antes de **21/09/2026**? Consulte a [documentação v1](./v1/intro.md).
+:::
 
 ## O que é a Extração de Dados Clínicos?
 
-Nossa extração de dados é uma seleção estruturada de nosso banco de dados clínico que:
+A extração é uma seleção estruturada do nosso banco de dados clínico que:
 
-- **Seleciona pacientes** baseado em critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
+- **Seleciona pacientes** com base em critérios específicos (diagnósticos, medicamentos, procedimentos etc.)
 - **Estrutura dados clínicos** em formatos padronizados para análise
-- **Preserva contexto clínico** mantendo relações entre entidades e documentos
-- **Oferece flexibilidade** com múltiplos formatos de disponibilização
-- **Mantém anonimização** garantindo privacidade dos pacientes
+- **Preserva o contexto clínico**, mantendo as relações entre entidades e documentos
+- **Oferece flexibilidade**, com mais de um formato de disponibilização
+- **Mantém a anonimização**, garantindo a privacidade dos pacientes
 
 ## Formatos de Disponibilização
 
-Os dados extraídos são disponibilizados em dois formatos principais, organizados em **lotes de arquivos** para facilitar o processamento:
+Os dados são disponibilizados em dois formatos, organizados em **lotes de arquivos** para facilitar o processamento:
 
-### 📊 CSV
+### CSV
 
-- **Granularidade**: Cada linha = 1 entidade clínica
-- **Estrutura**: Dados "achatados" em colunas
-- **Uso recomendado**: Análises estatísticas, agregações por tipo de entidade, análises exploratórias
-- **Entrega**: Arquivos em lotes de 10-50 pacientes cada
+- **Granularidade**: cada linha corresponde a 1 entidade clínica
+- **Estrutura**: dados "achatados" em colunas
+- **Uso recomendado**: análises estatísticas, agregações por tipo de entidade e análises exploratórias
+- **Entrega**: arquivos em lotes de 10–50 pacientes cada
 
-### 📋 JSONL
+### JSONL
 
-- **Granularidade**: Cada linha = 1 documento completo
-- **Estrutura**: Dados aninhados preservando hierarquia
-- **Uso recomendado**: Análises por documento, preservação de contexto clínico, análises de jornada do paciente
-- **Entrega**: Arquivos em lotes de 10-50 pacientes cada
+- **Granularidade**: cada linha corresponde a 1 documento completo
+- **Estrutura**: dados aninhados, preservando a hierarquia
+- **Uso recomendado**: análises por documento, preservação do contexto clínico e análises da jornada do paciente
+- **Entrega**: arquivos em lotes de 10–50 pacientes cada
 
-> **Importante**: O número de linhas por arquivo varia conforme a quantidade de documentos clínicos disponíveis para cada paciente na base de dados. Para detalhes completos sobre a estrutura de entrega, consulte a seção [Entrega dos Dados](./delivery.md).
+> **Importante**: o número de linhas por arquivo varia conforme a quantidade de documentos clínicos disponíveis para cada paciente na base. Para detalhes sobre a estrutura de entrega, consulte [Entrega dos Dados](./delivery.md).
 
 ## Público-Alvo
 
 Esta documentação é destinada a:
 
-- **Cientistas de Dados** que trabalharão com os dados extraídos para análises diversas
-- **Analistas de Dados** que precisam entender a estrutura e possibilidades dos dados
-- **Pesquisadores** que utilizarão os dados para estudos clínicos e RWE (Real World Evidence)
-- **Equipes de Business Intelligence** que integrarão os dados em dashboards e relatórios
+- **Cientistas de dados** que vão trabalhar com os dados extraídos em análises diversas
+- **Analistas de dados** que precisam entender a estrutura e as possibilidades dos dados
+- **Pesquisadores** que vão usar os dados em estudos clínicos e de RWE (Real World Evidence)
+- **Equipes de Business Intelligence** que vão integrar os dados a dashboards e relatórios
 
 ## Próximos Passos
 
-1. **[Estrutura dos Dados](./data-structure.md)** - Entenda como os dados extraídos são organizados
-2. **[Formato CSV](./csv-format.md)** - Aprenda a trabalhar com dados em CSV
-3. **[Formato JSONL](./jsonl-format.md)** - Explore a estrutura JSONL
-4. **[Entrega dos Dados](./delivery.md)** - Saiba como os dados são entregues em lotes e como processá-los
-5. **[Diretrizes de Análise](./analysis-guidelines.md)** - Boas práticas para análise dos dados extraídos
-6. **[Limitações](./limitations.md)** - Conheça as limitações e considerações importantes
-
----
-
-_Esta documentação foi criada para facilitar o uso dos dados extraídos do banco clínico da iHealth por analistas de dados e cientistas._
+1. **[Estrutura dos Dados](./data-structure.md)**: entenda como os dados extraídos são organizados
+2. **[Formato CSV](./csv-format.md)**: aprenda a trabalhar com os dados em CSV
+3. **[Formato JSONL](./jsonl-format.md)**: explore a estrutura JSONL
+4. **[Entrega dos Dados](./delivery.md)**: saiba como os dados são entregues em lotes e como processá-los
+5. **[Diretrizes de Análise](./analysis-guidelines.md)**: boas práticas para análise dos dados extraídos
+6. **[Limitações](./limitations.md)**: conheça as limitações e considerações importantes

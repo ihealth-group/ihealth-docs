@@ -1,14 +1,22 @@
+---
+displayed_sidebar: docsSidebar
+pagination_prev: clinical-data-extraction/v1/csv-format
+pagination_next: clinical-data-extraction/v1/delivery
+---
+
 # Formato JSONL
 
-Esta página descreve o arquivo JSONL da extração, em que cada linha é um documento com suas entidades agrupadas, e traz exemplos de código em Python para ler e analisar os dados. É indicada para quem precisa preservar o contexto do documento ou trabalhar com as relações entre entidades.
+:::caution Documentação v1
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../jsonl-format.md).
+:::
 
 ## Características
 
-- **Granularidade**: cada linha corresponde a 1 documento completo
-- **Estrutura**: dados aninhados, preservando a hierarquia original
-- **Uso recomendado**: análises por documento e preservação do contexto clínico
+- **Granularidade**: Cada linha = 1 documento completo
+- **Estrutura**: Dados aninhados preservando hierarquia original
+- **Uso recomendado**: Análises por documento, preservação de contexto clínico
 
-> **Relação com a Estrutura dos Dados**: o JSONL traz os mesmos campos descritos em [Estrutura dos Dados](./data-structure.md), mas agrupados de forma hierárquica, o que preserva melhor o contexto clínico original.
+> **Relação com a Estrutura dos Dados**: Este formato JSONL implementa a mesma estrutura de dados descrita em [Estrutura dos Dados](./data-structure.md), mas com organizações aninhadas específicas que preservam melhor o contexto clínico original. Os campos básicos permanecem os mesmos, mas são agrupados e estruturados de forma hierárquica.
 
 ## Estrutura do Arquivo JSONL
 
@@ -22,7 +30,7 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
   "document_date": "2023-05-31 13:15:47",
   "patient_id": "patient_abc123",
   "case_id": "case_xyz789",
-  "gender": "FEMALE",
+  "gender": "MALE",
   "birthdate": "1980-05-15 00:00:00",
   "death": "N",
   "provider_state_code": "SP",
@@ -31,6 +39,7 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
     "clinical_entities": [...],
     "biomarkers": [...],
     "lab_tests": [...],
+    "vital_signs": [...],
     "entities_relations": [...]
   }
 }
@@ -38,25 +47,36 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
 
 ## Estrutura Aninhada das Entidades
 
-> **Importante**: o formato JSONL preserva estruturas aninhadas que não existem no CSV. Elas permitem uma representação mais rica e contextualizada dos dados clínicos, mantendo a hierarquia original dos documentos.
+> **Importante**: O formato JSONL preserva estruturas aninhadas que não estão presentes no formato CSV. Estas estruturas permitem uma representação mais rica e contextualizada dos dados clínicos, mantendo a hierarquia original dos documentos.
 
 ### Estruturas Aninhadas Específicas do JSONL
 
-#### 1. Objeto `result`: Biomarcadores e Exames
+#### 1. Objeto `el` (Entity Linking) - Entidades Clínicas
 
-Os [campos estruturados](./data-structure.md#campos-estruturados-de-biomarcadores-e-exames) de biomarcadores e exames ficam divididos em dois níveis:
+Para entidades clínicas com terminologia padronizada, o JSONL utiliza um objeto aninhado `el` que contém:
 
-- **No nível da entidade**: `normalized_entity`, `specific_marker` e `method`
-- **Dentro de `result`**: `detection_status`, `numeric_value`, `unit` e, apenas em biomarcadores, `score`
+- `terminology`: Sistema de codificação (CID-10, ATC, TUSS)
+- `term_code`: Código específico da terminologia
+- `term_desc`: Descrição padronizada do termo
 
-#### 2. Agrupamento por Categoria
+#### 2. Objeto `result` - Biomarcadores, Exames e Sinais Vitais
 
-O JSONL organiza as entidades em grupos dentro do objeto `preds`:
+Para entidades com valores estruturados, o JSONL utiliza um objeto aninhado `result` que contém:
 
-- `clinical_entities`: entidades das demais categorias (doenças, achados clínicos, fármacos, procedimentos etc.)
-- `biomarkers`: biomarcadores (`BIOMARKER`)
-- `lab_tests`: exames laboratoriais (`LAB_TEST`)
-- `entities_relations`: relações entre entidades
+- `numeric_value`: Valor numérico (quando disponível)
+- `unit`: Unidade de medida
+- `detection_status`: Status de detecção (para biomarcadores e exames)
+- `condition`: Condições associadas (para sinais vitais)
+
+#### 3. Agrupamento por Categoria
+
+O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
+
+- `clinical_entities`: Doenças, sintomas, procedimentos, etc.
+- `biomarkers`: Biomarcadores com valores estruturados
+- `lab_tests`: Exames laboratoriais
+- `vital_signs`: Sinais vitais e medidas clínicas
+- `entities_relations`: Relações entre entidades
 
 ### 1. Entidades Clínicas (`clinical_entities`)
 
@@ -64,15 +84,14 @@ O JSONL organiza as entidades em grupos dentro do objeto `preds`:
 "clinical_entities": [
   {
     "entity_id": "doc_123_45",
-    "entity": "câncer de mama",
+    "entity": "hipertensão",
     "label": "DISEASE",
-    "assertion": "PRESENT"
-  },
-  {
-    "entity_id": "doc_123_60",
-    "entity": "mama esquerda",
-    "label": "BODY_PART",
-    "assertion": ""
+    "assertion": "PRESENTE",
+    "el": {
+      "terminology": "CID-10",
+      "term_code": "I10",
+      "term_desc": "Hipertensão arterial essencial"
+    }
   }
 ]
 ```
@@ -83,16 +102,15 @@ O JSONL organiza as entidades em grupos dentro do objeto `preds`:
 "biomarkers": [
   {
     "entity_id": "doc_123_120",
-    "entity": "HER2 3+",
+    "entity": "HER2 positivo",
     "label": "BIOMARKER",
     "normalized_entity": "HER2",
     "specific_marker": "",
-    "method": "imuno-histoquímica",
+    "loinc_code": "48676-1",
     "result": {
-      "detection_status": "POS",
-      "score": "3+",
       "numeric_value": "",
-      "unit": ""
+      "unit": "",
+      "detection_status": "POS"
     }
   },
   {
@@ -101,12 +119,11 @@ O JSONL organiza as entidades em grupos dentro do objeto `preds`:
     "label": "BIOMARKER",
     "normalized_entity": "KI67",
     "specific_marker": "",
-    "method": "",
+    "loinc_code": "29593-1",
     "result": {
-      "detection_status": "",
-      "score": "",
       "numeric_value": 25,
-      "unit": "%"
+      "unit": "%",
+      "detection_status": ""
     }
   }
 ]
@@ -121,12 +138,10 @@ O JSONL organiza as entidades em grupos dentro do objeto `preds`:
     "entity": "plaquetas 150.000/mm³",
     "label": "LAB_TEST",
     "normalized_entity": "Plaquetas",
-    "specific_marker": "",
-    "method": "",
     "result": {
-      "detection_status": "",
       "numeric_value": 150000.0,
-      "unit": "mm³"
+      "unit": "mm³",
+      "detection_status": ""
     }
   },
   {
@@ -134,30 +149,57 @@ O JSONL organiza as entidades em grupos dentro do objeto `preds`:
     "entity": "vitamina D 25 ng/mL",
     "label": "LAB_TEST",
     "normalized_entity": "Vitamina D",
-    "specific_marker": "",
-    "method": "",
     "result": {
-      "detection_status": "",
       "numeric_value": 25.0,
-      "unit": "ng/mL"
+      "unit": "ng/mL",
+      "detection_status": ""
     }
   }
 ]
 ```
 
-### 4. Relações entre Entidades (`entities_relations`)
+### 4. Sinais Vitais (`vital_signs`)
+
+```json
+"vital_signs": [
+  {
+    "entity_id": "doc_123_300",
+    "entity": "altura 1.70 m",
+    "label": "CLINICAL_ATT",
+    "normalized_entity": "Altura",
+    "result": {
+      "numeric_value": 1.7,
+      "unit": "m",
+      "condition": ""
+    }
+  },
+  {
+    "entity_id": "doc_123_310",
+    "entity": "peso 75 kg",
+    "label": "CLINICAL_ATT",
+    "normalized_entity": "Peso",
+    "result": {
+      "numeric_value": 75.0,
+      "unit": "kg",
+      "condition": ""
+    }
+  }
+]
+```
+
+### 5. Relações entre Entidades (`entities_relations`)
 
 ```json
 "entities_relations": [
   {
-    "relation_type": "disease_has_biomarker",
-    "head_entity": "câncer de mama",
-    "tail_entity": "HER2 3+"
+    "relation_type": "may_treat",
+    "head_entity": "metformina",
+    "tail_entity": "diabetes"
   },
   {
-    "relation_type": "disease_has_anatomic_site",
-    "head_entity": "câncer de mama",
-    "tail_entity": "mama esquerda"
+    "relation_type": "procedure_has_target_anatomy",
+    "head_entity": "rx toráx",
+    "tail_entity": "tórax"
   }
 ]
 ```
@@ -189,6 +231,11 @@ for doc in data:
         print(f"  Entidade: {entity['entity']}")
         print(f"  Label: {entity['label']}")
         print(f"  Assertion: {entity['assertion']}")
+
+        # Acessar terminologia
+        if 'el' in entity:
+            print(f"  Terminologia: {entity['el']['terminology']}")
+            print(f"  Código: {entity['el']['term_code']}")
         print("---")
 ```
 
@@ -201,15 +248,14 @@ for doc in data:
         print(f"ID: {biomarker['entity_id']}")
         print(f"Biomarcador: {biomarker['entity']}")
         print(f"Normalizado: {biomarker['normalized_entity']}")
-        print(f"Método: {biomarker['method']}")
+        print(f"LOINC: {biomarker['loinc_code']}")
 
         # Acessar resultado
         if 'result' in biomarker:
             result = biomarker['result']
-            print(f"Status: {result['detection_status']}")
-            print(f"Score: {result['score']}")
             print(f"Valor: {result['numeric_value']}")
             print(f"Unidade: {result['unit']}")
+            print(f"Status: {result['detection_status']}")
         print("---")
 ```
 
@@ -222,13 +268,30 @@ for doc in data:
         print(f"ID: {lab_test['entity_id']}")
         print(f"Exame: {lab_test['entity']}")
         print(f"Normalizado: {lab_test['normalized_entity']}")
-        print(f"Método: {lab_test['method']}")
 
         if 'result' in lab_test:
             result = lab_test['result']
-            print(f"Status: {result['detection_status']}")
             print(f"Valor: {result['numeric_value']}")
             print(f"Unidade: {result['unit']}")
+            print(f"Status: {result['detection_status']}")
+        print("---")
+```
+
+### Acessando Sinais Vitais
+
+```python
+# Acessar sinais vitais
+for doc in data:
+    for vital in doc['preds']['vital_signs']:
+        print(f"ID: {vital['entity_id']}")
+        print(f"Sinal Vital: {vital['entity']}")
+        print(f"Normalizado: {vital['normalized_entity']}")
+
+        if 'result' in vital:
+            result = vital['result']
+            print(f"Valor: {result['numeric_value']}")
+            print(f"Unidade: {result['unit']}")
+            print(f"Condição: {result['condition']}")
         print("---")
 ```
 
@@ -258,12 +321,14 @@ for doc in data:
     clinical_count = len(doc['preds']['clinical_entities'])
     biomarker_count = len(doc['preds']['biomarkers'])
     lab_count = len(doc['preds']['lab_tests'])
+    vital_count = len(doc['preds']['vital_signs'])
     relation_count = len(doc['preds']['entities_relations'])
 
     print(f"Documento {doc_id} (Paciente {patient_id}):")
     print(f"  Entidades clínicas: {clinical_count}")
     print(f"  Biomarcadores: {biomarker_count}")
     print(f"  Exames laboratoriais: {lab_count}")
+    print(f"  Sinais vitais: {vital_count}")
     print(f"  Relações: {relation_count}")
     print("---")
 ```
@@ -281,7 +346,7 @@ for doc in data:
             'entity_id': biomarker['entity_id'],
             'entity': biomarker['entity'],
             'normalized_entity': biomarker['normalized_entity'],
-            'method': biomarker['method']
+            'loinc_code': biomarker['loinc_code']
         }
 
         if 'result' in biomarker:
@@ -305,7 +370,7 @@ for doc in data:
     conditions = []
 
     for entity in doc['preds']['clinical_entities']:
-        if entity['label'] == 'DISEASE' and entity.get('assertion') == 'PRESENT':
+        if entity['label'] == 'DISEASE' and entity.get('assertion') == 'PRESENTE':
             conditions.append(entity['entity'])
 
     if patient_id not in patient_conditions:
@@ -325,17 +390,17 @@ print(f"Pacientes com comorbidades: {len(comorbidities)}")
 
 ```json
 "result": {
-  "detection_status": "",
   "numeric_value": 12.5,
-  "unit": "g/dL"
+  "unit": "g/dL",
+  "detection_status": ""
 }
 ```
 
 **CSV** (achatado):
 
 ```csv
-detection_status,numeric_value,unit
-,12.5,g/dL
+numeric_value,unit,detection_status
+12.5,g/dL,
 ```
 
 ### 2. Formato de Relações

@@ -6,57 +6,57 @@ slug: /
 
 ## Sobre a iHealth
 
-A **iHealth** é uma empresa do grupo DoctorAssistant.ai especializada no uso de inteligência artificial para transformar dados clínicos em inteligência aplicada. Atuamos na estruturação e análise de dados de prontuários eletrônicos com foco em soluções para a indústria farmacêutica, hospitais e operadoras de saúde.
+A **iHealth** é uma empresa do grupo DoctorAssistant.ai especializada em usar inteligência artificial para transformar dados clínicos em inteligência aplicada. Estruturamos e analisamos dados de prontuários eletrônicos para oferecer soluções à indústria farmacêutica, a hospitais e a operadoras de saúde.
 
 ## Nossa Missão
 
-Transformar dados clínicos em inteligência estratégica através de tecnologia avançada, conectando informações de mundo real às decisões clínicas e estratégicas de forma ética, segura e inteligente.
+Transformar dados clínicos em inteligência estratégica por meio de tecnologia avançada, conectando informações de mundo real às decisões clínicas e estratégicas de forma ética, segura e inteligente.
 
 ## Data Lake Colaborativo
 
-Com um data lake colaborativo que reúne dados clínicos altamente capilares de hospitais brasileiros em todas as regiões do país, entregamos soluções que transformam a forma como a saúde é gerenciada e pesquisada.
+Nosso data lake colaborativo reúne dados clínicos altamente capilares de hospitais brasileiros em todas as regiões do país. Com ele, entregamos soluções que transformam a forma como a saúde é gerenciada e pesquisada.
 
-## Plataforma iHealth
+## Documentação Disponível
 
-A **Plataforma iHealth** é o ambiente para transformar texto clínico em população de estudo. Ela lê evoluções, laudos, sumários de alta e pareceres com modelos de inteligência artificial, estrutura o que está no documento e coloca isso ao alcance em linguagem clínica — para montar coortes, explorar populações e sustentar análises.
+### Plataforma iHealth
 
-### Principais funcionalidades
+A **Plataforma iHealth** lê evoluções, laudos, sumários de alta e pareceres com modelos de inteligência artificial e coloca o conteúdo estruturado ao seu alcance em linguagem clínica, para montar coortes, explorar populações e sustentar análises.
+
+**Acesso à Plataforma:** [plataforma.ihealthgroup.tec.br](https://plataforma.ihealthgroup.tec.br/)
 
 - **Busca estruturada** em texto clínico, com categorias, contextos e relações entre entidades
 - **Painel Geral** da base disponível para pesquisa
 - **Análise de Funil** para critérios de elegibilidade em etapas
 - **Protocolos clínicos** para acompanhar e compartilhar coortes ao longo do tempo
 - **Estudos de RWE / RWD**, viabilidade e recrutamento
-- **Recortes por tipo de acesso**: datalake completo ou hospitalar
 
-[**Começar pelas boas-vindas da plataforma →**](./plataforma/boas-vindas)
+[**Ver documentação da Plataforma →**](./plataforma/boas-vindas)
 
-## Documentação Disponível
+### Extração de Dados Clínicos
 
-### 📊 Extração de Dados Clínicos
+A **Extração de Dados Clínicos** disponibiliza dados estruturados e anonimizados do nosso banco clínico, selecionados conforme critérios definidos pelo cliente (diagnósticos, medicamentos, procedimentos etc.), para análise por cientistas e analistas de dados.
 
-Nossa **Extração de Dados Clínicos** é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, com ampla cobertura e representatividade para estudos e projetos. Esta extração é personalizada conforme critérios específicos (diagnósticos, medicamentos, procedimentos, etc.) e permite:
+- **Dados clínicos estruturados** e anonimizados
+- **Formatos CSV e JSONL**, entregues em lotes
+- **Contexto clínico preservado**, com as relações entre entidades
+- **Campos estruturados** para biomarcadores e exames laboratoriais
+- **Exemplos de código** para carregar, validar e analisar os dados
 
-- Acesso a dados clínicos estruturados e anonimizados
-- Disponibilização em múltiplos formatos (CSV e JSONL)
-- Preservação de contexto clínico e relações entre entidades
-- Dados organizados com terminologias médicas padronizadas
-- Base para análises de dados por cientistas e analistas
-
-[**Começar com a Extração de Dados →**](./clinical-data-extraction/intro)
+[**Ver documentação da Extração →**](./clinical-data-extraction/intro)
 
 ## Nossos Valores
 
-- **Ética**: Uso responsável de dados clínicos
-- **Segurança**: Proteção e anonimização de informações
-- **Inovação**: Tecnologia de ponta aplicada à saúde
-- **Impacto**: Soluções que fazem a diferença na prática clínica
+- **Ética**: uso responsável de dados clínicos
+- **Segurança**: proteção e anonimização das informações
+- **Inovação**: tecnologia de ponta aplicada à saúde
+- **Impacto**: soluções que fazem diferença na prática clínica
 
 ## Contato
 
 - **Website**: [ihealthgroup.com.br](https://ihealthgroup.com.br)
 - **LinkedIn**: [iHealth Group](https://www.linkedin.com/company/ihealth-group/)
-- **Email**: oportunidades@ihealthgroup.com.br
+- **E-mail**: [oportunidades@ihealthgroup.com.br](mailto:oportunidades@ihealthgroup.com.br)
+- **Plataforma**: [plataforma.ihealthgroup.tec.br](https://plataforma.ihealthgroup.tec.br/)
 
 ---
 

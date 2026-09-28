@@ -16,11 +16,12 @@ docs/
 └── clinical-data-extraction/
     ├── intro.md                 # Introdução à Extração de Dados Clínicos
     ├── data-structure.md        # Estrutura dos dados
-    ├── delivery.md              # Entrega dos dados em lotes
     ├── csv-format.md            # Formato CSV
     ├── jsonl-format.md          # Formato JSONL
+    ├── delivery.md              # Entrega dos dados em lotes
     ├── analysis-guidelines.md   # Diretrizes de análise
-    └── limitations.md           # Limitações e considerações
+    ├── limitations.md           # Limitações e considerações
+    └── v1/                      # Documentação v1 (extrações até 20/09/2026), fora do menu
 ```
 
 ### Configuração
@@ -69,15 +70,19 @@ Apresentação da plataforma: interface, modelos de IA, busca estruturada, anál
 
 ### Extração de Dados Clínicos
 
-A documentação da Extração de Dados Clínicos está dividida em seções lógicas:
+A documentação da Extração de Dados Clínicos está dividida nas seções abaixo, na mesma ordem do menu lateral:
 
 1. **Introdução**: Visão geral do produto
-2. **Entrega dos Dados**: Como os dados são entregues em lotes
+2. **Estrutura dos Dados**: Campos e categorias disponíveis
 3. **Formato CSV**: Como trabalhar com dados em CSV
 4. **Formato JSONL**: Como trabalhar com dados em JSONL
-5. **Estrutura dos Dados**: Campos e categorias disponíveis
+5. **Entrega dos Dados**: Como os dados são entregues em lotes
 6. **Diretrizes de Análise**: Boas práticas e exemplos
 7. **Limitações**: Considerações importantes
+
+#### Documentação v1 (temporária)
+
+`docs/clinical-data-extraction/v1/` guarda a documentação das extrações entregues até 20/09/2026. As páginas ficam fora do `sidebars.js` e navegam entre si por `pagination_prev`/`pagination_next`. Recebem apenas correções e serão removidas no futuro.
 
 ## Adicionando Nova Documentação
 
