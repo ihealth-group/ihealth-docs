@@ -269,26 +269,10 @@ print((coverage * 100).round(1))
 - **IDs de pacientes e casos**: Anonimizados para preservar privacidade
 - **Preservação de privacidade**: Mantenha confidencialidade em todas as análises
 
-```python
-# Verificar anonimização
-print("Exemplos de IDs anonimizados:")
-print("Patient IDs:", df['patient_id'].unique()[:5])
-print("Case IDs:", df['case_id'].unique()[:5])
-```
-
 ### 2. Qualidade dos Dados
 
 ```python
-# Verificar consistência
-print("Verificações de qualidade:")
-
-# 1. Documentos sem entidades (todas as linhas com entity_id vazio)
-docs_without_entities = df.groupby('document_id')['entity_id'].apply(
-    lambda ids: ids.isna().all()
-)
-print(f"Documentos sem entidades: {docs_without_entities.sum()}")
-
-# 2. Entidades sem assertion (apenas nas categorias em que ela é inferida)
+# Entidades sem assertion (apenas nas categorias em que ela é inferida)
 labels_com_assertion = ['FINDING', 'INJURY', 'DISEASE', 'PHARM_SUBSTANCE',
                         'PROCEDURE', 'MEDICAL_DEVICE']
 entities_without_assertion = entities[
@@ -296,13 +280,6 @@ entities_without_assertion = entities[
     entities['assertion'].isna()
 ].shape[0]
 print(f"Entidades sem assertion: {entities_without_assertion}")
-
-# 3. Relações órfãs
-orphan_relations = df[
-    df['relation_type'].notna() &
-    df['relation_entity'].isna()
-].shape[0]
-print(f"Relações órfãs: {orphan_relations}")
 ```
 
 ### 3. Contexto Clínico
@@ -326,27 +303,7 @@ print(richest_docs.head(10))
 
 ## Exemplos de Análises Avançadas
 
-### 1. Análise de Correlação
-
-```python
-# Correlação entre biomarcadores (exemplo)
-biomarker_correlation = biomarkers.pivot_table(
-    index='patient_id',
-    columns='marker',
-    values='numeric_value',
-    aggfunc='mean'
-).corr()
-
-# Visualizar correlação
-import seaborn as sns
-plt.figure(figsize=(10, 8))
-sns.heatmap(biomarker_correlation, annot=True, cmap='coolwarm', center=0)
-plt.title('Correlação entre Biomarcadores')
-plt.tight_layout()
-plt.show()
-```
-
-### 2. Análise de Séries Temporais
+### Análise de Séries Temporais
 
 ```python
 # Análise temporal de biomarcadores
@@ -389,27 +346,9 @@ plt.show()
 
 ### 2. Reprodutibilidade
 
-```python
-# Configurar seed para reprodutibilidade
-import random
-import numpy as np
-
-RANDOM_SEED = 42
-random.seed(RANDOM_SEED)
-np.random.seed(RANDOM_SEED)
-
-# Salvar configurações
-config = {
-    'random_seed': RANDOM_SEED,
-    'data_version': 'v2',
-    'analysis_date': pd.Timestamp.now().strftime('%Y-%m-%d'),
-    'python_version': '3.8+'
-}
-
-print("Configurações da análise:")
-for key, value in config.items():
-    print(f"  {key}: {value}")
-```
+- **Seeds fixos** em análises com etapas aleatórias
+- **Versões** do Python e dos pacotes registradas
+- **Data e lote dos dados** usados em cada análise
 
 ### 3. Validação
 

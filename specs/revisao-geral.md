@@ -34,12 +34,12 @@ Na v1, as correções usam os valores do schema v1 (ex.: `PRESENTE` em vez de `P
 
 ## 2. Código: exemplos de pouco valor como sugestão básica (v2 e v1)
 
-- [ ] **B1 — "Verificar anonimização"** (imprime 5 IDs): não verifica nada. Remover o bloco e manter só os bullets.
-- [ ] **B2 — Verificações de qualidade** "documentos sem entidades" e "relações órfãs": checam detalhes internos do pipeline, o cliente não tem o que fazer com o resultado e, no CSV, tendem a dar sempre 0. Proposta: manter só a tabela de preenchimento dos campos estruturados e a contagem de `assertion` vazio.
-- [ ] **B3 — `delivery`: "Processamento com Chunking"** adiciona uma coluna `processed_date` sem utilidade e o contador de progresso é aproximado; **"Processamento Incremental"** grava CSVs intermediários sem transformação. Proposta: remover os dois ou fundir em um único exemplo de leitura em partes para arquivos grandes.
-- [ ] **B4 — `delivery`: exemplo de logging.** Genérico, não é específico dos dados. Proposta: remover.
-- [ ] **B5 — Correlação entre biomarcadores.** Heatmap com `annot=True` fica ilegível com muitos marcadores, e a média de todos os tempos por paciente mistura momentos diferentes. Decisão: remover.
-- [ ] **B6 — Reprodutibilidade** (seed + dicionário de config com `python_version: '3.8+'`): pouco útil como código. Proposta: manter só como lista de boas práticas.
+- [x] **B1 — "Verificar anonimização"** (imprime 5 IDs): não verifica nada. Remover o bloco e manter só os bullets.
+- [x] **B2 — Verificações de qualidade** "documentos sem entidades" e "relações órfãs": checam detalhes internos do pipeline, o cliente não tem o que fazer com o resultado e, no CSV, tendem a dar sempre 0. Proposta: manter só a tabela de preenchimento dos campos estruturados e a contagem de `assertion` vazio.
+- [x] **B3 — `delivery`: "Processamento com Chunking"** adiciona uma coluna `processed_date` sem utilidade e o contador de progresso é aproximado; **"Processamento Incremental"** grava CSVs intermediários sem transformação. Proposta: remover os dois ou fundir em um único exemplo de leitura em partes para arquivos grandes.
+- [x] **B4 — `delivery`: exemplo de logging.** Genérico, não é específico dos dados. Proposta: remover.
+- [x] **B5 — Correlação entre biomarcadores.** Heatmap com `annot=True` fica ilegível com muitos marcadores, e a média de todos os tempos por paciente mistura momentos diferentes. Decisão: remover.
+- [x] **B6 — Reprodutibilidade** (seed + dicionário de config com `python_version: '3.8+'`): pouco útil como código. Proposta: manter só como lista de boas práticas.
 
 ## 3. Código: melhorias sugeridas (úteis e básicas)
 
