@@ -12,17 +12,17 @@ Esta página descreve as limitações dos dados extraídos e os cuidados necess�
 
 Os dados são estruturados automaticamente usando técnicas de PLN, o que pode resultar em:
 
-- **Erros de extração**: Algumas entidades podem não ser identificadas corretamente
-- **Falsos positivos**: Termos podem ser classificados incorretamente
-- **Falsos negativos**: Entidades importantes podem ser perdidas
-- **Inconsistências**: Mesmo termo pode ser extraído de forma diferente em contextos similares
+- **Erros de extração**: algumas entidades podem não ser identificadas corretamente
+- **Falsos positivos**: termos podem ser classificados incorretamente
+- **Falsos negativos**: entidades importantes podem ser perdidas
+- **Inconsistências**: mesmo termo pode ser extraído de forma diferente em contextos similares
 
 ### 2. Cobertura dos Dados
 
-- **Documentos não processados**: Nem todos os documentos podem ter entidades extraídas
-- **Cobertura temporal**: Dados representam apenas o período disponível na base de dados
-- **Cobertura geográfica**: Limitada aos provedores participantes do sistema
-- **Cobertura de especialidades**: Pode variar entre diferentes áreas médicas
+- **Documentos não processados**: nem todos os documentos podem ter entidades extraídas
+- **Cobertura temporal**: dados representam apenas o período disponível na base de dados
+- **Cobertura geográfica**: limitada aos provedores participantes do sistema
+- **Cobertura de especialidades**: pode variar entre diferentes áreas médicas
 
 ### 3. Qualidade da Extração
 
@@ -35,6 +35,12 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 | `BIOMARKER` | Valores numéricos podem não ser extraídos corretamente |
 | `PROCEDURE` | Procedimentos complexos podem ser fragmentados         |
 
+#### Contexto e Campos Estruturados
+
+- **Contexto (`assertion`)**: é inferido automaticamente e pode estar errado, por exemplo, uma suspeita classificada como presente
+- **`OTHER`**: menções fora da jornada clínica do paciente (referências, estudos, documentos de apoio) recebem `OTHER` e, em geral, devem ficar fora das análises do paciente
+- **Campos estruturados**: só vêm preenchidos quando a normalização foi possível. Um biomarcador ou exame sem `normalized_entity` ou `numeric_value` não significa que o resultado esteja ausente do documento
+
 #### Exemplos de Limitações
 
 **Cobertura de Extração:**
@@ -45,34 +51,32 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 
 ### 4. Contexto Clínico
 
-- **Nuances perdidas**: Algumas nuances clínicas podem ser perdidas na extração
-- **Contexto temporal**: Relações temporais entre eventos podem não ser preservadas
-- **Gravidade**: Níveis de gravidade ou severidade podem não ser capturados
-- **Evolução**: Mudanças ao longo do tempo podem não ser rastreadas
+- **Nuances perdidas**: algumas nuances clínicas podem ser perdidas na extração
+- **Contexto temporal**: relações temporais entre eventos podem não ser capturadas em todos os casos
+- **Gravidade**: níveis de gravidade ou severidade podem não ser capturados
+- **Evolução**: mudanças ao longo do tempo podem não ser rastreadas
 
 ## Considerações Éticas
 
 ### 1. Privacidade e Confidencialidade
 
 - **Dados anonimizados**: IDs são anonimizados, mas mantenha confidencialidade
-- **Uso responsável**: Use dados apenas para fins de pesquisa aprovados
-- **Compartilhamento**: Não compartilhe dados sem autorização adequada
-- **Armazenamento**: Mantenha dados em ambientes seguros
+- **Uso responsável**: use dados apenas para fins de pesquisa aprovados
+- **Compartilhamento**: não compartilhe dados sem autorização adequada
+- **Armazenamento**: mantenha dados em ambientes seguros
 
 ### 2. Uso Responsável
 
-**Verificação de Anonimização:**
-
-- Sempre verifique se os dados estão adequadamente anonimizados antes de análises
-- Valide que os IDs de pacientes seguem o padrão de anonimização esperado
-- Mantenha logs de acesso e uso dos dados para auditoria
+- Não tente reidentificar pacientes, profissionais ou provedores
+- Não cruze os dados com bases que contenham informações identificadas
+- Mantenha registro de acesso e uso dos dados para auditoria
 
 ### 3. Transparência
 
-- **Documente limitações**: Sempre documente as limitações dos dados
-- **Metodologia**: Descreva claramente a metodologia utilizada
-- **Resultados**: Apresente resultados com contexto adequado
-- **Revisão**: Submeta análises para revisão por pares quando apropriado
+- **Documente limitações**: sempre documente as limitações dos dados
+- **Metodologia**: descreva claramente a metodologia utilizada
+- **Resultados**: apresente resultados com contexto adequado
+- **Revisão**: submeta análises para revisão por pares quando apropriado
 
 ## Limitações Técnicas
 
@@ -80,9 +84,9 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 
 #### Desafios do PLN
 
-- **Ambiguidade**: Termos médicos podem ter múltiplos significados
-- **Contexto**: Significado pode depender do contexto clínico
-- **Linguagem natural**: Variações na forma de expressar conceitos
+- **Ambiguidade**: termos médicos podem ter múltiplos significados
+- **Contexto**: significado pode depender do contexto clínico
+- **Linguagem natural**: variações na forma de expressar conceitos
 - **Variação de nomenclatura**: o mesmo conceito pode aparecer com nomes, siglas e abreviações diferentes
 
 #### Exemplo de Ambiguidade
@@ -101,33 +105,30 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 
 ### 3. Performance e Escalabilidade
 
-- **Tamanho dos arquivos**: Arquivos grandes podem ser difíceis de processar
-- **Memória**: Análises complexas podem requerer muita memória
-- **Tempo de processamento**: Algumas análises podem ser computacionalmente intensivas
+- **Tamanho dos arquivos**: arquivos grandes podem ser difíceis de processar
+- **Memória**: análises complexas podem requerer muita memória
+- **Tempo de processamento**: algumas análises podem ser computacionalmente intensivas
 
 ## Recomendações {#recomendacoes}
 
 ### 1. Validação Clínica
 
-**Validação de Resultados:**
-
-- Sempre valide resultados com base em conhecimento clínico estabelecido
-- Verifique associações doença-sintoma conhecidas para detectar possíveis erros de extração
-- Consulte especialistas clínicos para validação de achados inesperados
-- Estabeleça thresholds de confiança baseados em evidências clínicas
+- Valide os resultados com base em conhecimento clínico estabelecido
+- Consulte especialistas clínicos para validar achados inesperados
+- Revise manualmente uma amostra das entidades extraídas antes de conclusões importantes
 
 **Exemplos de Validação:**
 
-- Verificar se pacientes com diabetes apresentam sintomas esperados (poliúria, polidipsia)
-- Validar se hipertensos têm achados clínicos associados (cefaleia, tontura)
-- Confirmar se infartos estão associados a sintomas típicos (dor precordial, sudorese)
+- Comparar a prevalência das doenças na coorte com a descrita na literatura para populações semelhantes
+- Conferir se os fármacos ligados a uma doença por `may_treat` correspondem a tratamentos conhecidos
+- Verificar se os valores de exames estão em faixas plausíveis para a unidade informada
 
 ### 2. Análise Exploratória
 
-- **Comece simples**: Inicie com análises descritivas básicas
-- **Explore gradualmente**: Aumente complexidade gradualmente
-- **Documente descobertas**: Mantenha registro de insights
-- **Valide hipóteses**: Teste hipóteses com dados adicionais
+- **Comece simples**: inicie com análises descritivas básicas
+- **Explore gradualmente**: aumente complexidade gradualmente
+- **Documente descobertas**: mantenha registro de insights
+- **Valide hipóteses**: teste hipóteses com dados adicionais
 
 ### 3. Documentação
 
@@ -142,14 +143,14 @@ Registre em cada análise:
 
 ### 4. Reprodutibilidade
 
-- **Versionamento**: Use controle de versão para código e dados
-- **Ambiente**: Documente ambiente de execução
-- **Seeds**: Use seeds fixos para análises aleatórias
-- **Dependências**: Mantenha registro de versões de pacotes
+- **Versionamento**: use controle de versão para código e dados
+- **Ambiente**: documente ambiente de execução
+- **Seeds**: use seeds fixos para análises aleatórias
+- **Dependências**: mantenha registro de versões de pacotes
 
 ## Contato e Suporte
 
 Para dúvidas sobre limitações ou considerações:
 
 - **Contato**: [oportunidades@ihealthgroup.com.br](mailto:oportunidades@ihealthgroup.com.br)
-- **Suporte Clínico**: Consulte especialistas para validação
+- **Suporte Clínico**: consulte especialistas para validação

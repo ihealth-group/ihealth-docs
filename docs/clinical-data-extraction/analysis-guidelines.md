@@ -8,11 +8,11 @@ Os **dados extraídos** representam uma seleção de documentos médicos do noss
 
 ### Características Importantes dos Dados Extraídos
 
-- **Origem**: Banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
-- **Seleção**: Pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
-- **Estruturação**: Dados processados com Processamento de Linguagem Natural (PLN) para extração de entidades clínicas
-- **Anonimização**: Identificadores de pacientes e provedores anonimizados
-- **Formatos**: Disponibilizados em CSV e JSONL para diferentes tipos de análise
+- **Origem**: banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
+- **Seleção**: pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
+- **Estruturação**: dados processados com Processamento de Linguagem Natural (PLN) para extração de entidades clínicas
+- **Anonimização**: identificadores de pacientes e provedores anonimizados
+- **Formatos**: disponibilizados em CSV e JSONL para diferentes tipos de análise
 
 ## Preparação dos Dados
 
@@ -67,10 +67,10 @@ if data:
 ### Tratamento de Valores Ausentes
 
 - **Campos vazios**: ficam em branco no CSV e viram `NaN` ao carregar com pandas
-- **Valores numéricos ausentes**: Campo `numeric_value` vazio
+- **Valores numéricos ausentes**: campo `numeric_value` vazio
 - **Campos estruturados**: preenchidos apenas em `BIOMARKER` e `LAB_TEST`, quando a normalização foi possível
 - **Assertion**: vazio nas categorias em que o contexto não é inferido
-- **Relações**: Nem todas as entidades possuem relações
+- **Relações**: nem todas as entidades possuem relações
 
 ```python
 # Verificar campos vazios por coluna
@@ -268,8 +268,8 @@ print((coverage * 100).round(1))
 
 ### 1. Anonimização
 
-- **IDs de pacientes e casos**: Anonimizados para preservar privacidade
-- **Preservação de privacidade**: Mantenha confidencialidade em todas as análises
+- **IDs de pacientes e casos**: anonimizados para preservar privacidade
+- **Preservação de privacidade**: mantenha confidencialidade em todas as análises
 
 ### 2. Qualidade dos Dados
 

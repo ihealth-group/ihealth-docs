@@ -7,7 +7,7 @@ Todos os itens foram considerados pertinentes. Nada aplicado ainda.
 ## Decisões
 
 - **Critério para os exemplos de análise:** os códigos são só um norte para o analista. Exemplos são corrigidos para dar resultados coerentes; análises ambíguas ou de pouco valor, e qualquer item com proposta de remoção, são **removidos**.
-- **Formatos (L6):** o cliente escolhe o formato; a maioria pede CSV e JSONL, mas pode receber só um.
+- **Formatos (L6):** o cliente escolhe o formato (CSV, JSONL ou os dois). A documentação diz só isso.
 
 ## Escopo por versão
 
@@ -58,10 +58,10 @@ Na v1, as correções usam os valores do schema v1 (ex.: `PRESENTE` em vez de `P
 
 ## 5. Linguagem e conteúdo
 
-- [ ] **L1 — Maiúscula após rótulo em negrito.** Os textos novos usam "**Granularidade**: cada linha…", os antigos "**Granularidade**: Cada linha…". Proposta: padronizar com minúscula em todas as páginas.
-- [ ] **L2 — `limitations`, "Verificação de Anonimização".** Pede ao cliente que confira se os dados estão "adequadamente anonimizados", o que transfere a ele uma responsabilidade que é da iHealth. Proposta: trocar por orientação de uso (não tentar reidentificar, não cruzar com bases identificadas).
-- [ ] **L3 — `limitations`, "Validação Clínica".** "Estabeleça thresholds de confiança" não se aplica (os dados não têm score de confiança). Os exemplos "verificar se diabéticos apresentam poliúria" sugerem que a ausência de sintoma indica erro de extração, o que não é verdade. Proposta: reescrever com exemplos que fazem sentido (ex.: conferir amostras de entidades contra o texto esperado, comparar prevalências com a literatura).
-- [ ] **L4 — Limitações próprias da v2 ausentes.** Não há menção a erros de inferência de `assertion`, a `OTHER` nem ao fato de os campos estruturados só virem quando a normalização é possível. Proposta: acrescentar em "Qualidade da Extração".
-- [ ] **L5 — `delivery`, "Suporte".** "Esta documentação já contém todas as informações necessárias" soa categórico, e "entre em contato com nossa equipe técnica" não diz como. Proposta: frase neutra + e-mail de contato.
-- [ ] **L6 — `delivery`, "Cada lote contém arquivos nos dois formatos".** Respondido: o cliente escolhe; a maioria pede os dois. Ajustar o texto.
-- [ ] **L7 — `limitations`, "Contexto temporal".** Diz que relações temporais podem não ser preservadas; hoje existe `is_date_of`. Proposta: ajustar para "podem não ser capturadas em todos os casos".
+- [x] **L1 — Maiúscula após rótulo em negrito.** Os textos novos usam "**Granularidade**: cada linha…", os antigos "**Granularidade**: Cada linha…". Proposta: padronizar com minúscula em todas as páginas.
+- [x] **L2 — `limitations`, "Verificação de Anonimização".** Pede ao cliente que confira se os dados estão "adequadamente anonimizados", o que transfere a ele uma responsabilidade que é da iHealth. Proposta: trocar por orientação de uso (não tentar reidentificar, não cruzar com bases identificadas).
+- [x] **L3 — `limitations`, "Validação Clínica".** "Estabeleça thresholds de confiança" não se aplica (os dados não têm score de confiança). Os exemplos "verificar se diabéticos apresentam poliúria" sugerem que a ausência de sintoma indica erro de extração, o que não é verdade. Proposta: reescrever com exemplos que fazem sentido (ex.: conferir amostras de entidades contra o texto esperado, comparar prevalências com a literatura).
+- [x] **L4 — Limitações próprias da v2 ausentes.** Não há menção a erros de inferência de `assertion`, a `OTHER` nem ao fato de os campos estruturados só virem quando a normalização é possível. Proposta: acrescentar em "Qualidade da Extração".
+- [x] **L5 — `delivery`, "Suporte".** "Esta documentação já contém todas as informações necessárias" soa categórico, e "entre em contato com nossa equipe técnica" não diz como. Proposta: frase neutra + e-mail de contato.
+- [x] **L6 — `delivery`, "Cada lote contém arquivos nos dois formatos".** Respondido: o cliente escolhe o formato. O texto diz só isso, sem mencionar a preferência geral.
+- [x] **L7 — `limitations`, "Contexto temporal".** Diz que relações temporais podem não ser preservadas; hoje existe `is_date_of`. Proposta: ajustar para "podem não ser capturadas em todos os casos".

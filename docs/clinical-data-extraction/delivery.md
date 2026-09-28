@@ -12,33 +12,33 @@ Os dados extraídos são entregues em **lotes de arquivos**, o que facilita o pr
 
 Os dados são organizados em lotes com as seguintes características:
 
-- **Tamanho do lote**: Entre 10-50 pacientes por arquivo
-- **Controle de volume**: Permite processamento eficiente e validação adequada
-- **Flexibilidade**: Tamanho pode ser ajustado conforme necessidades específicas do projeto
+- **Tamanho do lote**: entre 10-50 pacientes por arquivo
+- **Controle de volume**: permite processamento eficiente e validação adequada
+- **Flexibilidade**: tamanho pode ser ajustado conforme necessidades específicas do projeto
 
 ### Formatos de Arquivo
 
-Cada lote contém arquivos nos dois formatos disponíveis:
+O cliente pode escolher receber os arquivos em CSV, em JSONL ou nos dois formatos:
 
 #### Arquivos CSV
 
 - **Nomenclatura**: `projectname_patients_part_001.csv`, `projectname_patients_part_002.csv`, etc.
-- **Conteúdo**: Entidades clínicas "achatadas" em formato tabular
-- **Granularidade**: Uma linha por entidade clínica
+- **Conteúdo**: entidades clínicas "achatadas" em formato tabular
+- **Granularidade**: uma linha por entidade clínica
 
 #### Arquivos JSONL
 
 - **Nomenclatura**: `projectname_patients_part_001.jsonl`, `projectname_patients_part_002.jsonl`, etc.
-- **Conteúdo**: Documentos completos com estrutura hierárquica
-- **Granularidade**: Uma linha por documento clínico
+- **Conteúdo**: documentos completos com estrutura hierárquica
+- **Granularidade**: uma linha por documento clínico
 
 ### Variação no Número de Linhas
 
 O número de linhas em cada arquivo varia significativamente devido a:
 
-- **Quantidade de documentos**: Cada paciente pode ter diferentes números de documentos clínicos
-- **Densidade de entidades**: Documentos podem conter diferentes quantidades de entidades extraídas
-- **Complexidade clínica**: Casos mais complexos tendem a gerar mais entidades
+- **Quantidade de documentos**: cada paciente pode ter diferentes números de documentos clínicos
+- **Densidade de entidades**: documentos podem conter diferentes quantidades de entidades extraídas
+- **Complexidade clínica**: casos mais complexos tendem a gerar mais entidades
 
 #### Exemplo de Variação
 
@@ -59,14 +59,14 @@ Parte 002: 23 pacientes
 O local de upload/entrega dos dados é definido durante a **contratação da extração** e pode incluir:
 
 - **Cloud Storage**: AWS S3, Google Cloud Storage, Azure Blob Storage
-- **SFTP/Secure Transfer**: Servidor seguro para transferência de arquivos
-- **Plataforma específica**: Conforme preferência e infraestrutura do cliente
+- **SFTP/Secure Transfer**: servidor seguro para transferência de arquivos
+- **Plataforma específica**: conforme preferência e infraestrutura do cliente
 
 ### Configurações de Acesso
 
-- **Credenciais**: Fornecidas durante o processo de contratação
-- **Permissões**: Acesso configurado conforme necessidades do projeto
-- **Segurança**: Transferência criptografada e logs de acesso
+- **Credenciais**: fornecidas durante o processo de contratação
+- **Permissões**: acesso configurado conforme necessidades do projeto
+- **Segurança**: transferência criptografada e logs de acesso
 
 ## Processamento dos Lotes
 
@@ -186,23 +186,22 @@ for csv_file, jsonl_file in zip(csv_files, jsonl_files):
 
 ### 1. Ordem dos Lotes
 
-- **Sequência**: Os lotes são numerados sequencialmente (001, 002, 003...)
-- **Independência**: Cada lote é independente e pode ser processado separadamente
-- **Completude**: Todos os lotes devem ser processados para análise completa
+- **Sequência**: os lotes são numerados sequencialmente (001, 002, 003...)
+- **Independência**: cada lote é independente e pode ser processado separadamente
+- **Completude**: todos os lotes devem ser processados para análise completa
 
 ### 2. Qualidade dos Dados
 
-- **Validação**: Cada lote passa por validação de qualidade antes da entrega
-- **Consistência**: Estrutura de dados mantida entre todos os lotes
-- **Integridade**: Verificação de integridade entre formatos CSV e JSONL
+- **Validação**: cada lote passa por validação de qualidade antes da entrega
+- **Consistência**: estrutura de dados mantida entre todos os lotes
+- **Integridade**: verificação de integridade entre formatos CSV e JSONL
 
 ### 3. Segurança
 
-- **Criptografia**: Transferência criptografada para o local de entrega
-- **Acesso**: Credenciais seguras e controle de acesso
-- **Auditoria**: Logs de acesso e transferência mantidos
+- **Criptografia**: transferência criptografada para o local de entrega
+- **Acesso**: credenciais seguras e controle de acesso
+- **Auditoria**: logs de acesso e transferência mantidos
 
 ### 4. Suporte
 
-- **Documentação**: Esta documentação já contém todas as informações necessárias sobre os dados e como processá-los
-- **Dúvidas**: Para qualquer dúvida adicional, entre em contato com nossa equipe técnica
+Em caso de dúvidas sobre os dados ou a entrega, entre em contato pelo e-mail [oportunidades@ihealthgroup.com.br](mailto:oportunidades@ihealthgroup.com.br).

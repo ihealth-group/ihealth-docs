@@ -5,7 +5,7 @@ A **Extração de Dados Clínicos** da iHealth disponibiliza dados estruturados 
 Esta documentação explica como os dados são organizados, entregues e analisados.
 
 :::info Documentação v1
-Recebeu sua extração antes de **21/09/2026**? Consulte a [documentação v1](./v1/intro.md).
+Para extrações entregues até **20/09/2026**, consulte a [documentação v1](./v1/intro.md).
 :::
 
 ## O que é a Extração de Dados Clínicos?
