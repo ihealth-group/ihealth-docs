@@ -380,53 +380,16 @@ No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`ma
 | **Processamento** | Acesso direto às entidades relacionadas  | Necessário combinar campos para entender a relação       |
 | **Linhas**        | Uma linha por relação completa           | Uma linha por "lado" da relação                          |
 
-### 3. Considerações Importantes
-
-#### Impacto nas Análises
-
-**Análise de Relações:**
-
-- **JSONL**: Mais intuitivo para análise de relacionamentos diretos
-- **CSV**: Requer agregação e reconstrução das relações
-
-**Performance:**
-
-- **JSONL**: Melhor para análises por documento completo
-- **CSV**: Melhor para análises estatísticas de entidades individuais
-
-**Complexidade de Processamento:**
-
-- **JSONL**: Estrutura mais complexa, mas mais rica em contexto
-- **CSV**: Estrutura mais simples, mas perde informações de relacionamento
-
-#### Recomendações de Uso
+### 3. Quando Usar JSONL ou CSV
 
 **Use JSONL quando:**
 
-- Analisando comorbidades e relacionamentos entre condições
-- Estudando padrões por documento ou paciente
-- Preservando contexto clínico completo
-- Trabalhando com análises de rede de entidades
+- a análise depende do contexto completo do documento ou da jornada do paciente
+- o foco são as relações entre entidades (comorbidades, redes de entidades)
+- você quer a relação explícita, com `head_entity` e `tail_entity`
 
 **Use CSV quando:**
 
-- Fazendo análises estatísticas de entidades individuais
-- Trabalhando com ferramentas que preferem dados tabulares
-- Realizando análises de frequência e distribuição
-- Processando grandes volumes de dados com foco em performance
-
-### Vantagens do JSONL
-
-1. **Preservação de Contexto**: Mantém a estrutura original dos dados
-2. **Flexibilidade**: Permite análises mais complexas
-3. **Hierarquia**: Preserva relacionamentos entre entidades
-4. **Eficiência**: Uma linha por documento facilita processamento
-5. **Relações Explícitas**: Representação clara de relacionamentos entre entidades
-
-### Quando Usar JSONL
-
-- Análises que requerem contexto completo do documento
-- Estudos de comorbidades e relacionamentos
-- Análises por paciente ou caso clínico
-- Preservação de estrutura hierárquica
-- Análises de rede de entidades clínicas
+- o foco são estatísticas de entidades individuais (frequência, distribuição)
+- suas ferramentas trabalham melhor com dados tabulares
+- você prefere uma estrutura simples, sem aninhamento

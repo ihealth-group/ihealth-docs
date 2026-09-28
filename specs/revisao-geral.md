@@ -50,11 +50,11 @@ Na v1, as correções usam os valores do schema v1 (ex.: `PRESENTE` em vez de `P
 
 ## 4. Estrutura e duplicações
 
-- [ ] **E1 — `csv-format` × `analysis-guidelines`.** Distribuição, análise temporal, geográfica, relações e biomarcadores aparecem quase idênticos nas duas páginas. Proposta: `csv-format` fica com carregamento, estrutura e particularidades do formato; as análises ficam só em `analysis-guidelines`.
-- [ ] **E2 — `jsonl-format`, fim da página.** Quatro listas se sobrepõem ("Impacto nas Análises", "Recomendações de Uso", "Vantagens do JSONL", "Quando Usar JSONL"). Proposta: uma única seção "Quando usar JSONL ou CSV". "Performance" hoje fala de tipo de análise, não de desempenho.
-- [ ] **E3 — `limitations`, repetições.** "Campos vazios"/completude aparece três vezes (Limitações de Formato, Características dos Campos e sua subseção "Características dos Dados"). "Metadados de Análise" e "Elementos Essenciais" são duas listas do mesmo tema. Proposta: fundir.
-- [ ] **E4 — `delivery`, hierarquia.** "Estratégias de Processamento" (`##`) pula direto para `####`, e o tema repete "Estratégias Recomendadas". Proposta: fundir as duas seções.
-- [ ] **E5 — `analysis-guidelines`.** "Contexto Clínico" repete o bloco "Agregações" do CSV; "Boas Práticas > Validação" repete "Recomendações" de `limitations`. Proposta: manter cada tema em um lugar e linkar.
+- [x] **E1 — `csv-format` × `analysis-guidelines`.** Distribuição, análise temporal, geográfica, relações e biomarcadores aparecem quase idênticos nas duas páginas. Proposta: `csv-format` fica com carregamento, estrutura e particularidades do formato; as análises ficam só em `analysis-guidelines`.
+- [x] **E2 — `jsonl-format`, fim da página.** Quatro listas se sobrepõem ("Impacto nas Análises", "Recomendações de Uso", "Vantagens do JSONL", "Quando Usar JSONL"). Proposta: uma única seção "Quando usar JSONL ou CSV". "Performance" hoje fala de tipo de análise, não de desempenho.
+- [x] **E3 — `limitations`, repetições.** "Campos vazios"/completude aparece três vezes (Limitações de Formato, Características dos Campos e sua subseção "Características dos Dados"). "Metadados de Análise" e "Elementos Essenciais" são duas listas do mesmo tema. Proposta: fundir.
+- [x] **E4 — `delivery`, hierarquia.** "Estratégias de Processamento" (`##`) pula direto para `####`, e o tema repete "Estratégias Recomendadas". Proposta: fundir as duas seções.
+- [x] **E5 — `analysis-guidelines`.** "Contexto Clínico" repete o bloco "Agregações" do CSV; "Boas Práticas > Validação" repete "Recomendações" de `limitations`. Proposta: manter cada tema em um lugar e linkar. Aplicado a toda a seção "Boas Práticas" (documentação, reprodutibilidade e validação já existem em "Recomendações" de `limitations`), que virou um link.
 
 ## 5. Linguagem e conteúdo
 

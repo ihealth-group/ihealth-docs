@@ -70,9 +70,7 @@ O local de upload/entrega dos dados é definido durante a **contratação da ext
 
 ## Processamento dos Lotes
 
-### Estratégias Recomendadas
-
-#### 1. Processamento Sequencial
+### 1. Processamento Sequencial
 
 ```python
 import pandas as pd
@@ -95,7 +93,7 @@ combined_df = pd.concat(all_data, ignore_index=True)
 print(f"Total de registros: {len(combined_df)}")
 ```
 
-#### 2. Processamento Paralelo
+### 2. Processamento Paralelo
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
@@ -119,7 +117,7 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 combined_df = pd.concat(results, ignore_index=True)
 ```
 
-#### 3. Processamento JSONL por Lote
+### 3. Processamento JSONL por Lote
 
 ```python
 import glob
@@ -147,9 +145,7 @@ for file in jsonl_files:
 print(f"Total de documentos: {len(all_documents)}")
 ```
 
-### Validação de Integridade
-
-#### Verificação de Lotes
+### 4. Validação de Integridade
 
 ```python
 import glob

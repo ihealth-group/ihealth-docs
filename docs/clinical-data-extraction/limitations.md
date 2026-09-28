@@ -95,26 +95,9 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 
 ### 2. Estrutura dos Dados
 
-#### Limitações de Formato
-
-- **CSV**: Perda de estrutura hierárquica original dos dados
-- **JSONL**: Maior complexidade para análises simples e estatísticas básicas
-- **Campos vazios**: Nem todos os campos são preenchidos para todas as entidades
-- **Completude**: A disponibilidade de informações varia por tipo de entidade
-
-#### Características dos Campos
-
-**Características dos Dados:**
-
-- Nem todos os campos são preenchidos para todas as entidades
-- Alguns campos podem estar vazios quando a informação não está disponível
-- A estrutura dos dados é consistente, mas a completude varia por entidade
-
-**Recomendações:**
-
-- Sempre verifique a completude dos dados antes de análises
-- Considere campos vazios como "informação não disponível"
-- Documente quais campos são essenciais para sua análise específica
+- **CSV**: perde a estrutura hierárquica original dos dados
+- **JSONL**: é mais complexo para análises simples e estatísticas básicas
+- **Campos vazios**: nem todos os campos são preenchidos para todas as entidades, e a completude varia por tipo de entidade. Trate campo vazio como "informação não disponível" e verifique a completude dos campos essenciais para a sua análise antes de começar
 
 ### 3. Performance e Escalabilidade
 
@@ -122,7 +105,7 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - **Memória**: Análises complexas podem requerer muita memória
 - **Tempo de processamento**: Algumas análises podem ser computacionalmente intensivas
 
-## Recomendações
+## Recomendações {#recomendacoes}
 
 ### 1. Validação Clínica
 
@@ -148,25 +131,14 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 
 ### 3. Documentação
 
-**Metadados de Análise:**
+Registre em cada análise:
 
-- Sempre documente o ID da análise, data e analista responsável
-- Descreva claramente o objetivo e metodologia utilizada
-- Registre a versão dos dados utilizados
-- Confirme que as limitações foram reconhecidas
-- Documente o status da validação clínica
-- Liste as ferramentas e pacotes utilizados
-- Inclua resumo dos principais achados
-- Defina próximos passos recomendados
-
-**Elementos Essenciais:**
-
-- Identificação única da análise
-- Contexto e objetivos
-- Metodologia aplicada
-- Limitações reconhecidas
-- Resultados e interpretações
-- Recomendações futuras
+- identificação, data e analista responsável
+- objetivo e metodologia
+- versão dos dados utilizados (data de entrega e lotes)
+- limitações reconhecidas e status da validação clínica
+- ferramentas e pacotes utilizados, com versões
+- principais resultados, interpretações e próximos passos
 
 ### 4. Reprodutibilidade
 

@@ -339,22 +339,4 @@ plt.show()
 
 ## Boas Práticas
 
-### 1. Documentação
-
-- **Mantenha registro** de todas as análises realizadas
-- **Documente limitações** e suposições
-- **Use versionamento** para código de análise
-- **Valide resultados** com especialistas clínicos
-
-### 2. Reprodutibilidade
-
-- **Seeds fixos** em análises com etapas aleatórias
-- **Versões** do Python e dos pacotes registradas
-- **Data e lote dos dados** usados em cada análise
-
-### 3. Validação
-
-- **Sempre valide** resultados com especialistas clínicos
-- **Considere limitações** dos dados de PLN
-- **Documente incertezas** e limitações
-- **Use múltiplas fontes** quando possível
+Recomendações de validação clínica, documentação e reprodutibilidade das análises estão em [Limitações e Considerações](./limitations.md#recomendacoes).

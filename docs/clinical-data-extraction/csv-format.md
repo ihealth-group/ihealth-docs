@@ -65,37 +65,6 @@ entities = df.drop_duplicates('entity_id')
 print("Labels disponíveis:", entities['label'].unique())
 ```
 
-### Análises Básicas
-
-#### Distribuição de Entidades
-
-```python
-# Distribuição por tipo de entidade
-entity_distribution = entities['label'].value_counts()
-print(entity_distribution)
-
-# Entidades mais frequentes
-top_entities = entities['entity'].value_counts().head(20)
-print(top_entities)
-```
-
-#### Análise Temporal
-
-```python
-# Documentos por mês
-df['month'] = df['document_date'].dt.to_period('M')
-monthly_docs = df.groupby('month')['document_id'].nunique()
-print(monthly_docs)
-```
-
-#### Análise Geográfica
-
-```python
-# Distribuição por região
-region_distribution = df['provider_state_code'].value_counts()
-print(region_distribution)
-```
-
 ### Análise de Biomarcadores e Exames
 
 ```python
@@ -150,49 +119,6 @@ print(relations_table.head())
 - Cada relação aparece em duas linhas: a da entidade `head` e a da entidade `tail` (`relation_position`)
 - Para contar entidades, remova as duplicatas por `entity_id`; para contar relações, use só as linhas com `relation_position == 'head'`
 
-### 4. Agregações
+## Próximos Passos
 
-```python
-# Agrupar por documento
-doc_entities = df.groupby('document_id').agg({
-    'entity_id': 'nunique',
-    'label': lambda x: list(x.unique()),
-    'patient_id': 'first'
-})
-
-# Contar entidades por documento
-entities_per_doc = df.groupby('document_id')['entity_id'].nunique()
-```
-
-## Exemplo de Análise Completa
-
-```python
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Carregar dados
-df = pd.read_csv('dados_extraidos.csv')
-
-# Análise de distribuição
-plt.figure(figsize=(12, 6))
-df.drop_duplicates('entity_id')['label'].value_counts().plot(kind='bar')
-plt.title('Distribuição de Entidades por Tipo')
-plt.xlabel('Tipo de Entidade')
-plt.ylabel('Quantidade')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-
-# Análise temporal
-df['document_date'] = pd.to_datetime(df['document_date'])
-df['month'] = df['document_date'].dt.to_period('M')
-monthly_trend = df.groupby('month')['document_id'].nunique()
-
-plt.figure(figsize=(12, 6))
-monthly_trend.plot(kind='line', marker='o')
-plt.title('Tendência de Documentos por Mês')
-plt.xlabel('Mês')
-plt.ylabel('Número de Documentos')
-plt.tight_layout()
-plt.show()
-```
+Para exemplos de análise (distribuição de entidades, análises temporal e geográfica, comorbidades e outras), veja [Diretrizes de Análise](./analysis-guidelines.md).
