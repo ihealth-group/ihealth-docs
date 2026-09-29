@@ -53,6 +53,7 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 
 - **Nuances perdidas**: algumas nuances clínicas podem ser perdidas na extração
 - **Contexto temporal**: relações temporais entre eventos podem não ser capturadas em todos os casos
+- **Data do documento**: `document_date` é a data do documento, não necessariamente a do evento ou exame citado. Um resultado pode ser transcrito em documentos posteriores e aparecer mais de uma vez para o mesmo paciente
 - **Gravidade**: níveis de gravidade ou severidade podem não ser capturados
 - **Evolução**: mudanças ao longo do tempo podem não ser rastreadas
 

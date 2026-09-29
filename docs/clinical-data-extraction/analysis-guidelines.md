@@ -82,6 +82,33 @@ print(df.isna().sum())
 
 ### 1. Análise Descritiva
 
+#### Caracterização da Coorte {#caracterizacao-da-coorte}
+
+Os campos do paciente se repetem em todas as linhas. Para descrever a coorte, monte primeiro uma tabela com uma linha por paciente:
+
+```python
+# Uma linha por paciente
+patients = df.groupby('patient_id').agg(
+    gender=('gender', 'first'),
+    birthdate=('birthdate', 'first'),
+    death=('death', 'first'),
+    first_doc=('document_date', 'min'),
+    last_doc=('document_date', 'max'),
+    n_docs=('document_id', 'nunique'),
+)
+
+# Idade na data do primeiro documento
+patients['age'] = (patients['first_doc'] - patients['birthdate']).dt.days / 365.25
+
+print(f"Pacientes: {len(patients)}")
+print("Idade:")
+print(patients['age'].describe())
+print("Sexo (%):")
+print((patients['gender'].value_counts(normalize=True) * 100).round(1))
+print("Óbito registrado (%):")
+print((patients['death'].value_counts(normalize=True) * 100).round(1))
+```
+
 #### Distribuição de Entidades
 
 ```python
@@ -106,57 +133,62 @@ plt.show()
 
 ```python
 # Desconsiderar menções negadas, de familiares ou fora da jornada do paciente
-patient_entities = entities[~entities['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER'])]
+patient_entities = entities[~entities['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER'])].copy()
+patient_entities['entity_lower'] = patient_entities['entity'].str.lower()
 
-# Top 20 entidades mais frequentes
-top_entities = patient_entities['entity'].value_counts().head(20)
-print("Entidades mais frequentes:")
-print(top_entities)
-
-# Entidades por categoria
+# Entidades mencionadas para mais pacientes, por categoria
+# (contar pacientes evita que quem tem mais documentos pese mais)
 for label in patient_entities['label'].dropna().unique():
     print(f"\n{label}:")
-    top_in_category = patient_entities[patient_entities['label'] == label]['entity'].value_counts().head(10)
+    top_in_category = (
+        patient_entities[patient_entities['label'] == label]
+        .groupby('entity_lower')['patient_id'].nunique()
+        .sort_values(ascending=False)
+        .head(10)
+    )
     print(top_in_category)
 ```
 
 #### Contexto das Entidades
 
 ```python
-# Quantidade de menções por categoria e contexto (assertion)
-print(pd.crosstab(entities['label'], entities['assertion']))
+# Quantidade de menções por categoria e contexto (assertion).
+# O fillna mantém na tabela as categorias sem assertion.
+print(pd.crosstab(entities['label'], entities['assertion'].fillna('(vazio)')))
 ```
 
 ### 2. Análise Temporal
 
+A quantidade de documentos por período reflete a cobertura da base, não uma tendência clínica. Para estudos com os pacientes, costuma ser mais útil olhar o seguimento de cada um (usa a tabela `patients` da [Caracterização da Coorte](#caracterizacao-da-coorte)):
+
 ```python
-# Análise temporal
-df['document_date'] = pd.to_datetime(df['document_date'])
-df['month'] = df['document_date'].dt.to_period('M')
-df['year'] = df['document_date'].dt.year
+# Tempo de seguimento: do primeiro ao último documento do paciente
+patients['followup_months'] = (patients['last_doc'] - patients['first_doc']).dt.days / 30.44
 
-# Documentos por mês
-monthly_docs = df.groupby('month')['document_id'].nunique()
-print("Documentos por mês:")
-print(monthly_docs)
+print("Documentos por paciente:")
+print(patients['n_docs'].describe())
+print("Seguimento (meses):")
+print(patients['followup_months'].describe())
 
-# Tendência temporal
-plt.figure(figsize=(12, 6))
-monthly_docs.plot(kind='line', marker='o')
-plt.title('Tendência de Documentos por Mês')
-plt.xlabel('Mês')
-plt.ylabel('Número de Documentos')
+plt.figure(figsize=(10, 5))
+patients['followup_months'].plot(kind='hist', bins=30)
+plt.title('Tempo de Seguimento por Paciente')
+plt.xlabel('Meses entre o primeiro e o último documento')
+plt.ylabel('Pacientes')
 plt.tight_layout()
 plt.show()
 ```
 
-### 3. Análise Geográfica
+### 3. Análise Geográfica e por Tipo de Provedor
 
 ```python
-# Distribuição por região
-region_distribution = df['provider_state_code'].value_counts()
-print("Distribuição por UF:")
-print(region_distribution)
+# Pacientes por UF e por tipo de provedor.
+# Um paciente atendido em mais de um provedor é contado em cada um deles.
+print("Pacientes por UF:")
+print(df.groupby('provider_state_code')['patient_id'].nunique().sort_values(ascending=False))
+
+print("Pacientes por tipo de provedor:")
+print(df.groupby('provider_type')['patient_id'].nunique().sort_values(ascending=False))
 ```
 
 ### 4. Análise de Relações
@@ -171,15 +203,15 @@ relation_types = relations['relation_type'].value_counts()
 print("Tipos de relação mais comuns:")
 print(relation_types)
 
-# Entidades mais relacionadas (como tail)
-related_entities = relations['relation_entity'].value_counts()
-print("Entidades mais relacionadas:")
-print(related_entities.head(20))
+# Entidades mais relacionadas (como tail), por tipo de relação
+for relation_type, group in relations.groupby('relation_type'):
+    print(f"\n{relation_type}:")
+    print(group['relation_entity'].str.lower().value_counts().head(5))
 ```
 
 ## Análises Específicas
 
-### 1. Análise de Biomarcadores
+### 1. Análise de Biomarcadores e Exames
 
 ```python
 # Filtrar biomarcadores e exames com valor numérico
@@ -190,17 +222,22 @@ biomarkers = biomarkers[biomarkers['numeric_value'].notna()]
 # Identificar cada medida pelo nome e pela unidade, para não misturar unidades diferentes
 biomarkers['marker'] = biomarkers['normalized_entity'] + ' (' + biomarkers['unit'].fillna('sem unidade') + ')'
 
-# Estatísticas por medida
-biomarker_stats = biomarkers.groupby('marker')['numeric_value'].describe()
+# Um mesmo resultado pode ser repetido em vários documentos do paciente.
+# Para que quem tem mais documentos não pese mais, use um valor por paciente (aqui, o mais recente).
+latest = biomarkers.sort_values('document_date').groupby(['patient_id', 'marker']).tail(1)
+
+# Estatísticas por medida (um valor por paciente)
+biomarker_stats = latest.groupby('marker')['numeric_value'].describe()
 print("Estatísticas por medida:")
 print(biomarker_stats)
 
-# Análise por status de detecção
+# Pacientes por status de detecção.
+# Um paciente pode aparecer em mais de um status ao longo do tempo.
 detection_analysis = entities[
     entities['label'].isin(['BIOMARKER', 'LAB_TEST'])
-].groupby(['normalized_entity', 'detection_status']).size().unstack(fill_value=0)
+].groupby(['normalized_entity', 'detection_status'])['patient_id'].nunique().unstack(fill_value=0)
 
-print("Análise por status de detecção:")
+print("Pacientes por status de detecção:")
 print(detection_analysis)
 ```
 
@@ -210,10 +247,16 @@ print(detection_analysis)
 from collections import Counter
 from itertools import combinations
 
-# Doenças confirmadas no paciente.
+# Doenças do paciente: presentes ou em histórico (doenças crônicas costumam vir como "histórico de ...").
 # Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
 # (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
-diseases = entities[(entities['label'] == 'DISEASE') & (entities['assertion'] == 'PRESENT')]
+diseases = entities[(entities['label'] == 'DISEASE') & entities['assertion'].isin(['PRESENT', 'HISTORY'])]
+
+# A doença usada na seleção da coorte aparece em quase todos os pacientes e domina os pares.
+# Liste aqui os termos dela para deixá-la de fora.
+inclusion_terms = []  # ex.: ['câncer de mama', 'neoplasia de mama']
+diseases = diseases[~diseases['entity'].str.lower().isin(inclusion_terms)]
+
 patient_diseases = diseases.groupby('patient_id')['entity'].apply(lambda x: sorted(set(x.str.lower())))
 
 multi = patient_diseases[patient_diseases.apply(len) > 1]
@@ -226,36 +269,46 @@ for (a, b), n in pair_counts.most_common(10):
     print(f"  {a} + {b}: {n} pacientes")
 ```
 
-### 3. Análise de Padrões de Tratamento
+### 3. Fármacos Associados a Condições
 
 ```python
-# Relacionar medicamentos a condições (sem menções negadas)
-treatment_patterns = df[
+# Pares fármaco–condição ligados pela relação may_treat (sem menções negadas).
+# A relação indica a associação feita no texto, não a sequência ou a linha de tratamento.
+may_treat = df[
     (df['label'] == 'PHARM_SUBSTANCE') &
     (df['relation_type'] == 'may_treat') &
+    (df['relation_position'] == 'head') &
     (~df['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER']))
-].groupby(['entity', 'relation_entity']).size().sort_values(ascending=False)
+]
+drug_condition = (
+    may_treat.assign(drug=may_treat['entity'].str.lower(),
+                     condition=may_treat['relation_entity'].str.lower())
+    .groupby(['drug', 'condition'])['patient_id'].nunique()
+    .sort_values(ascending=False)
+)
 
-print("Padrões de tratamento mais comuns:")
-print(treatment_patterns.head(20))
+print("Pares fármaco–condição (pacientes):")
+print(drug_condition.head(20))
 ```
 
 ### 4. Análise de Qualidade dos Dados
 
 ```python
-# Verificar consistência entre entity e normalized_entity
-inconsistent_entities = entities[
-    entities['normalized_entity'].notna() &
-    (entities['entity'] != entities['normalized_entity'])
-][['entity', 'normalized_entity', 'label']].drop_duplicates()
+structured = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])]
 
-print("Entidades com normalização:")
-print(inconsistent_entities.head(10))
+# Grafias diferentes agrupadas em cada entidade normalizada (vale revisar as mais variadas)
+spellings = structured.groupby('normalized_entity')['entity'].nunique().sort_values(ascending=False)
+print("Grafias por entidade normalizada:")
+print(spellings.head(10))
 
-# Verificar preenchimento dos campos estruturados
+# Biomarcadores e exames que não puderam ser normalizados
+not_normalized = structured[structured['normalized_entity'].isna()]['entity'].str.lower().value_counts()
+print("Mais frequentes sem normalização:")
+print(not_normalized.head(10))
+
+# Verificar preenchimento dos campos estruturados (score só se aplica a BIOMARKER)
 structured_fields = ['normalized_entity', 'specific_marker', 'method',
                      'detection_status', 'score', 'numeric_value', 'unit']
-structured = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])]
 coverage = structured.groupby('label')[structured_fields].agg(
     lambda col: col.notna().mean()
 )
@@ -305,34 +358,34 @@ print(richest_docs.head(10))
 
 ## Exemplos de Análises Avançadas
 
-### Análise de Séries Temporais
+### Trajetória de Exames por Paciente
+
+A média de um exame por mês mistura pacientes diferentes a cada período. Para acompanhar a evolução, olhe os valores de cada paciente ao longo do tempo.
+
+> **Atenção**: `document_date` é a data do documento, não necessariamente a do exame. Um resultado pode ser transcrito em documentos posteriores; por isso, o exemplo remove valores repetidos do mesmo paciente.
 
 ```python
-# Análise temporal de biomarcadores
-temporal_biomarkers = biomarkers.copy()
-temporal_biomarkers['date'] = pd.to_datetime(temporal_biomarkers['document_date'])
+# Medida com mais pacientes
+marker = biomarkers.groupby('marker')['patient_id'].nunique().idxmax()
 
-# Agrupar por mês e medida
-monthly_biomarkers = temporal_biomarkers.groupby([
-    temporal_biomarkers['date'].dt.to_period('M'),
-    'marker'
-])['numeric_value'].mean().unstack()
-monthly_biomarkers.index = monthly_biomarkers.index.to_timestamp()
+values = (
+    biomarkers[biomarkers['marker'] == marker]
+    .drop_duplicates(['patient_id', 'numeric_value'])
+    .sort_values('document_date')
+)
+# Dias desde a primeira medida do paciente
+values['days'] = (values['document_date'] - values.groupby('patient_id')['document_date'].transform('min')).dt.days
 
-# As 5 medidas com mais registros
-top_markers = biomarkers['marker'].value_counts().head(5).index
+# Pacientes com pelo menos 2 medidas
+values = values[values.groupby('patient_id')['patient_id'].transform('size') >= 2]
 
-# Visualizar tendências
-plt.figure(figsize=(15, 8))
-for biomarker in top_markers:
-    plt.plot(monthly_biomarkers.index, monthly_biomarkers[biomarker],
-             label=biomarker, marker='o')
+plt.figure(figsize=(12, 6))
+for patient_id, group in values.groupby('patient_id'):
+    plt.plot(group['days'], group['numeric_value'], marker='o', alpha=0.4)
 
-plt.title('Tendências Temporais de Biomarcadores')
-plt.xlabel('Mês')
-plt.ylabel('Valor Médio')
-plt.legend()
-plt.xticks(rotation=45)
+plt.title(f'Trajetória por Paciente: {marker}')
+plt.xlabel('Dias desde a primeira medida')
+plt.ylabel('Valor')
 plt.tight_layout()
 plt.show()
 ```

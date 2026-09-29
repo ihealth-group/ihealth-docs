@@ -26,7 +26,7 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
   "birthdate": "1980-05-15 00:00:00",
   "death": "N",
   "provider_state_code": "SP",
-  "provider_type": "Convênio ou Particular",
+  "provider_type": "Público",
   "preds": {
     "clinical_entities": [...],
     "biomarkers": [...],
@@ -248,26 +248,28 @@ for doc in data:
 
 ## Análises com JSONL
 
-### Análise por Documento
+### Resumo por Documento e Jornada do Paciente
 
 ```python
-# Análise de documentos
-for doc in data:
-    doc_id = doc['document_id']
-    patient_id = doc['patient_id']
+import pandas as pd
 
-    # Contar entidades por tipo
-    clinical_count = len(doc['preds']['clinical_entities'])
-    biomarker_count = len(doc['preds']['biomarkers'])
-    lab_count = len(doc['preds']['lab_tests'])
-    relation_count = len(doc['preds']['entities_relations'])
+# Uma linha por documento, com a quantidade de itens em cada grupo
+docs = pd.DataFrame([
+    {
+        'document_id': doc['document_id'],
+        'patient_id': doc['patient_id'],
+        'document_date': doc['document_date'],
+        **{group: len(items) for group, items in doc['preds'].items()},
+    }
+    for doc in data
+])
+docs['document_date'] = pd.to_datetime(docs['document_date'])
 
-    print(f"Documento {doc_id} (Paciente {patient_id}):")
-    print(f"  Entidades clínicas: {clinical_count}")
-    print(f"  Biomarcadores: {biomarker_count}")
-    print(f"  Exames laboratoriais: {lab_count}")
-    print(f"  Relações: {relation_count}")
-    print("---")
+print(docs.describe())
+
+# Jornada do paciente: documentos em ordem cronológica
+patient_id = docs['patient_id'].iloc[0]
+print(docs[docs['patient_id'] == patient_id].sort_values('document_date'))
 ```
 
 ### Convertendo para DataFrames
@@ -306,14 +308,21 @@ print(biomarkers_df.head())
 from collections import Counter, defaultdict
 from itertools import combinations
 
-# Doenças confirmadas por paciente.
+# Doenças do paciente: presentes ou em histórico (doenças crônicas costumam vir como "histórico de ...").
 # Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
 # (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+# A doença usada na seleção da coorte aparece em quase todos os pacientes e domina os pares.
+# Liste aqui os termos dela para deixá-la de fora.
+inclusion_terms = set()  # ex.: {'câncer de mama', 'neoplasia de mama'}
+
 patient_diseases = defaultdict(set)
 for doc in data:
     for entity in doc['preds']['clinical_entities']:
-        if entity['label'] == 'DISEASE' and entity.get('assertion') == 'PRESENT':
-            patient_diseases[doc['patient_id']].add(entity['entity'].lower())
+        name = entity['entity'].lower()
+        if (entity['label'] == 'DISEASE'
+                and entity.get('assertion') in ('PRESENT', 'HISTORY')
+                and name not in inclusion_terms):
+            patient_diseases[doc['patient_id']].add(name)
 
 multi = {p: d for p, d in patient_diseases.items() if len(d) > 1}
 print(f"Pacientes com mais de uma doença: {len(multi)}")
@@ -385,7 +394,7 @@ No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`ma
 **Use JSONL quando:**
 
 - a análise depende do contexto completo do documento ou da jornada do paciente
-- o foco são as relações entre entidades (comorbidades, redes de entidades)
+- o foco são as relações entre entidades (por exemplo, doença e biomarcador, fármaco e condição)
 - você quer a relação explícita, com `head_entity` e `tail_entity`
 
 **Use CSV quando:**

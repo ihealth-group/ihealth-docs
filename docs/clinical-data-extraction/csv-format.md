@@ -73,7 +73,8 @@ numeric_entities = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])].c
 numeric_entities['numeric_value'] = pd.to_numeric(numeric_entities['numeric_value'], errors='coerce')
 numeric_entities = numeric_entities[numeric_entities['numeric_value'].notna()]
 
-# Estatísticas por exame e unidade (a mesma medida pode vir em unidades diferentes)
+# Estatísticas por exame e unidade (a mesma medida pode vir em unidades diferentes).
+# Os valores são por menção: o mesmo resultado pode se repetir em vários documentos do paciente.
 biomarker_stats = numeric_entities.groupby(['normalized_entity', 'unit'], dropna=False)['numeric_value'].describe()
 print(biomarker_stats)
 ```
@@ -89,8 +90,8 @@ relations = df[df['relation_position'] == 'head']
 relation_types = relations['relation_type'].value_counts()
 print(relation_types)
 
-# Entidades mais relacionadas (como tail)
-related_entities = relations['relation_entity'].value_counts()
+# Entidades mais relacionadas (como tail), por tipo de relação
+related_entities = relations.groupby('relation_type')['relation_entity'].value_counts()
 print(related_entities)
 
 # Uma linha por relação, no mesmo formato do JSONL (head → tail)
