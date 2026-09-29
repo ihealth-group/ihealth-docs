@@ -369,6 +369,8 @@ from itertools import combinations
 # Doenças confirmadas por paciente.
 # Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
 # (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+# O term_code (CID-10, no objeto el) pode ajudar a agrupar sinônimos, mas não vem preenchido
+# em muitas entidades: use-o como apoio, sem descartar as doenças que não têm código.
 patient_diseases = defaultdict(set)
 for doc in data:
     for entity in doc['preds']['clinical_entities']:

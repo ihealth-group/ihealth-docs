@@ -93,9 +93,10 @@ print(monthly_docs)
 #### Análise Geográfica
 
 ```python
-# Distribuição por região
-region_distribution = df['provider_state_code'].value_counts()
-print(region_distribution)
+# Pacientes por UF (cada linha é uma entidade, então conte pacientes distintos).
+# Um paciente atendido em mais de uma UF é contado em cada uma delas.
+patients_by_state = df.groupby('provider_state_code')['patient_id'].nunique().sort_values(ascending=False)
+print(patients_by_state)
 ```
 
 ### Análise de Biomarcadores e Exames

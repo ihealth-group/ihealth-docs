@@ -158,10 +158,11 @@ plt.show()
 ### 3. Análise Geográfica
 
 ```python
-# Distribuição por região
-region_distribution = df['provider_state_code'].value_counts()
-print("Distribuição por UF:")
-print(region_distribution)
+# Pacientes por UF (cada linha é uma entidade, então conte pacientes distintos).
+# Um paciente atendido em mais de uma UF é contado em cada uma delas.
+patients_by_state = df.groupby('provider_state_code')['patient_id'].nunique().sort_values(ascending=False)
+print("Pacientes por UF:")
+print(patients_by_state)
 ```
 
 ### 4. Análise de Relações
@@ -218,6 +219,8 @@ from itertools import combinations
 # Doenças confirmadas no paciente.
 # Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
 # (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+# O term_code (CID-10) pode ajudar a agrupar sinônimos, mas não vem preenchido em muitas
+# entidades: use-o como apoio, sem descartar as doenças que não têm código.
 diseases = entities[(entities['label'] == 'DISEASE') & (entities['assertion'] == 'PRESENTE')]
 patient_diseases = diseases.groupby('patient_id')['entity'].apply(lambda x: sorted(set(x.str.lower())))
 
