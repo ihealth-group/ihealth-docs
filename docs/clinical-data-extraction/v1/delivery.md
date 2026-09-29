@@ -1,10 +1,18 @@
+---
+displayed_sidebar: docsSidebar
+pagination_prev: clinical-data-extraction/v1/jsonl-format
+pagination_next: clinical-data-extraction/v1/analysis-guidelines
+---
+
 # Entrega dos Dados
 
-Esta página explica como os arquivos da extração são organizados e entregues, e traz exemplos de código para processar os lotes. É indicada para quem vai receber os arquivos e montar o carregamento dos dados.
+:::caution Documentação v1
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../delivery.md).
+:::
 
 ## Visão Geral
 
-Os dados extraídos são entregues em **lotes de arquivos**, o que facilita o processamento e o controle do volume de informações. Essa abordagem permite gerenciar os dados com mais eficiência e controlar melhor a qualidade durante a entrega.
+Os dados extraídos são entregues em **lotes de arquivos** para facilitar o processamento e controle adequado do volume de informações. Esta abordagem permite um gerenciamento mais eficiente dos dados e melhor controle de qualidade durante o processo de entrega.
 
 ## Estrutura de Entrega
 
@@ -12,33 +20,33 @@ Os dados extraídos são entregues em **lotes de arquivos**, o que facilita o pr
 
 Os dados são organizados em lotes com as seguintes características:
 
-- **Tamanho do lote**: entre 10-50 pacientes por arquivo
-- **Controle de volume**: permite processamento eficiente e validação adequada
-- **Flexibilidade**: tamanho pode ser ajustado conforme necessidades específicas do projeto
+- **Tamanho do lote**: Entre 10-50 pacientes por arquivo
+- **Controle de volume**: Permite processamento eficiente e validação adequada
+- **Flexibilidade**: Tamanho pode ser ajustado conforme necessidades específicas do projeto
 
 ### Formatos de Arquivo
 
-O cliente pode escolher receber os arquivos em CSV, em JSONL ou nos dois formatos:
+Cada lote contém arquivos nos dois formatos disponíveis:
 
 #### Arquivos CSV
 
 - **Nomenclatura**: `projectname_patients_part_001.csv`, `projectname_patients_part_002.csv`, etc.
-- **Conteúdo**: entidades clínicas "achatadas" em formato tabular
-- **Granularidade**: uma linha por entidade clínica
+- **Conteúdo**: Entidades clínicas "achatadas" em formato tabular
+- **Granularidade**: Uma linha por entidade clínica
 
 #### Arquivos JSONL
 
 - **Nomenclatura**: `projectname_patients_part_001.jsonl`, `projectname_patients_part_002.jsonl`, etc.
-- **Conteúdo**: documentos completos com estrutura hierárquica
-- **Granularidade**: uma linha por documento clínico
+- **Conteúdo**: Documentos completos com estrutura hierárquica
+- **Granularidade**: Uma linha por documento clínico
 
 ### Variação no Número de Linhas
 
 O número de linhas em cada arquivo varia significativamente devido a:
 
-- **Quantidade de documentos**: cada paciente pode ter diferentes números de documentos clínicos
-- **Densidade de entidades**: documentos podem conter diferentes quantidades de entidades extraídas
-- **Complexidade clínica**: casos mais complexos tendem a gerar mais entidades
+- **Quantidade de documentos**: Cada paciente pode ter diferentes números de documentos clínicos
+- **Densidade de entidades**: Documentos podem conter diferentes quantidades de entidades extraídas
+- **Complexidade clínica**: Casos mais complexos tendem a gerar mais entidades
 
 #### Exemplo de Variação
 
@@ -59,18 +67,20 @@ Parte 002: 23 pacientes
 O local de upload/entrega dos dados é definido durante a **contratação da extração** e pode incluir:
 
 - **Cloud Storage**: AWS S3, Google Cloud Storage, Azure Blob Storage
-- **SFTP/Secure Transfer**: servidor seguro para transferência de arquivos
-- **Plataforma específica**: conforme preferência e infraestrutura do cliente
+- **SFTP/Secure Transfer**: Servidor seguro para transferência de arquivos
+- **Plataforma específica**: Conforme preferência e infraestrutura do cliente
 
 ### Configurações de Acesso
 
-- **Credenciais**: fornecidas durante o processo de contratação
-- **Permissões**: acesso configurado conforme necessidades do projeto
-- **Segurança**: transferência criptografada e logs de acesso
+- **Credenciais**: Fornecidas durante o processo de contratação
+- **Permissões**: Acesso configurado conforme necessidades do projeto
+- **Segurança**: Transferência criptografada e logs de acesso
 
 ## Processamento dos Lotes
 
-### 1. Processamento Sequencial
+### Estratégias Recomendadas
+
+#### 1. Processamento Sequencial
 
 ```python
 import pandas as pd
@@ -84,8 +94,6 @@ all_data = []
 for file in csv_files:
     print(f"Processando {file}...")
     df = pd.read_csv(file)
-    # Identificar o lote: "projectname_patients_part_001.csv" -> "001"
-    df['lote_id'] = file.split('_')[-1].split('.')[0]
     all_data.append(df)
 
 # Combinar todos os dados
@@ -93,7 +101,7 @@ combined_df = pd.concat(all_data, ignore_index=True)
 print(f"Total de registros: {len(combined_df)}")
 ```
 
-### 2. Processamento Paralelo
+#### 2. Processamento Paralelo
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
@@ -117,7 +125,7 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 combined_df = pd.concat(results, ignore_index=True)
 ```
 
-### 3. Processamento JSONL por Lote
+#### 3. Processamento JSONL por Lote
 
 ```python
 import glob
@@ -145,13 +153,11 @@ for file in jsonl_files:
 print(f"Total de documentos: {len(all_documents)}")
 ```
 
-### 4. Validação de Integridade
+### Validação de Integridade
+
+#### Verificação de Lotes
 
 ```python
-import glob
-import json
-import pandas as pd
-
 def validate_batch_integrity(csv_file, jsonl_file):
     """Valida integridade entre arquivos CSV e JSONL do mesmo lote"""
 
@@ -186,22 +192,23 @@ for csv_file, jsonl_file in zip(csv_files, jsonl_files):
 
 ### 1. Ordem dos Lotes
 
-- **Sequência**: os lotes são numerados sequencialmente (001, 002, 003...)
-- **Independência**: cada lote é independente e pode ser processado separadamente
-- **Completude**: todos os lotes devem ser processados para análise completa
+- **Sequência**: Os lotes são numerados sequencialmente (001, 002, 003...)
+- **Independência**: Cada lote é independente e pode ser processado separadamente
+- **Completude**: Todos os lotes devem ser processados para análise completa
 
 ### 2. Qualidade dos Dados
 
-- **Validação**: cada lote passa por validação de qualidade antes da entrega
-- **Consistência**: estrutura de dados mantida entre todos os lotes
-- **Integridade**: verificação de integridade entre formatos CSV e JSONL
+- **Validação**: Cada lote passa por validação de qualidade antes da entrega
+- **Consistência**: Estrutura de dados mantida entre todos os lotes
+- **Integridade**: Verificação de integridade entre formatos CSV e JSONL
 
 ### 3. Segurança
 
-- **Criptografia**: transferência criptografada para o local de entrega
-- **Acesso**: credenciais seguras e controle de acesso
-- **Auditoria**: logs de acesso e transferência mantidos
+- **Criptografia**: Transferência criptografada para o local de entrega
+- **Acesso**: Credenciais seguras e controle de acesso
+- **Auditoria**: Logs de acesso e transferência mantidos
 
 ### 4. Suporte
 
-Em caso de dúvidas sobre os dados ou a entrega, entre em contato pelo e-mail [oportunidades@ihealthgroup.com.br](mailto:oportunidades@ihealthgroup.com.br).
+- **Documentação**: Esta documentação já contém todas as informações necessárias sobre os dados e como processá-los
+- **Dúvidas**: Para qualquer dúvida adicional, entre em contato com nossa equipe técnica

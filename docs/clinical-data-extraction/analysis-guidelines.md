@@ -1,18 +1,22 @@
 # Diretrizes para Análise de Dados
 
+Esta página reúne boas práticas e exemplos de análise dos dados extraídos, da preparação às análises avançadas. É indicada para cientistas e analistas de dados que vão explorar a extração.
+
 ## Contexto dos Dados
 
-Esta documentação fornece diretrizes para análise dos **dados extraídos** de nosso banco clínico. Estes dados representam uma seleção específica de documentos médicos de nossa base, com ampla cobertura nacional e representatividade para análises, filtrados conforme critérios definidos para o projeto.
+Os **dados extraídos** representam uma seleção de documentos médicos do nosso banco clínico, com ampla cobertura nacional e representatividade para análises, filtrados conforme os critérios definidos para o projeto.
 
 ### Características Importantes dos Dados Extraídos
 
-- **Origem**: Banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
-- **Seleção**: Pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
-- **Estruturação**: Dados processados com NLP para extração de entidades clínicas
-- **Anonimização**: Identificadores de pacientes e provedores anonimizados
-- **Formatos**: Disponibilizados em CSV e JSONL para diferentes tipos de análise
+- **Origem**: banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
+- **Seleção**: pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
+- **Estruturação**: dados processados com Processamento de Linguagem Natural (PLN) para extração de entidades clínicas
+- **Anonimização**: identificadores de pacientes e provedores anonimizados
+- **Formatos**: disponibilizados em CSV e JSONL para diferentes tipos de análise
 
 ## Preparação dos Dados
+
+> Os exemplos desta página são sequenciais: cada bloco usa os imports e as variáveis (`df`, `entities`) criados nos blocos anteriores.
 
 ### Limpeza e Validação
 
@@ -30,6 +34,10 @@ df = df[df['document_id'].notna()]
 # Converter datas
 df['document_date'] = pd.to_datetime(df['document_date'])
 df['birthdate'] = pd.to_datetime(df['birthdate'])
+
+# Uma entidade com mais de uma relação aparece em mais de uma linha (mesmo entity_id).
+# Para contar entidades, use uma linha por entity_id.
+entities = df.drop_duplicates('entity_id')
 
 # Verificar estrutura
 print("Shape:", df.shape)
@@ -58,37 +66,54 @@ if data:
 
 ### Tratamento de Valores Ausentes
 
-- **Campos vazios**: Representados como strings vazias ("")
-- **Valores numéricos ausentes**: Campo `numeric_value` vazio
-- **Códigos de terminologia**: Podem estar ausentes
-- **Relações**: Nem todas as entidades possuem relações
+- **Campos vazios**: ficam em branco no CSV e viram `NaN` ao carregar com pandas
+- **Valores numéricos ausentes**: campo `numeric_value` vazio
+- **Campos estruturados**: preenchidos apenas em `BIOMARKER` e `LAB_TEST`, quando a normalização foi possível
+- **Assertion**: vazio nas categorias em que o contexto não é inferido
+- **Relações**: nem todas as entidades possuem relações
 
 ```python
-# Verificar valores ausentes
-print("Valores ausentes por coluna:")
-print(df.isnull().sum())
-
-# Verificar campos vazios (strings vazias)
-empty_fields = {}
-for col in df.columns:
-    empty_count = (df[col] == '').sum()
-    if empty_count > 0:
-        empty_fields[col] = empty_count
-
-print("Campos vazios:")
-for field, count in empty_fields.items():
-    print(f"  {field}: {count}")
+# Verificar campos vazios por coluna
+print("Campos vazios por coluna:")
+print(df.isna().sum())
 ```
 
 ## Análises Recomendadas
 
 ### 1. Análise Descritiva
 
+#### Caracterização da Coorte {#caracterizacao-da-coorte}
+
+Os campos do paciente se repetem em todas as linhas. Para descrever a coorte, monte primeiro uma tabela com uma linha por paciente:
+
+```python
+# Uma linha por paciente
+patients = df.groupby('patient_id').agg(
+    gender=('gender', 'first'),
+    birthdate=('birthdate', 'first'),
+    death=('death', 'first'),
+    first_doc=('document_date', 'min'),
+    last_doc=('document_date', 'max'),
+    n_docs=('document_id', 'nunique'),
+)
+
+# Idade na data do primeiro documento
+patients['age'] = (patients['first_doc'] - patients['birthdate']).dt.days / 365.25
+
+print(f"Pacientes: {len(patients)}")
+print("Idade:")
+print(patients['age'].describe())
+print("Sexo (%):")
+print((patients['gender'].value_counts(normalize=True) * 100).round(1))
+print("Óbito registrado (%):")
+print((patients['death'].value_counts(normalize=True) * 100).round(1))
+```
+
 #### Distribuição de Entidades
 
 ```python
 # Distribuição por tipo de entidade
-entity_distribution = df['label'].value_counts()
+entity_distribution = entities['label'].value_counts()
 print("Distribuição de entidades:")
 print(entity_distribution)
 
@@ -107,189 +132,209 @@ plt.show()
 #### Entidades Mais Frequentes
 
 ```python
-# Top 20 entidades mais frequentes
-top_entities = df['entity'].value_counts().head(20)
-print("Entidades mais frequentes:")
-print(top_entities)
+# Desconsiderar menções negadas, de familiares ou fora da jornada do paciente
+patient_entities = entities[~entities['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER'])].copy()
+patient_entities['entity_lower'] = patient_entities['entity'].str.lower()
 
-# Entidades por categoria
-for label in df['label'].unique():
-    if pd.notna(label):
-        print(f"\n{label}:")
-        top_in_category = df[df['label'] == label]['entity'].value_counts().head(10)
-        print(top_in_category)
+# Entidades mencionadas para mais pacientes, por categoria
+# (contar pacientes evita que quem tem mais documentos pese mais)
+for label in patient_entities['label'].dropna().unique():
+    print(f"\n{label}:")
+    top_in_category = (
+        patient_entities[patient_entities['label'] == label]
+        .groupby('entity_lower')['patient_id'].nunique()
+        .sort_values(ascending=False)
+        .head(10)
+    )
+    print(top_in_category)
+```
+
+#### Contexto das Entidades
+
+```python
+# Quantidade de menções por categoria e contexto (assertion).
+# O fillna mantém na tabela as categorias sem assertion.
+print(pd.crosstab(entities['label'], entities['assertion'].fillna('(vazio)')))
 ```
 
 ### 2. Análise Temporal
 
+A quantidade de documentos por período reflete a cobertura da base, não uma tendência clínica. Para estudos com os pacientes, costuma ser mais útil olhar o seguimento de cada um (usa a tabela `patients` da [Caracterização da Coorte](#caracterizacao-da-coorte)):
+
 ```python
-# Análise temporal
-df['document_date'] = pd.to_datetime(df['document_date'])
-df['month'] = df['document_date'].dt.to_period('M')
-df['year'] = df['document_date'].dt.year
+# Tempo de seguimento: do primeiro ao último documento do paciente
+patients['followup_months'] = (patients['last_doc'] - patients['first_doc']).dt.days / 30.44
 
-# Documentos por mês
-monthly_docs = df.groupby('month')['document_id'].nunique()
-print("Documentos por mês:")
-print(monthly_docs)
+print("Documentos por paciente:")
+print(patients['n_docs'].describe())
+print("Seguimento (meses):")
+print(patients['followup_months'].describe())
 
-# Tendência temporal
-plt.figure(figsize=(12, 6))
-monthly_docs.plot(kind='line', marker='o')
-plt.title('Tendência de Documentos por Mês')
-plt.xlabel('Mês')
-plt.ylabel('Número de Documentos')
+plt.figure(figsize=(10, 5))
+patients['followup_months'].plot(kind='hist', bins=30)
+plt.title('Tempo de Seguimento por Paciente')
+plt.xlabel('Meses entre o primeiro e o último documento')
+plt.ylabel('Pacientes')
 plt.tight_layout()
 plt.show()
 ```
 
-### 3. Análise Geográfica
+### 3. Análise Geográfica e por Tipo de Provedor
 
 ```python
-# Distribuição por região
-region_distribution = df['provider_state_code'].value_counts()
-print("Distribuição por UF:")
-print(region_distribution)
+# Pacientes por UF e por tipo de provedor.
+# Um paciente atendido em mais de um provedor é contado em cada um deles.
+print("Pacientes por UF:")
+print(df.groupby('provider_state_code')['patient_id'].nunique().sort_values(ascending=False))
+
+print("Pacientes por tipo de provedor:")
+print(df.groupby('provider_type')['patient_id'].nunique().sort_values(ascending=False))
 ```
 
 ### 4. Análise de Relações
 
 ```python
+# Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
+# Para contar relações, use só as linhas da head.
+relations = df[df['relation_position'] == 'head']
+
 # Relações mais comuns
-relation_types = df[df['relation_type'] != '']['relation_type'].value_counts()
+relation_types = relations['relation_type'].value_counts()
 print("Tipos de relação mais comuns:")
 print(relation_types)
 
-# Entidades mais relacionadas
-related_entities = df[df['relation_entity'] != '']['relation_entity'].value_counts()
-print("Entidades mais relacionadas:")
-print(related_entities.head(20))
+# Entidades mais relacionadas (como tail), por tipo de relação
+for relation_type, group in relations.groupby('relation_type'):
+    print(f"\n{relation_type}:")
+    print(group['relation_entity'].str.lower().value_counts().head(5))
 ```
 
 ## Análises Específicas
 
-### 1. Análise de Biomarcadores
+### 1. Análise de Biomarcadores e Exames
 
 ```python
-# Filtrar apenas biomarcadores com valores numéricos
-biomarkers = df[
-    (df['label'].isin(['BIOMARKER', 'LAB_TEST', 'CLINICAL_ATT'])) &
-    (df['numeric_value'] != '') &
-    (df['numeric_value'].notna())
-].copy()
+# Filtrar biomarcadores e exames com valor numérico
+biomarkers = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])].copy()
+biomarkers['numeric_value'] = pd.to_numeric(biomarkers['numeric_value'], errors='coerce')
+biomarkers = biomarkers[biomarkers['numeric_value'].notna()]
 
-# Converter valores numéricos
-biomarkers['numeric_value'] = pd.to_numeric(biomarkers['numeric_value'])
+# Identificar cada medida pelo nome e pela unidade, para não misturar unidades diferentes
+biomarkers['marker'] = biomarkers['normalized_entity'] + ' (' + biomarkers['unit'].fillna('sem unidade') + ')'
 
-# Estatísticas por biomarcador
-biomarker_stats = biomarkers.groupby('normalized_entity')['numeric_value'].describe()
-print("Estatísticas por biomarcador:")
+# Um mesmo resultado pode ser repetido em vários documentos do paciente.
+# Para que quem tem mais documentos não pese mais, use um valor por paciente (aqui, o mais recente).
+latest = biomarkers.sort_values('document_date').groupby(['patient_id', 'marker']).tail(1)
+
+# Estatísticas por medida (um valor por paciente)
+biomarker_stats = latest.groupby('marker')['numeric_value'].describe()
+print("Estatísticas por medida:")
 print(biomarker_stats)
 
-# Análise por status de detecção
-detection_analysis = df[
-    df['label'].isin(['BIOMARKER', 'LAB_TEST'])
-].groupby(['normalized_entity', 'detection_status']).size().unstack(fill_value=0)
+# Pacientes por status de detecção.
+# Um paciente pode aparecer em mais de um status ao longo do tempo.
+detection_analysis = entities[
+    entities['label'].isin(['BIOMARKER', 'LAB_TEST'])
+].groupby(['normalized_entity', 'detection_status'])['patient_id'].nunique().unstack(fill_value=0)
 
-print("Análise por status de detecção:")
+print("Pacientes por status de detecção:")
 print(detection_analysis)
 ```
 
 ### 2. Análise de Comorbidades
 
 ```python
-# Identificar pacientes com múltiplas condições
-patient_conditions = df.groupby('patient_id')['entity'].apply(list)
-comorbidities = patient_conditions[patient_conditions.apply(len) > 1]
+from collections import Counter
+from itertools import combinations
 
-print(f"Pacientes com múltiplas condições: {len(comorbidities)}")
+# Doenças do paciente: presentes ou em histórico (doenças crônicas costumam vir como "histórico de ...").
+# Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
+# (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+diseases = entities[(entities['label'] == 'DISEASE') & entities['assertion'].isin(['PRESENT', 'HISTORY'])]
 
-# Análise de padrões de comorbidade
-comorbidity_patterns = {}
-for patient, conditions in comorbidities.items():
-    conditions_set = set(conditions)
-    if len(conditions_set) > 1:
-        pattern = tuple(sorted(conditions_set))
-        if pattern not in comorbidity_patterns:
-            comorbidity_patterns[pattern] = 0
-        comorbidity_patterns[pattern] += 1
+# A doença usada na seleção da coorte aparece em quase todos os pacientes e domina os pares.
+# Liste aqui os termos dela para deixá-la de fora.
+inclusion_terms = []  # ex.: ['câncer de mama', 'neoplasia de mama']
+diseases = diseases[~diseases['entity'].str.lower().isin(inclusion_terms)]
 
-# Padrões mais comuns
-common_patterns = sorted(comorbidity_patterns.items(), key=lambda x: x[1], reverse=True)
-print("Padrões de comorbidade mais comuns:")
-for pattern, count in common_patterns[:10]:
-    print(f"  {pattern}: {count} pacientes")
+patient_diseases = diseases.groupby('patient_id')['entity'].apply(lambda x: sorted(set(x.str.lower())))
+
+multi = patient_diseases[patient_diseases.apply(len) > 1]
+print(f"Pacientes com mais de uma doença: {len(multi)}")
+
+# Pares de doenças mais frequentes no mesmo paciente
+pair_counts = Counter(pair for d in multi for pair in combinations(d, 2))
+print("Pares de doenças mais comuns:")
+for (a, b), n in pair_counts.most_common(10):
+    print(f"  {a} + {b}: {n} pacientes")
 ```
 
-### 3. Análise de Padrões de Tratamento
+### 3. Fármacos Associados a Condições
 
 ```python
-# Relacionar medicamentos a condições
-treatment_patterns = df[
+# Pares fármaco–condição ligados pela relação may_treat (sem menções negadas).
+# A relação indica a associação feita no texto, não a sequência ou a linha de tratamento.
+may_treat = df[
     (df['label'] == 'PHARM_SUBSTANCE') &
-    (df['relation_type'] == 'may_treat')
-].groupby(['entity', 'relation_entity']).size().sort_values(ascending=False)
+    (df['relation_type'] == 'may_treat') &
+    (df['relation_position'] == 'head') &
+    (~df['assertion'].isin(['ABSENT', 'FAMILY_HISTORY', 'OTHER']))
+]
+drug_condition = (
+    may_treat.assign(drug=may_treat['entity'].str.lower(),
+                     condition=may_treat['relation_entity'].str.lower())
+    .groupby(['drug', 'condition'])['patient_id'].nunique()
+    .sort_values(ascending=False)
+)
 
-print("Padrões de tratamento mais comuns:")
-print(treatment_patterns.head(20))
+print("Pares fármaco–condição (pacientes):")
+print(drug_condition.head(20))
 ```
 
 ### 4. Análise de Qualidade dos Dados
 
 ```python
-# Verificar consistência entre entity e normalized_entity
-inconsistent_entities = df[
-    (df['normalized_entity'] != '') &
-    (df['entity'] != df['normalized_entity'])
-][['entity', 'normalized_entity', 'label']].drop_duplicates()
+structured = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])]
 
-print("Entidades com normalização:")
-print(inconsistent_entities.head(10))
+# Grafias diferentes agrupadas em cada entidade normalizada (vale revisar as mais variadas)
+spellings = structured.groupby('normalized_entity')['entity'].nunique().sort_values(ascending=False)
+print("Grafias por entidade normalizada:")
+print(spellings.head(10))
 
-# Verificar códigos de terminologia
-terminology_coverage = df[
-    df['terminology'] != ''
-].groupby('label')['terminology'].value_counts()
+# Biomarcadores e exames que não puderam ser normalizados
+not_normalized = structured[structured['normalized_entity'].isna()]['entity'].str.lower().value_counts()
+print("Mais frequentes sem normalização:")
+print(not_normalized.head(10))
 
-print("Cobertura de terminologia por categoria:")
-print(terminology_coverage)
+# Verificar preenchimento dos campos estruturados (score só se aplica a BIOMARKER)
+structured_fields = ['normalized_entity', 'specific_marker', 'method',
+                     'detection_status', 'score', 'numeric_value', 'unit']
+coverage = structured.groupby('label')[structured_fields].agg(
+    lambda col: col.notna().mean()
+)
+
+print("Preenchimento dos campos estruturados por categoria (%):")
+print((coverage * 100).round(1))
 ```
 
 ## Considerações Específicas
 
 ### 1. Anonimização
 
-- **IDs de pacientes e casos**: Anonimizados para preservar privacidade
-- **Preservação de privacidade**: Mantenha confidencialidade em todas as análises
-
-```python
-# Verificar anonimização
-print("Exemplos de IDs anonimizados:")
-print("Patient IDs:", df['patient_id'].unique()[:5])
-print("Case IDs:", df['case_id'].unique()[:5])
-```
+- **IDs de pacientes e casos**: anonimizados para preservar privacidade
+- **Preservação de privacidade**: mantenha confidencialidade em todas as análises
 
 ### 2. Qualidade dos Dados
 
 ```python
-# Verificar consistência
-print("Verificações de qualidade:")
-
-# 1. Documentos sem entidades
-docs_without_entities = df.groupby('document_id').size()
-empty_docs = docs_without_entities[docs_without_entities == 0]
-print(f"Documentos sem entidades: {len(empty_docs)}")
-
-# 2. Entidades sem assertion
-entities_without_assertion = df[df['assertion'] == ''].shape[0]
-print(f"Entidades sem assertion: {entities_without_assertion}")
-
-# 3. Relações órfãs
-orphan_relations = df[
-    (df['relation_type'] != '') &
-    (df['relation_entity'] == '')
+# Entidades sem assertion (apenas nas categorias em que ela é inferida)
+labels_com_assertion = ['FINDING', 'INJURY', 'DISEASE', 'PHARM_SUBSTANCE',
+                        'PROCEDURE', 'MEDICAL_DEVICE']
+entities_without_assertion = entities[
+    entities['label'].isin(labels_com_assertion) &
+    entities['assertion'].isna()
 ].shape[0]
-print(f"Relações órfãs: {orphan_relations}")
+print(f"Entidades sem assertion: {entities_without_assertion}")
 ```
 
 ### 3. Contexto Clínico
@@ -297,7 +342,7 @@ print(f"Relações órfãs: {orphan_relations}")
 ```python
 # Análise por documento
 doc_analysis = df.groupby('document_id').agg({
-    'entity_id': 'count',
+    'entity_id': 'nunique',
     'label': lambda x: list(x.unique()),
     'patient_id': 'first'
 })
@@ -313,123 +358,38 @@ print(richest_docs.head(10))
 
 ## Exemplos de Análises Avançadas
 
-### 1. Análise de Correlação
+### Trajetória de Exames por Paciente
+
+A média de um exame por mês mistura pacientes diferentes a cada período. Para acompanhar a evolução, olhe os valores de cada paciente ao longo do tempo.
+
+> **Atenção**: `document_date` é a data do documento, não necessariamente a do exame. Um resultado pode ser transcrito em documentos posteriores; por isso, o exemplo remove valores repetidos do mesmo paciente.
 
 ```python
-# Correlação entre biomarcadores (exemplo)
-biomarker_correlation = biomarkers.pivot_table(
-    index='patient_id',
-    columns='normalized_entity',
-    values='numeric_value',
-    aggfunc='mean'
-).corr()
+# Medida com mais pacientes
+marker = biomarkers.groupby('marker')['patient_id'].nunique().idxmax()
 
-# Visualizar correlação
-import seaborn as sns
-plt.figure(figsize=(10, 8))
-sns.heatmap(biomarker_correlation, annot=True, cmap='coolwarm', center=0)
-plt.title('Correlação entre Biomarcadores')
-plt.tight_layout()
-plt.show()
-```
+values = (
+    biomarkers[biomarkers['marker'] == marker]
+    .drop_duplicates(['patient_id', 'numeric_value'])
+    .sort_values('document_date')
+)
+# Dias desde a primeira medida do paciente
+values['days'] = (values['document_date'] - values.groupby('patient_id')['document_date'].transform('min')).dt.days
 
-### 2. Análise de Clusters
+# Pacientes com pelo menos 2 medidas
+values = values[values.groupby('patient_id')['patient_id'].transform('size') >= 2]
 
-```python
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
+plt.figure(figsize=(12, 6))
+for patient_id, group in values.groupby('patient_id'):
+    plt.plot(group['days'], group['numeric_value'], marker='o', alpha=0.4)
 
-# Preparar dados para clustering
-biomarker_pivot = biomarkers.pivot_table(
-    index='patient_id',
-    columns='normalized_entity',
-    values='numeric_value',
-    aggfunc='mean'
-).fillna(0)
-
-# Normalizar dados
-scaler = StandardScaler()
-biomarker_scaled = scaler.fit_transform(biomarker_pivot)
-
-# Aplicar K-means
-kmeans = KMeans(n_clusters=3, random_state=42)
-clusters = kmeans.fit_predict(biomarker_scaled)
-
-# Adicionar clusters ao DataFrame
-biomarker_pivot['cluster'] = clusters
-print("Distribuição de clusters:")
-print(biomarker_pivot['cluster'].value_counts())
-```
-
-### 3. Análise de Séries Temporais
-
-```python
-# Análise temporal de biomarcadores
-temporal_biomarkers = biomarkers.copy()
-temporal_biomarkers['date'] = pd.to_datetime(temporal_biomarkers['document_date'])
-
-# Agrupar por mês e biomarcador
-monthly_biomarkers = temporal_biomarkers.groupby([
-    temporal_biomarkers['date'].dt.to_period('M'),
-    'normalized_entity'
-])['numeric_value'].mean().unstack()
-
-# Visualizar tendências
-plt.figure(figsize=(15, 8))
-for biomarker in monthly_biomarkers.columns[:5]:  # Top 5 biomarcadores
-    plt.plot(monthly_biomarkers.index, monthly_biomarkers[biomarker],
-             label=biomarker, marker='o')
-
-plt.title('Tendências Temporais de Biomarcadores')
-plt.xlabel('Mês')
-plt.ylabel('Valor Médio')
-plt.legend()
-plt.xticks(rotation=45)
+plt.title(f'Trajetória por Paciente: {marker}')
+plt.xlabel('Dias desde a primeira medida')
+plt.ylabel('Valor')
 plt.tight_layout()
 plt.show()
 ```
 
 ## Boas Práticas
 
-### 1. Documentação
-
-- **Mantenha registro** de todas as análises realizadas
-- **Documente limitações** e suposições
-- **Use versionamento** para código de análise
-- **Valide resultados** com especialistas clínicos
-
-### 2. Reprodutibilidade
-
-```python
-# Configurar seed para reprodutibilidade
-import random
-import numpy as np
-
-RANDOM_SEED = 42
-random.seed(RANDOM_SEED)
-np.random.seed(RANDOM_SEED)
-
-# Salvar configurações
-config = {
-    'random_seed': RANDOM_SEED,
-    'data_version': 'v1.0',
-    'analysis_date': pd.Timestamp.now().strftime('%Y-%m-%d'),
-    'python_version': '3.8+'
-}
-
-print("Configurações da análise:")
-for key, value in config.items():
-    print(f"  {key}: {value}")
-```
-
-### 3. Validação
-
-- **Sempre valide** resultados com especialistas clínicos
-- **Considere limitações** dos dados de PLN
-- **Documente incertezas** e limitações
-- **Use múltiplas fontes** quando possível
-
----
-
-**Anterior**: [Formato JSONL](./jsonl-format.md)  
-**Próximo**: [Limitações](./limitations.md)
+Recomendações de validação clínica, documentação e reprodutibilidade das análises estão em [Limitações e Considerações](./limitations.md#recomendacoes).

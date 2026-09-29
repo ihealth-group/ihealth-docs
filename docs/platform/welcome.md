@@ -1,5 +1,5 @@
 ---
-id: boas-vindas
+id: welcome
 title: Boas-vindas
 sidebar_label: Boas-vindas
 description: Apresentação da nova plataforma iHealth — a interface renovada, a evolução dos modelos de IA e um tour pelos módulos.

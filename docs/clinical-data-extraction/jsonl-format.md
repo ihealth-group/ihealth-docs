@@ -1,12 +1,14 @@
 # Formato JSONL
 
+Esta página descreve o arquivo JSONL da extração, em que cada linha é um documento com suas entidades agrupadas, e traz exemplos de código em Python para ler e analisar os dados. É indicada para quem precisa preservar o contexto do documento ou trabalhar com as relações entre entidades.
+
 ## Características
 
-- **Granularidade**: Cada linha = 1 documento completo
-- **Estrutura**: Dados aninhados preservando hierarquia original
-- **Uso recomendado**: Análises por documento, preservação de contexto clínico
+- **Granularidade**: cada linha corresponde a 1 documento completo
+- **Estrutura**: dados aninhados, preservando a hierarquia original
+- **Uso recomendado**: análises por documento e preservação do contexto clínico
 
-> **Relação com a Estrutura dos Dados**: Este formato JSONL implementa a mesma estrutura de dados descrita em [Estrutura dos Dados](./data-structure.md), mas com organizações aninhadas específicas que preservam melhor o contexto clínico original. Os campos básicos permanecem os mesmos, mas são agrupados e estruturados de forma hierárquica.
+> **Relação com a Estrutura dos Dados**: o JSONL traz os mesmos campos descritos em [Estrutura dos Dados](./data-structure.md), mas agrupados de forma hierárquica, o que preserva melhor o contexto clínico original.
 
 ## Estrutura do Arquivo JSONL
 
@@ -20,16 +22,15 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
   "document_date": "2023-05-31 13:15:47",
   "patient_id": "patient_abc123",
   "case_id": "case_xyz789",
-  "gender": "MALE",
+  "gender": "FEMALE",
   "birthdate": "1980-05-15 00:00:00",
   "death": "N",
   "provider_state_code": "SP",
-  "provider_type": "Convênio ou Particular",
+  "provider_type": "Público",
   "preds": {
     "clinical_entities": [...],
     "biomarkers": [...],
     "lab_tests": [...],
-    "vital_signs": [...],
     "entities_relations": [...]
   }
 }
@@ -37,36 +38,25 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
 
 ## Estrutura Aninhada das Entidades
 
-> **Importante**: O formato JSONL preserva estruturas aninhadas que não estão presentes no formato CSV. Estas estruturas permitem uma representação mais rica e contextualizada dos dados clínicos, mantendo a hierarquia original dos documentos.
+> **Importante**: o formato JSONL preserva estruturas aninhadas que não existem no CSV. Elas permitem uma representação mais rica e contextualizada dos dados clínicos, mantendo a hierarquia original dos documentos.
 
 ### Estruturas Aninhadas Específicas do JSONL
 
-#### 1. Objeto `el` (Entity Linking) - Entidades Clínicas
+#### 1. Objeto `result`: Biomarcadores e Exames
 
-Para entidades clínicas com terminologia padronizada, o JSONL utiliza um objeto aninhado `el` que contém:
+Os [campos estruturados](./data-structure.md#campos-estruturados-de-biomarcadores-e-exames) de biomarcadores e exames ficam divididos em dois níveis:
 
-- `terminology`: Sistema de codificação (CID-10, ATC, TUSS)
-- `term_code`: Código específico da terminologia
-- `term_desc`: Descrição padronizada do termo
+- **No nível da entidade**: `normalized_entity`, `specific_marker` e `method`
+- **Dentro de `result`**: `detection_status`, `numeric_value`, `unit` e, apenas em biomarcadores, `score`
 
-#### 2. Objeto `result` - Biomarcadores, Exames e Sinais Vitais
+#### 2. Agrupamento por Categoria
 
-Para entidades com valores estruturados, o JSONL utiliza um objeto aninhado `result` que contém:
+O JSONL organiza as entidades em grupos dentro do objeto `preds`:
 
-- `numeric_value`: Valor numérico (quando disponível)
-- `unit`: Unidade de medida
-- `detection_status`: Status de detecção (para biomarcadores e exames)
-- `condition`: Condições associadas (para sinais vitais)
-
-#### 3. Agrupamento por Categoria
-
-O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
-
-- `clinical_entities`: Doenças, sintomas, procedimentos, etc.
-- `biomarkers`: Biomarcadores com valores estruturados
-- `lab_tests`: Exames laboratoriais
-- `vital_signs`: Sinais vitais e medidas clínicas
-- `entities_relations`: Relações entre entidades
+- `clinical_entities`: entidades das demais categorias (doenças, achados clínicos, fármacos, procedimentos etc.)
+- `biomarkers`: biomarcadores (`BIOMARKER`)
+- `lab_tests`: exames laboratoriais (`LAB_TEST`)
+- `entities_relations`: relações entre entidades
 
 ### 1. Entidades Clínicas (`clinical_entities`)
 
@@ -74,14 +64,15 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 "clinical_entities": [
   {
     "entity_id": "doc_123_45",
-    "entity": "hipertensão",
+    "entity": "câncer de mama",
     "label": "DISEASE",
-    "assertion": "PRESENTE",
-    "el": {
-      "terminology": "CID-10",
-      "term_code": "I10",
-      "term_desc": "Hipertensão arterial essencial"
-    }
+    "assertion": "PRESENT"
+  },
+  {
+    "entity_id": "doc_123_60",
+    "entity": "mama esquerda",
+    "label": "BODY_PART",
+    "assertion": ""
   }
 ]
 ```
@@ -92,15 +83,16 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 "biomarkers": [
   {
     "entity_id": "doc_123_120",
-    "entity": "HER2 positivo",
+    "entity": "HER2 3+",
     "label": "BIOMARKER",
     "normalized_entity": "HER2",
     "specific_marker": "",
-    "loinc_code": "33747-0",
+    "method": "imuno-histoquímica",
     "result": {
+      "detection_status": "POS",
+      "score": "3+",
       "numeric_value": "",
-      "unit": "",
-      "detection_status": "POS"
+      "unit": ""
     }
   },
   {
@@ -109,11 +101,12 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
     "label": "BIOMARKER",
     "normalized_entity": "KI67",
     "specific_marker": "",
-    "loinc_code": "33747-0",
+    "method": "",
     "result": {
+      "detection_status": "",
+      "score": "",
       "numeric_value": 25,
-      "unit": "%",
-      "detection_status": ""
+      "unit": "%"
     }
   }
 ]
@@ -128,10 +121,12 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
     "entity": "plaquetas 150.000/mm³",
     "label": "LAB_TEST",
     "normalized_entity": "Plaquetas",
+    "specific_marker": "",
+    "method": "",
     "result": {
+      "detection_status": "",
       "numeric_value": 150000.0,
-      "unit": "mm³",
-      "detection_status": ""
+      "unit": "mm³"
     }
   },
   {
@@ -139,62 +134,37 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
     "entity": "vitamina D 25 ng/mL",
     "label": "LAB_TEST",
     "normalized_entity": "Vitamina D",
+    "specific_marker": "",
+    "method": "",
     "result": {
+      "detection_status": "",
       "numeric_value": 25.0,
-      "unit": "ng/mL",
-      "detection_status": ""
+      "unit": "ng/mL"
     }
   }
 ]
 ```
 
-### 4. Sinais Vitais (`vital_signs`)
-
-```json
-"vital_signs": [
-  {
-    "entity_id": "doc_123_300",
-    "entity": "altura 1.70 m",
-    "label": "CLINICAL_ATT",
-    "normalized_entity": "Altura",
-    "result": {
-      "numeric_value": 1.7,
-      "unit": "m",
-      "condition": ""
-    }
-  },
-  {
-    "entity_id": "doc_123_310",
-    "entity": "peso 75 kg",
-    "label": "CLINICAL_ATT",
-    "normalized_entity": "Peso",
-    "result": {
-      "numeric_value": 75.0,
-      "unit": "kg",
-      "condition": ""
-    }
-  }
-]
-```
-
-### 5. Relações entre Entidades (`entities_relations`)
+### 4. Relações entre Entidades (`entities_relations`)
 
 ```json
 "entities_relations": [
   {
-    "relation_type": "disease_has_finding",
-    "head_entity": "hipertensão",
-    "tail_entity": "pressão alta"
+    "relation_type": "disease_has_biomarker",
+    "head_entity": "câncer de mama",
+    "tail_entity": "HER2 3+"
   },
   {
-    "relation_type": "may_treat",
-    "head_entity": "metformina",
-    "tail_entity": "diabetes"
+    "relation_type": "disease_has_anatomic_site",
+    "head_entity": "câncer de mama",
+    "tail_entity": "mama esquerda"
   }
 ]
 ```
 
 ## Trabalhando com JSONL
+
+> Os exemplos desta página são sequenciais: cada bloco usa a variável `data` criada em "Carregando Dados".
 
 ### Carregando Dados
 
@@ -221,11 +191,6 @@ for doc in data:
         print(f"  Entidade: {entity['entity']}")
         print(f"  Label: {entity['label']}")
         print(f"  Assertion: {entity['assertion']}")
-
-        # Acessar terminologia
-        if 'el' in entity:
-            print(f"  Terminologia: {entity['el']['terminology']}")
-            print(f"  Código: {entity['el']['term_code']}")
         print("---")
 ```
 
@@ -238,14 +203,15 @@ for doc in data:
         print(f"ID: {biomarker['entity_id']}")
         print(f"Biomarcador: {biomarker['entity']}")
         print(f"Normalizado: {biomarker['normalized_entity']}")
-        print(f"LOINC: {biomarker['loinc_code']}")
+        print(f"Método: {biomarker['method']}")
 
         # Acessar resultado
         if 'result' in biomarker:
             result = biomarker['result']
+            print(f"Status: {result['detection_status']}")
+            print(f"Score: {result['score']}")
             print(f"Valor: {result['numeric_value']}")
             print(f"Unidade: {result['unit']}")
-            print(f"Status: {result['detection_status']}")
         print("---")
 ```
 
@@ -258,30 +224,13 @@ for doc in data:
         print(f"ID: {lab_test['entity_id']}")
         print(f"Exame: {lab_test['entity']}")
         print(f"Normalizado: {lab_test['normalized_entity']}")
+        print(f"Método: {lab_test['method']}")
 
         if 'result' in lab_test:
             result = lab_test['result']
-            print(f"Valor: {result['numeric_value']}")
-            print(f"Unidade: {result['unit']}")
             print(f"Status: {result['detection_status']}")
-        print("---")
-```
-
-### Acessando Sinais Vitais
-
-```python
-# Acessar sinais vitais
-for doc in data:
-    for vital in doc['preds']['vital_signs']:
-        print(f"ID: {vital['entity_id']}")
-        print(f"Sinal Vital: {vital['entity']}")
-        print(f"Normalizado: {vital['normalized_entity']}")
-
-        if 'result' in vital:
-            result = vital['result']
             print(f"Valor: {result['numeric_value']}")
             print(f"Unidade: {result['unit']}")
-            print(f"Condição: {result['condition']}")
         print("---")
 ```
 
@@ -299,77 +248,89 @@ for doc in data:
 
 ## Análises com JSONL
 
-### Análise por Documento
+### Resumo por Documento e Jornada do Paciente
 
 ```python
-# Análise de documentos
-for doc in data:
-    doc_id = doc['document_id']
-    patient_id = doc['patient_id']
+import pandas as pd
 
-    # Contar entidades por tipo
-    clinical_count = len(doc['preds']['clinical_entities'])
-    biomarker_count = len(doc['preds']['biomarkers'])
-    lab_count = len(doc['preds']['lab_tests'])
-    vital_count = len(doc['preds']['vital_signs'])
-    relation_count = len(doc['preds']['entities_relations'])
+# Uma linha por documento, com a quantidade de itens em cada grupo
+docs = pd.DataFrame([
+    {
+        'document_id': doc['document_id'],
+        'patient_id': doc['patient_id'],
+        'document_date': doc['document_date'],
+        **{group: len(items) for group, items in doc['preds'].items()},
+    }
+    for doc in data
+])
+docs['document_date'] = pd.to_datetime(docs['document_date'])
 
-    print(f"Documento {doc_id} (Paciente {patient_id}):")
-    print(f"  Entidades clínicas: {clinical_count}")
-    print(f"  Biomarcadores: {biomarker_count}")
-    print(f"  Exames laboratoriais: {lab_count}")
-    print(f"  Sinais vitais: {vital_count}")
-    print(f"  Relações: {relation_count}")
-    print("---")
+print(docs.describe())
+
+# Jornada do paciente: documentos em ordem cronológica
+patient_id = docs['patient_id'].iloc[0]
+print(docs[docs['patient_id'] == patient_id].sort_values('document_date'))
 ```
 
-### Extraindo Dados para Análise
+### Convertendo para DataFrames
+
+Para análises tabulares, cada grupo de `preds` pode virar um DataFrame, com os dados do documento em cada linha:
 
 ```python
-# Extrair todos os biomarcadores
-all_biomarkers = []
-for doc in data:
-    for biomarker in doc['preds']['biomarkers']:
-        biomarker_data = {
-            'document_id': doc['document_id'],
-            'patient_id': doc['patient_id'],
-            'entity_id': biomarker['entity_id'],
-            'entity': biomarker['entity'],
-            'normalized_entity': biomarker['normalized_entity'],
-            'loinc_code': biomarker['loinc_code']
-        }
-
-        if 'result' in biomarker:
-            biomarker_data.update(biomarker['result'])
-
-        all_biomarkers.append(biomarker_data)
-
-# Converter para DataFrame
 import pandas as pd
-biomarkers_df = pd.DataFrame(all_biomarkers)
+
+def to_dataframe(data, group):
+    """Transforma um grupo de preds (ex.: 'biomarkers') em DataFrame."""
+    df = pd.json_normalize(
+        data,
+        record_path=['preds', group],
+        meta=['document_id', 'document_date', 'patient_id'],
+    )
+    # Remove o prefixo "result." dos campos estruturados
+    df.columns = [col.replace('result.', '') for col in df.columns]
+    return df
+
+clinical_df = to_dataframe(data, 'clinical_entities')
+biomarkers_df = to_dataframe(data, 'biomarkers')
+lab_tests_df = to_dataframe(data, 'lab_tests')
+relations_df = to_dataframe(data, 'entities_relations')
+
+# No JSONL, campos vazios vêm como "": converta os valores numéricos antes de analisar
+biomarkers_df['numeric_value'] = pd.to_numeric(biomarkers_df['numeric_value'], errors='coerce')
+lab_tests_df['numeric_value'] = pd.to_numeric(lab_tests_df['numeric_value'], errors='coerce')
+
 print(biomarkers_df.head())
 ```
 
 ### Análise de Comorbidades
 
 ```python
-# Identificar pacientes com múltiplas condições
-patient_conditions = {}
+from collections import Counter, defaultdict
+from itertools import combinations
+
+# Doenças do paciente: presentes ou em histórico (doenças crônicas costumam vir como "histórico de ...").
+# Atenção: DISEASE não tem normalized_entity. O texto é usado como veio do documento
+# (em minúsculas), então sinônimos como "diabetes" e "DM2" contam como doenças diferentes.
+# A doença usada na seleção da coorte aparece em quase todos os pacientes e domina os pares.
+# Liste aqui os termos dela para deixá-la de fora.
+inclusion_terms = set()  # ex.: {'câncer de mama', 'neoplasia de mama'}
+
+patient_diseases = defaultdict(set)
 for doc in data:
-    patient_id = doc['patient_id']
-    conditions = []
-
     for entity in doc['preds']['clinical_entities']:
-        if entity['label'] == 'DISEASE':
-            conditions.append(entity['entity'])
+        name = entity['entity'].lower()
+        if (entity['label'] == 'DISEASE'
+                and entity.get('assertion') in ('PRESENT', 'HISTORY')
+                and name not in inclusion_terms):
+            patient_diseases[doc['patient_id']].add(name)
 
-    if patient_id not in patient_conditions:
-        patient_conditions[patient_id] = []
-    patient_conditions[patient_id].extend(conditions)
+multi = {p: d for p, d in patient_diseases.items() if len(d) > 1}
+print(f"Pacientes com mais de uma doença: {len(multi)}")
 
-# Pacientes com múltiplas condições
-comorbidities = {k: v for k, v in patient_conditions.items() if len(set(v)) > 1}
-print(f"Pacientes com comorbidades: {len(comorbidities)}")
+# Pares de doenças mais frequentes no mesmo paciente
+pair_counts = Counter(pair for d in multi.values() for pair in combinations(sorted(d), 2))
+for (a, b), n in pair_counts.most_common(10):
+    print(f"  {a} + {b}: {n} pacientes")
 ```
 
 ## Diferenças entre CSV e JSONL
@@ -380,17 +341,17 @@ print(f"Pacientes com comorbidades: {len(comorbidities)}")
 
 ```json
 "result": {
+  "detection_status": "",
   "numeric_value": 12.5,
-  "unit": "g/dL",
-  "detection_status": "normal"
+  "unit": "g/dL"
 }
 ```
 
 **CSV** (achatado):
 
 ```csv
-numeric_value,unit,detection_status
-12.5,g/dL,normal
+detection_status,numeric_value,unit
+,12.5,g/dL
 ```
 
 ### 2. Formato de Relações
@@ -402,9 +363,9 @@ Uma diferença importante entre os formatos está na representação das relaç�
 ```json
 "entities_relations": [
   {
-    "relation_type": "disease_has_finding",
-    "head_entity": "hipertensão",
-    "tail_entity": "pressão alta"
+    "relation_type": "may_treat",
+    "head_entity": "metformina",
+    "tail_entity": "diabetes"
   }
 ]
 ```
@@ -412,10 +373,12 @@ Uma diferença importante entre os formatos está na representação das relaç�
 #### CSV - Relações Achatadas
 
 ```csv
-relation_type,relation_entity,relation_position
-disease_has_finding,pressão alta,tail
-disease_has_finding,hipertensão,head
+entity,relation_type,relation_entity,relation_position
+metformina,may_treat,diabetes,head
+diabetes,may_treat,metformina,tail
 ```
+
+No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`may_treat`). No JSONL, a relação aparece uma vez, com o medicamento como `head_entity` e a doença como `tail_entity`. No CSV, cada entidade tem sua própria linha: `relation_entity` indica a outra entidade da relação e `relation_position` indica a posição da entidade da linha (`head` ou `tail`).
 
 **Principais Diferenças:**
 
@@ -426,58 +389,16 @@ disease_has_finding,hipertensão,head
 | **Processamento** | Acesso direto às entidades relacionadas  | Necessário combinar campos para entender a relação       |
 | **Linhas**        | Uma linha por relação completa           | Uma linha por "lado" da relação                          |
 
-### 3. Considerações Importantes
-
-#### Impacto nas Análises
-
-**Análise de Relações:**
-
-- **JSONL**: Mais intuitivo para análise de relacionamentos diretos
-- **CSV**: Requer agregação e reconstrução das relações
-
-**Performance:**
-
-- **JSONL**: Melhor para análises por documento completo
-- **CSV**: Melhor para análises estatísticas de entidades individuais
-
-**Complexidade de Processamento:**
-
-- **JSONL**: Estrutura mais complexa, mas mais rica em contexto
-- **CSV**: Estrutura mais simples, mas perde informações de relacionamento
-
-#### Recomendações de Uso
+### 3. Quando Usar JSONL ou CSV
 
 **Use JSONL quando:**
 
-- Analisando comorbidades e relacionamentos entre condições
-- Estudando padrões por documento ou paciente
-- Preservando contexto clínico completo
-- Trabalhando com análises de rede de entidades
+- a análise depende do contexto completo do documento ou da jornada do paciente
+- o foco são as relações entre entidades (por exemplo, doença e biomarcador, fármaco e condição)
+- você quer a relação explícita, com `head_entity` e `tail_entity`
 
 **Use CSV quando:**
 
-- Fazendo análises estatísticas de entidades individuais
-- Trabalhando com ferramentas que preferem dados tabulares
-- Realizando análises de frequência e distribuição
-- Processando grandes volumes de dados com foco em performance
-
-### Vantagens do JSONL
-
-1. **Preservação de Contexto**: Mantém a estrutura original dos dados
-2. **Flexibilidade**: Permite análises mais complexas
-3. **Hierarquia**: Preserva relacionamentos entre entidades
-4. **Eficiência**: Uma linha por documento facilita processamento
-5. **Relações Explícitas**: Representação clara de relacionamentos entre entidades
-
-### Quando Usar JSONL
-
-- Análises que requerem contexto completo do documento
-- Estudos de comorbidades e relacionamentos
-- Análises por paciente ou caso clínico
-- Preservação de estrutura hierárquica
-- Análises de rede de entidades clínicas
-
----
-
-**Anterior**: [Formato CSV](./csv-format.md)  
-**Próximo**: [Diretrizes de Análise](./analysis-guidelines.md)
+- o foco são estatísticas de entidades individuais (frequência, distribuição)
+- suas ferramentas trabalham melhor com dados tabulares
+- você prefere uma estrutura simples, sem aninhamento

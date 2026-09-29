@@ -91,7 +91,7 @@ const config = {
               },
               {
                 label: "Plataforma iHealth",
-                to: "/plataforma/boas-vindas",
+                to: "/platform/welcome",
               },
               {
                 label: "Extração de Dados Clínicos",
@@ -103,8 +103,12 @@ const config = {
             title: "iHealth",
             items: [
               {
+                label: "Acessar a Plataforma",
+                href: "https://plataforma.ihealthgroup.tec.br/",
+              },
+              {
                 label: "Website",
-                href: "https://www.ihealthgroup.com.br/",
+                href: "https://ihealthgroup.com.br/",
               },
               {
                 label: "LinkedIn",
