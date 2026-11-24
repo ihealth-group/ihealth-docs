@@ -5,7 +5,7 @@ iHealth's **Clinical Data Extraction** delivers structured data from our clinica
 This documentation explains how the data is organized, delivered and analyzed.
 
 :::info v1 documentation
-For extractions delivered up to **September 20, 2026**, see the [v1 documentation](/clinical-data-extraction/v1/intro) (in Portuguese).
+For extractions delivered up to **September 20, 2026**, see the [v1 documentation](./v1/intro.md).
 :::
 
 :::note Language of the data

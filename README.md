@@ -48,7 +48,7 @@ A tagline e o copyright ficam no `docusaurus.config.js`, escolhidos pela variáv
 
 ### Ao alterar uma página
 
-Toda alteração em `docs/` precisa da alteração equivalente no arquivo de mesmo caminho em `i18n/en/docusaurus-plugin-content-docs/current/`. Uma página sem arquivo em inglês aparece em português no site em inglês (é o caso, hoje, de `docs/clinical-data-extraction/v1/`).
+Toda alteração em `docs/` precisa da alteração equivalente no arquivo de mesmo caminho em `i18n/en/docusaurus-plugin-content-docs/current/`. Uma página sem arquivo em inglês aparece em português no site em inglês. Hoje todas as páginas, inclusive a v1, têm versão em inglês.
 
 Regras da tradução:
 
