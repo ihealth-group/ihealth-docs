@@ -7,16 +7,16 @@ pagination_next: clinical-data-extraction/v1/analysis-guidelines
 # Entrega dos Dados
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../delivery.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/delivery).
 :::
 
-## Visão Geral
+## Visão Geral {#visão-geral}
 
 Os dados extraídos são entregues em **lotes de arquivos** para facilitar o processamento e controle adequado do volume de informações. Esta abordagem permite um gerenciamento mais eficiente dos dados e melhor controle de qualidade durante o processo de entrega.
 
-## Estrutura de Entrega
+## Estrutura de Entrega {#estrutura-de-entrega}
 
-### Organização em Lotes
+### Organização em Lotes {#organização-em-lotes}
 
 Os dados são organizados em lotes com as seguintes características:
 
@@ -24,23 +24,23 @@ Os dados são organizados em lotes com as seguintes características:
 - **Controle de volume**: Permite processamento eficiente e validação adequada
 - **Flexibilidade**: Tamanho pode ser ajustado conforme necessidades específicas do projeto
 
-### Formatos de Arquivo
+### Formatos de Arquivo {#formatos-de-arquivo}
 
 Cada lote contém arquivos nos dois formatos disponíveis:
 
-#### Arquivos CSV
+#### Arquivos CSV {#arquivos-csv}
 
 - **Nomenclatura**: `projectname_patients_part_001.csv`, `projectname_patients_part_002.csv`, etc.
 - **Conteúdo**: Entidades clínicas "achatadas" em formato tabular
 - **Granularidade**: Uma linha por entidade clínica
 
-#### Arquivos JSONL
+#### Arquivos JSONL {#arquivos-jsonl}
 
 - **Nomenclatura**: `projectname_patients_part_001.jsonl`, `projectname_patients_part_002.jsonl`, etc.
 - **Conteúdo**: Documentos completos com estrutura hierárquica
 - **Granularidade**: Uma linha por documento clínico
 
-### Variação no Número de Linhas
+### Variação no Número de Linhas {#variação-no-número-de-linhas}
 
 O número de linhas em cada arquivo varia significativamente devido a:
 
@@ -48,7 +48,7 @@ O número de linhas em cada arquivo varia significativamente devido a:
 - **Densidade de entidades**: Documentos podem conter diferentes quantidades de entidades extraídas
 - **Complexidade clínica**: Casos mais complexos tendem a gerar mais entidades
 
-#### Exemplo de Variação
+#### Exemplo de Variação {#exemplo-de-variação}
 
 ```text
 Parte 001: 15 pacientes
@@ -60,9 +60,9 @@ Parte 002: 23 pacientes
 └── JSONL: 156 linhas (média de 7 documentos por paciente)
 ```
 
-## Local de Entrega
+## Local de Entrega {#local-de-entrega}
 
-### Definição do Local
+### Definição do Local {#definição-do-local}
 
 O local de upload/entrega dos dados é definido durante a **contratação da extração** e pode incluir:
 
@@ -70,17 +70,17 @@ O local de upload/entrega dos dados é definido durante a **contratação da ext
 - **SFTP/Secure Transfer**: Servidor seguro para transferência de arquivos
 - **Plataforma específica**: Conforme preferência e infraestrutura do cliente
 
-### Configurações de Acesso
+### Configurações de Acesso {#configurações-de-acesso}
 
 - **Credenciais**: Fornecidas durante o processo de contratação
 - **Permissões**: Acesso configurado conforme necessidades do projeto
 - **Segurança**: Transferência criptografada e logs de acesso
 
-## Processamento dos Lotes
+## Processamento dos Lotes {#processamento-dos-lotes}
 
-### Estratégias Recomendadas
+### Estratégias Recomendadas {#estratégias-recomendadas}
 
-#### 1. Processamento Sequencial
+#### 1. Processamento Sequencial {#1-processamento-sequencial}
 
 ```python
 import pandas as pd
@@ -101,7 +101,7 @@ combined_df = pd.concat(all_data, ignore_index=True)
 print(f"Total de registros: {len(combined_df)}")
 ```
 
-#### 2. Processamento Paralelo
+#### 2. Processamento Paralelo {#2-processamento-paralelo}
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
@@ -125,7 +125,7 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 combined_df = pd.concat(results, ignore_index=True)
 ```
 
-#### 3. Processamento JSONL por Lote
+#### 3. Processamento JSONL por Lote {#3-processamento-jsonl-por-lote}
 
 ```python
 import glob
@@ -153,9 +153,9 @@ for file in jsonl_files:
 print(f"Total de documentos: {len(all_documents)}")
 ```
 
-### Validação de Integridade
+### Validação de Integridade {#validação-de-integridade}
 
-#### Verificação de Lotes
+#### Verificação de Lotes {#verificação-de-lotes}
 
 ```python
 def validate_batch_integrity(csv_file, jsonl_file):
@@ -188,27 +188,27 @@ for csv_file, jsonl_file in zip(csv_files, jsonl_files):
     validate_batch_integrity(csv_file, jsonl_file)
 ```
 
-## Considerações Importantes
+## Considerações Importantes {#considerações-importantes}
 
-### 1. Ordem dos Lotes
+### 1. Ordem dos Lotes {#1-ordem-dos-lotes}
 
 - **Sequência**: Os lotes são numerados sequencialmente (001, 002, 003...)
 - **Independência**: Cada lote é independente e pode ser processado separadamente
 - **Completude**: Todos os lotes devem ser processados para análise completa
 
-### 2. Qualidade dos Dados
+### 2. Qualidade dos Dados {#2-qualidade-dos-dados}
 
 - **Validação**: Cada lote passa por validação de qualidade antes da entrega
 - **Consistência**: Estrutura de dados mantida entre todos os lotes
 - **Integridade**: Verificação de integridade entre formatos CSV e JSONL
 
-### 3. Segurança
+### 3. Segurança {#3-segurança}
 
 - **Criptografia**: Transferência criptografada para o local de entrega
 - **Acesso**: Credenciais seguras e controle de acesso
 - **Auditoria**: Logs de acesso e transferência mantidos
 
-### 4. Suporte
+### 4. Suporte {#4-suporte}
 
 - **Documentação**: Esta documentação já contém todas as informações necessárias sobre os dados e como processá-los
 - **Dúvidas**: Para qualquer dúvida adicional, entre em contato com nossa equipe técnica

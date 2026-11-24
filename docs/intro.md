@@ -4,21 +4,21 @@ slug: /
 
 # Bem-vindo à Documentação
 
-## Sobre a iHealth
+## Sobre a iHealth {#sobre-a-ihealth}
 
 A **iHealth** é uma empresa do grupo DoctorAssistant.ai especializada em usar inteligência artificial para transformar dados clínicos em inteligência aplicada. Estruturamos e analisamos dados de prontuários eletrônicos para oferecer soluções à indústria farmacêutica, a hospitais e a operadoras de saúde.
 
-## Nossa Missão
+## Nossa Missão {#nossa-missão}
 
 Transformar dados clínicos em inteligência estratégica por meio de tecnologia avançada, conectando informações de mundo real às decisões clínicas e estratégicas de forma ética, segura e inteligente.
 
-## Data Lake Colaborativo
+## Data Lake Colaborativo {#data-lake-colaborativo}
 
 Nosso data lake colaborativo reúne dados clínicos altamente capilares de hospitais brasileiros em todas as regiões do país. Com ele, entregamos soluções que transformam a forma como a saúde é gerenciada e pesquisada.
 
-## Documentação Disponível
+## Documentação Disponível {#documentação-disponível}
 
-### Plataforma iHealth
+### Plataforma iHealth {#plataforma-ihealth}
 
 A **Plataforma iHealth** lê evoluções, laudos, sumários de alta e pareceres com modelos de inteligência artificial e coloca o conteúdo estruturado ao seu alcance em linguagem clínica, para montar coortes, explorar populações e sustentar análises.
 
@@ -32,7 +32,7 @@ A **Plataforma iHealth** lê evoluções, laudos, sumários de alta e pareceres 
 
 [**Ver documentação da Plataforma →**](./platform/welcome.md)
 
-### Extração de Dados Clínicos
+### Extração de Dados Clínicos {#extração-de-dados-clínicos}
 
 A **Extração de Dados Clínicos** disponibiliza dados estruturados e anonimizados do nosso banco clínico, selecionados conforme critérios definidos pelo cliente (diagnósticos, medicamentos, procedimentos etc.), para análise por cientistas e analistas de dados.
 
@@ -44,14 +44,14 @@ A **Extração de Dados Clínicos** disponibiliza dados estruturados e anonimiza
 
 [**Ver documentação da Extração →**](./clinical-data-extraction/intro)
 
-## Nossos Valores
+## Nossos Valores {#nossos-valores}
 
 - **Ética**: uso responsável de dados clínicos
 - **Segurança**: proteção e anonimização das informações
 - **Inovação**: tecnologia de ponta aplicada à saúde
 - **Impacto**: soluções que fazem diferença na prática clínica
 
-## Contato
+## Contato {#contato}
 
 - **Website**: [ihealthgroup.com.br](https://ihealthgroup.com.br)
 - **LinkedIn**: [iHealth Group](https://www.linkedin.com/company/ihealth-group/)

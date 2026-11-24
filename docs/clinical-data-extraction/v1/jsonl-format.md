@@ -7,10 +7,10 @@ pagination_next: clinical-data-extraction/v1/delivery
 # Formato JSONL
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../jsonl-format.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/jsonl-format).
 :::
 
-## Características
+## Características {#características}
 
 - **Granularidade**: Cada linha = 1 documento completo
 - **Estrutura**: Dados aninhados preservando hierarquia original
@@ -18,9 +18,9 @@ Esta documentação corresponde às extrações entregues **até 20/09/2026**. C
 
 > **Relação com a Estrutura dos Dados**: Este formato JSONL implementa a mesma estrutura de dados descrita em [Estrutura dos Dados](./data-structure.md), mas com organizações aninhadas específicas que preservam melhor o contexto clínico original. Os campos básicos permanecem os mesmos, mas são agrupados e estruturados de forma hierárquica.
 
-## Estrutura do Arquivo JSONL
+## Estrutura do Arquivo JSONL {#estrutura-do-arquivo-jsonl}
 
-### Formato Geral
+### Formato Geral {#formato-geral}
 
 Cada linha do arquivo JSONL contém um objeto JSON completo representando um documento:
 
@@ -45,13 +45,13 @@ Cada linha do arquivo JSONL contém um objeto JSON completo representando um doc
 }
 ```
 
-## Estrutura Aninhada das Entidades
+## Estrutura Aninhada das Entidades {#estrutura-aninhada-das-entidades}
 
 > **Importante**: O formato JSONL preserva estruturas aninhadas que não estão presentes no formato CSV. Estas estruturas permitem uma representação mais rica e contextualizada dos dados clínicos, mantendo a hierarquia original dos documentos.
 
-### Estruturas Aninhadas Específicas do JSONL
+### Estruturas Aninhadas Específicas do JSONL {#estruturas-aninhadas-específicas-do-jsonl}
 
-#### 1. Objeto `el` (Entity Linking) - Entidades Clínicas
+#### 1. Objeto `el` (Entity Linking) - Entidades Clínicas {#1-objeto-el-entity-linking---entidades-clínicas}
 
 Para entidades clínicas com terminologia padronizada, o JSONL utiliza um objeto aninhado `el` que contém:
 
@@ -59,7 +59,7 @@ Para entidades clínicas com terminologia padronizada, o JSONL utiliza um objeto
 - `term_code`: Código específico da terminologia
 - `term_desc`: Descrição padronizada do termo
 
-#### 2. Objeto `result` - Biomarcadores, Exames e Sinais Vitais
+#### 2. Objeto `result` - Biomarcadores, Exames e Sinais Vitais {#2-objeto-result---biomarcadores-exames-e-sinais-vitais}
 
 Para entidades com valores estruturados, o JSONL utiliza um objeto aninhado `result` que contém:
 
@@ -68,7 +68,7 @@ Para entidades com valores estruturados, o JSONL utiliza um objeto aninhado `res
 - `detection_status`: Status de detecção (para biomarcadores e exames)
 - `condition`: Condições associadas (para sinais vitais)
 
-#### 3. Agrupamento por Categoria
+#### 3. Agrupamento por Categoria {#3-agrupamento-por-categoria}
 
 O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 
@@ -78,7 +78,7 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 - `vital_signs`: Sinais vitais e medidas clínicas
 - `entities_relations`: Relações entre entidades
 
-### 1. Entidades Clínicas (`clinical_entities`)
+### 1. Entidades Clínicas (`clinical_entities`) {#1-entidades-clínicas-clinical_entities}
 
 ```json
 "clinical_entities": [
@@ -96,7 +96,7 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 ]
 ```
 
-### 2. Biomarcadores (`biomarkers`)
+### 2. Biomarcadores (`biomarkers`) {#2-biomarcadores-biomarkers}
 
 ```json
 "biomarkers": [
@@ -129,7 +129,7 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 ]
 ```
 
-### 3. Exames Laboratoriais (`lab_tests`)
+### 3. Exames Laboratoriais (`lab_tests`) {#3-exames-laboratoriais-lab_tests}
 
 ```json
 "lab_tests": [
@@ -158,7 +158,7 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 ]
 ```
 
-### 4. Sinais Vitais (`vital_signs`)
+### 4. Sinais Vitais (`vital_signs`) {#4-sinais-vitais-vital_signs}
 
 ```json
 "vital_signs": [
@@ -187,7 +187,7 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 ]
 ```
 
-### 5. Relações entre Entidades (`entities_relations`)
+### 5. Relações entre Entidades (`entities_relations`) {#5-relações-entre-entidades-entities_relations}
 
 ```json
 "entities_relations": [
@@ -204,9 +204,9 @@ O JSONL organiza as entidades em grupos específicos dentro do objeto `preds`:
 ]
 ```
 
-## Trabalhando com JSONL
+## Trabalhando com JSONL {#trabalhando-com-jsonl}
 
-### Carregando Dados
+### Carregando Dados {#carregando-dados}
 
 ```python
 import json
@@ -220,7 +220,7 @@ with open('dados_extraidos.jsonl', 'r', encoding='utf-8') as f:
 print(f"Total de documentos: {len(data)}")
 ```
 
-### Acessando Entidades Clínicas
+### Acessando Entidades Clínicas {#acessando-entidades-clínicas}
 
 ```python
 # Acessar entidades clínicas
@@ -239,7 +239,7 @@ for doc in data:
         print("---")
 ```
 
-### Acessando Biomarcadores
+### Acessando Biomarcadores {#acessando-biomarcadores}
 
 ```python
 # Acessar biomarcadores
@@ -259,7 +259,7 @@ for doc in data:
         print("---")
 ```
 
-### Acessando Exames Laboratoriais
+### Acessando Exames Laboratoriais {#acessando-exames-laboratoriais}
 
 ```python
 # Acessar exames laboratoriais
@@ -277,7 +277,7 @@ for doc in data:
         print("---")
 ```
 
-### Acessando Sinais Vitais
+### Acessando Sinais Vitais {#acessando-sinais-vitais}
 
 ```python
 # Acessar sinais vitais
@@ -295,7 +295,7 @@ for doc in data:
         print("---")
 ```
 
-### Acessando Relações
+### Acessando Relações {#acessando-relações}
 
 ```python
 # Acessar relações
@@ -307,9 +307,9 @@ for doc in data:
         print("---")
 ```
 
-## Análises com JSONL
+## Análises com JSONL {#análises-com-jsonl}
 
-### Análise por Documento
+### Análise por Documento {#análise-por-documento}
 
 ```python
 # Análise de documentos
@@ -333,7 +333,7 @@ for doc in data:
     print("---")
 ```
 
-### Extraindo Dados para Análise
+### Extraindo Dados para Análise {#extraindo-dados-para-análise}
 
 ```python
 # Extrair todos os biomarcadores
@@ -360,7 +360,7 @@ biomarkers_df = pd.DataFrame(all_biomarkers)
 print(biomarkers_df.head())
 ```
 
-### Análise de Comorbidades
+### Análise de Comorbidades {#análise-de-comorbidades}
 
 ```python
 from collections import Counter, defaultdict
@@ -386,9 +386,9 @@ for (a, b), n in pair_counts.most_common(10):
     print(f"  {a} + {b}: {n} pacientes")
 ```
 
-## Diferenças entre CSV e JSONL
+## Diferenças entre CSV e JSONL {#diferenças-entre-csv-e-jsonl}
 
-### 1. Estrutura de Resultados
+### 1. Estrutura de Resultados {#1-estrutura-de-resultados}
 
 **JSONL** (aninhado):
 
@@ -407,11 +407,11 @@ numeric_value,unit,detection_status
 12.5,g/dL,
 ```
 
-### 2. Formato de Relações
+### 2. Formato de Relações {#2-formato-de-relações}
 
 Uma diferença importante entre os formatos está na representação das relações entre entidades:
 
-#### JSONL - Relações Estruturadas
+#### JSONL - Relações Estruturadas {#jsonl---relações-estruturadas}
 
 ```json
 "entities_relations": [
@@ -423,7 +423,7 @@ Uma diferença importante entre os formatos está na representação das relaç�
 ]
 ```
 
-#### CSV - Relações Achatadas
+#### CSV - Relações Achatadas {#csv---relações-achatadas}
 
 ```csv
 entity,relation_type,relation_entity,relation_position
@@ -442,9 +442,9 @@ No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`ma
 | **Processamento** | Acesso direto às entidades relacionadas  | Necessário combinar campos para entender a relação       |
 | **Linhas**        | Uma linha por relação completa           | Uma linha por "lado" da relação                          |
 
-### 3. Considerações Importantes
+### 3. Considerações Importantes {#3-considerações-importantes}
 
-#### Impacto nas Análises
+#### Impacto nas Análises {#impacto-nas-análises}
 
 **Análise de Relações:**
 
@@ -461,7 +461,7 @@ No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`ma
 - **JSONL**: Estrutura mais complexa, mas mais rica em contexto
 - **CSV**: Estrutura mais simples, mas perde informações de relacionamento
 
-#### Recomendações de Uso
+#### Recomendações de Uso {#recomendações-de-uso}
 
 **Use JSONL quando:**
 
@@ -477,7 +477,7 @@ No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`ma
 - Realizando análises de frequência e distribuição
 - Processando grandes volumes de dados com foco em performance
 
-### Vantagens do JSONL
+### Vantagens do JSONL {#vantagens-do-jsonl}
 
 1. **Preservação de Contexto**: Mantém a estrutura original dos dados
 2. **Flexibilidade**: Permite análises mais complexas
@@ -485,7 +485,7 @@ No exemplo, o medicamento **metformina** pode tratar a doença **diabetes** (`ma
 4. **Eficiência**: Uma linha por documento facilita processamento
 5. **Relações Explícitas**: Representação clara de relacionamentos entre entidades
 
-### Quando Usar JSONL
+### Quando Usar JSONL {#quando-usar-jsonl}
 
 - Análises que requerem contexto completo do documento
 - Estudos de comorbidades e relacionamentos

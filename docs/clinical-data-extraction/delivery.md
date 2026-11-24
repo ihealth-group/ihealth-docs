@@ -2,13 +2,13 @@
 
 Esta página explica como os arquivos da extração são organizados e entregues, e traz exemplos de código para processar os lotes. É indicada para quem vai receber os arquivos e montar o carregamento dos dados.
 
-## Visão Geral
+## Visão Geral {#visão-geral}
 
 Os dados extraídos são entregues em **lotes de arquivos**, o que facilita o processamento e o controle do volume de informações. Essa abordagem permite gerenciar os dados com mais eficiência e controlar melhor a qualidade durante a entrega.
 
-## Estrutura de Entrega
+## Estrutura de Entrega {#estrutura-de-entrega}
 
-### Organização em Lotes
+### Organização em Lotes {#organização-em-lotes}
 
 Os dados são organizados em lotes com as seguintes características:
 
@@ -16,23 +16,23 @@ Os dados são organizados em lotes com as seguintes características:
 - **Controle de volume**: permite processamento eficiente e validação adequada
 - **Flexibilidade**: tamanho pode ser ajustado conforme necessidades específicas do projeto
 
-### Formatos de Arquivo
+### Formatos de Arquivo {#formatos-de-arquivo}
 
 O cliente pode escolher receber os arquivos em CSV, em JSONL ou nos dois formatos:
 
-#### Arquivos CSV
+#### Arquivos CSV {#arquivos-csv}
 
 - **Nomenclatura**: `projectname_patients_part_001.csv`, `projectname_patients_part_002.csv`, etc.
 - **Conteúdo**: entidades clínicas "achatadas" em formato tabular
 - **Granularidade**: uma linha por entidade clínica
 
-#### Arquivos JSONL
+#### Arquivos JSONL {#arquivos-jsonl}
 
 - **Nomenclatura**: `projectname_patients_part_001.jsonl`, `projectname_patients_part_002.jsonl`, etc.
 - **Conteúdo**: documentos completos com estrutura hierárquica
 - **Granularidade**: uma linha por documento clínico
 
-### Variação no Número de Linhas
+### Variação no Número de Linhas {#variação-no-número-de-linhas}
 
 O número de linhas em cada arquivo varia significativamente devido a:
 
@@ -40,7 +40,7 @@ O número de linhas em cada arquivo varia significativamente devido a:
 - **Densidade de entidades**: documentos podem conter diferentes quantidades de entidades extraídas
 - **Complexidade clínica**: casos mais complexos tendem a gerar mais entidades
 
-#### Exemplo de Variação
+#### Exemplo de Variação {#exemplo-de-variação}
 
 ```text
 Parte 001: 15 pacientes
@@ -52,9 +52,9 @@ Parte 002: 23 pacientes
 └── JSONL: 156 linhas (média de 7 documentos por paciente)
 ```
 
-## Local de Entrega
+## Local de Entrega {#local-de-entrega}
 
-### Definição do Local
+### Definição do Local {#definição-do-local}
 
 O local de upload/entrega dos dados é definido durante a **contratação da extração** e pode incluir:
 
@@ -62,15 +62,15 @@ O local de upload/entrega dos dados é definido durante a **contratação da ext
 - **SFTP/Secure Transfer**: servidor seguro para transferência de arquivos
 - **Plataforma específica**: conforme preferência e infraestrutura do cliente
 
-### Configurações de Acesso
+### Configurações de Acesso {#configurações-de-acesso}
 
 - **Credenciais**: fornecidas durante o processo de contratação
 - **Permissões**: acesso configurado conforme necessidades do projeto
 - **Segurança**: transferência criptografada e logs de acesso
 
-## Processamento dos Lotes
+## Processamento dos Lotes {#processamento-dos-lotes}
 
-### 1. Processamento Sequencial
+### 1. Processamento Sequencial {#1-processamento-sequencial}
 
 ```python
 import pandas as pd
@@ -93,7 +93,7 @@ combined_df = pd.concat(all_data, ignore_index=True)
 print(f"Total de registros: {len(combined_df)}")
 ```
 
-### 2. Processamento Paralelo
+### 2. Processamento Paralelo {#2-processamento-paralelo}
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
@@ -117,7 +117,7 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 combined_df = pd.concat(results, ignore_index=True)
 ```
 
-### 3. Processamento JSONL por Lote
+### 3. Processamento JSONL por Lote {#3-processamento-jsonl-por-lote}
 
 ```python
 import glob
@@ -145,7 +145,7 @@ for file in jsonl_files:
 print(f"Total de documentos: {len(all_documents)}")
 ```
 
-### 4. Validação de Integridade
+### 4. Validação de Integridade {#4-validação-de-integridade}
 
 ```python
 import glob
@@ -182,26 +182,26 @@ for csv_file, jsonl_file in zip(csv_files, jsonl_files):
     validate_batch_integrity(csv_file, jsonl_file)
 ```
 
-## Considerações Importantes
+## Considerações Importantes {#considerações-importantes}
 
-### 1. Ordem dos Lotes
+### 1. Ordem dos Lotes {#1-ordem-dos-lotes}
 
 - **Sequência**: os lotes são numerados sequencialmente (001, 002, 003...)
 - **Independência**: cada lote é independente e pode ser processado separadamente
 - **Completude**: todos os lotes devem ser processados para análise completa
 
-### 2. Qualidade dos Dados
+### 2. Qualidade dos Dados {#2-qualidade-dos-dados}
 
 - **Validação**: cada lote passa por validação de qualidade antes da entrega
 - **Consistência**: estrutura de dados mantida entre todos os lotes
 - **Integridade**: verificação de integridade entre formatos CSV e JSONL
 
-### 3. Segurança
+### 3. Segurança {#3-segurança}
 
 - **Criptografia**: transferência criptografada para o local de entrega
 - **Acesso**: credenciais seguras e controle de acesso
 - **Auditoria**: logs de acesso e transferência mantidos
 
-### 4. Suporte
+### 4. Suporte {#4-suporte}
 
 Em caso de dúvidas sobre os dados ou a entrega, entre em contato pelo e-mail [oportunidades@ihealthgroup.com.br](mailto:oportunidades@ihealthgroup.com.br).

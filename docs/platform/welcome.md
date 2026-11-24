@@ -14,9 +14,9 @@ Nesta versão, a plataforma ganha uma interface nova e uma camada de leitura cl�
 
 ---
 
-## O que há de novo
+## O que há de novo {#o-que-há-de-novo}
 
-### Uma interface mais leve e direta
+### Uma interface mais leve e direta {#uma-interface-mais-leve-e-direta}
 
 O produto foi redesenhado por inteiro, com foco em clareza e ritmo de trabalho.
 
@@ -25,11 +25,11 @@ O produto foi redesenhado por inteiro, com foco em clareza e ritmo de trabalho.
 - **Mais fluidez** — as telas carregam por partes, os filtros recortam o resultado sem refazer a busca, e voltar de um paciente devolve você exatamente onde estava.
 - **Ajuda no lugar certo** — o ícone de ajuda na busca abre as orientações sem tirar você da tela.
 
-### Análise de Funil
+### Análise de Funil {#análise-de-funil}
 
 Novo módulo disponível nesta versão. Quando um único conjunto de critérios não descreve a coorte, o funil a constrói em etapas e mostra o número de cada uma — o desenho de um critério de elegibilidade de estudo.
 
-### Modelos de IA ainda mais apurados
+### Modelos de IA ainda mais apurados {#modelos-de-ia-ainda-mais-apurados}
 
 Nossos modelos de extração e normalização evoluem continuamente. Nesta versão eles foram **retreinados sobre uma amostra maior e mais representativa de textos reais**, e isso se traduziu em ganhos de métrica em três frentes:
 
@@ -41,7 +41,7 @@ Nossos modelos de extração e normalização evoluem continuamente. Nesta vers�
 
 Junto com isso, **a lista de categorias foi revisada** e passa a reunir as que mais sustentam um critério de pesquisa na prática.
 
-### O que você ganha com isso
+### O que você ganha com isso {#o-que-você-ganha-com-isso}
 
 - **Mais alcance** — buscas que acompanham a linguagem corrente dos prontuários, incluindo o vocabulário mais atual.
 - **Mais controle** — contextos que permitem perguntar pela jornada: o que o paciente tem agora, o que já teve, o que está em investigação, o que foi descartado e o que vem da família.
@@ -52,11 +52,11 @@ Na prática: coortes mais aderentes à pergunta clínica, uma leitura de jornada
 
 ---
 
-## O que mudou
+## O que mudou {#o-que-mudou}
 
 Se você já usava a plataforma, categorias e contextos foram reorganizados para refletir melhor a forma como o texto clínico descreve o paciente. A busca e os protocolos acompanham essa taxonomia.
 
-### Contextos
+### Contextos {#contextos}
 
 O papel de cada menção no texto ficou mais preciso — e o conjunto mudou em dois pontos:
 
@@ -67,7 +67,7 @@ O papel de cada menção no texto ficou mais preciso — e o conjunto mudou em d
 
 **Presente**, **Histórico** e **Ausente** permanecem.
 
-### Categorias
+### Categorias {#categorias}
 
 A lista agora reúne as categorias que mais sustentam um critério de pesquisa:
 
@@ -79,7 +79,7 @@ A lista agora reúne as categorias que mais sustentam um critério de pesquisa:
 
 As demais categorias — doença, fármaco, procedimento, exame, biomarcador e as outras da tabela da busca — seguem iguais.
 
-### Protocolos já salvos
+### Protocolos já salvos {#protocolos-já-salvos}
 
 Os protocolos que usavam categorias removidas ou reorganizadas **foram ajustados** para a nova taxonomia e continuam funcionando normalmente.
 
@@ -87,17 +87,17 @@ As contagens, no entanto, serão atualizadas. A captura de entidades evoluiu —
 
 ---
 
-## Tour pelos módulos
+## Tour pelos módulos {#tour-pelos-módulos}
 
 Menu, filtros e alguns recortes acompanham a permissão da sua conta. Se algo descrito aqui não aparecer na sua tela, é por isso — não por erro. Texto clínico e identificação do paciente são dado sensível e ficam no acesso hospitalar.
 
-### Painel Geral
+### Painel Geral {#painel-geral}
 
 O retrato da base disponível para pesquisa: quantos pacientes, quantos documentos clínicos, a cobertura no tempo.
 
 Os filtros do topo valem para todos os gráficos ao mesmo tempo — e você também pode **clicar em um segmento do gráfico** para recortar a tela por ele. É um bom lugar para começar: antes de montar critério, veja o tamanho e a forma da população disponível.
 
-### Busca estruturada
+### Busca estruturada {#busca-estruturada}
 
 O ponto de partida de qualquer coorte. Você descreve o paciente que procura em linguagem clínica, e a plataforma procura esses termos no **texto dos documentos clínicos**.
 
@@ -128,7 +128,7 @@ Entre um critério e o próximo você escolhe **E** (todos precisam ser atendido
 
 Duas categorias têm campos extras: **Biomarcador** aceita resultado e valor numérico; **Exame laboratorial** aceita faixa mínima e máxima.
 
-#### Contexto do termo
+#### Contexto do termo {#contexto-do-termo}
 
 Para Achado clínico, Lesão, Doença, Fármaco, Procedimento e Dispositivo médico, você pode exigir **em que contexto** o termo deve aparecer no texto:
 
@@ -142,13 +142,13 @@ Para Achado clínico, Lesão, Doença, Fármaco, Procedimento e Dispositivo méd
 
 Deixar o contexto em branco aceita qualquer um. É aqui que a evolução dos modelos rende mais: você consegue perguntar pela **jornada**, e não apenas pela presença do termo.
 
-#### Filtros complementares
+#### Filtros complementares {#filtros-complementares}
 
 Recortam por dados estruturados do atendimento: período, sexo, idade, óbito, tipo de fonte pagadora, região, estado, rede, instituição e setor. Filtros de rede, instituição e setor só aparecem conforme a sua permissão e quando a base tem dado para eles. Sem a permissão do nome da instituição, a plataforma mostra o tipo de prestador no lugar.
 
 As **Buscas recentes** guardam o que você rodou nos últimos três dias.
 
-### Resultados
+### Resultados {#resultados}
 
 Depois de buscar — ou ao abrir um protocolo — a coorte aparece em duas abas.
 
@@ -162,7 +162,7 @@ Os gráficos de menção contam **pacientes que têm aquela menção**. Um mesmo
 
 Filtrar ou clicar em um gráfico recorta o resultado **sem refazer a busca**. E, a qualquer momento, você pode salvar a busca como protocolo ou reutilizar os critérios para começar outra.
 
-### Paciente e documento clínico
+### Paciente e documento clínico {#paciente-e-documento-clínico}
 
 :::note Disponível no acesso hospitalar
 O prontuário do paciente e o texto do documento clínico são dado sensível e estão disponíveis para quem tem acesso hospitalar. No acesso ao datalake, a análise acontece no nível agregado — coorte, gráficos e distribuição — sem abrir o registro individual.
@@ -176,7 +176,7 @@ Ao abrir um documento, o texto fica à esquerda com as entidades coloridas por c
 
 Clicar no termo da lista destaca a passagem correspondente no texto.
 
-### Análise de Funil
+### Análise de Funil {#análise-de-funil-1}
 
 Quando a coorte não se descreve em um único conjunto de critérios, o funil a constrói em **níveis sequenciais**: cada nível filtra apenas quem sobreviveu ao anterior. O primeiro nível é a base disponível no seu acesso, o seu 100%.
 
@@ -184,7 +184,7 @@ Em cada nível você usa os mesmos critérios e filtros da busca, e pode **impor
 
 É o desenho natural de um **critério de elegibilidade de estudo**: população-alvo, diagnóstico, tratamento prévio, exclusões — cada passo com o seu número.
 
-### Protocolos clínicos
+### Protocolos clínicos {#protocolos-clínicos}
 
 Um protocolo é uma busca salva: os critérios ficam guardados para reabrir a coorte, acompanhar como ela cresce e compartilhar com a equipe.
 
@@ -198,7 +198,7 @@ A lista se organiza em **Meus protocolos**, **Compartilhados comigo**, **Favorit
 
 ---
 
-## Um fluxo de ponta a ponta
+## Um fluxo de ponta a ponta {#um-fluxo-de-ponta-a-ponta}
 
 ```text
 Painel Geral        →  dimensione a base disponível
@@ -215,7 +215,7 @@ Busca e protocolo abrem exatamente a mesma tela de resultados, e o endereço da 
 
 ---
 
-## Dicas para tirar mais da busca
+## Dicas para tirar mais da busca {#dicas-para-tirar-mais-da-busca}
 
 - **Pense primeiro no critério clínico**, depois nos filtros de cadastro e instituição.
 - **Sinônimos e siglas vão juntos** no mesmo critério; exigências diferentes vão em critérios separados, ligados por **E**.
@@ -225,7 +225,7 @@ Busca e protocolo abrem exatamente a mesma tela de resultados, e o endereço da 
 
 ---
 
-## O que vem por aí
+## O que vem por aí {#o-que-vem-por-aí}
 
 Esta versão abre espaço para o próximo passo. Com uma base clínica mais rica e mais conectada, estamos trabalhando em **formas mais avançadas de compor coortes** — combinações que hoje exigem várias buscas — e em **análises mais profundas sobre a população encontrada**.
 

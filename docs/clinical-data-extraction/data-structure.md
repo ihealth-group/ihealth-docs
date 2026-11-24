@@ -2,7 +2,7 @@
 
 Esta página descreve todos os campos da extração: o que cada um significa, quais valores pode assumir e a quais categorias se aplica. É a referência para quem vai carregar, validar ou analisar os dados.
 
-## Visão Geral
+## Visão Geral {#visão-geral}
 
 Os dados extraídos do nosso banco clínico são organizados em duas partes:
 
@@ -11,7 +11,7 @@ Os dados extraídos do nosso banco clínico são organizados em duas partes:
 
 > **Nota**: os dados representam uma seleção do nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos, filtrada conforme os critérios definidos pelo cliente contratante.
 
-## Campos de Metadados do Paciente e do Documento
+## Campos de Metadados do Paciente e do Documento {#campos-de-metadados-do-paciente-e-do-documento}
 
 | Campo                 | Tipo   | Descrição                                                                                      |
 | --------------------- | ------ | ---------------------------------------------------------------------------------------------- |
@@ -25,7 +25,7 @@ Os dados extraídos do nosso banco clínico são organizados em duas partes:
 | `provider_state_code` | string | Código da Unidade Federativa do provedor                                                       |
 | `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular). [Ver detalhes abaixo](#campo-provider-type). |
 
-## Campos Adicionais
+## Campos Adicionais {#campos-adicionais}
 
 Os campos abaixo podem ser contratados à parte, durante a negociação da extração.
 
@@ -35,7 +35,7 @@ Os campos abaixo podem ser contratados à parte, durante a negociação da extra
 
 > **Importante**: para incluir o campo, fale com o time comercial durante a negociação.
 
-### Detalhamento dos Campos
+### Detalhamento dos Campos {#detalhamento-dos-campos}
 
 #### Campo death – Status de Óbito {#campo-death}
 
@@ -67,9 +67,9 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `Convênio ou Particular`          | Estabelecimento que atende por planos de saúde/convênios e/ou atendimento particular (privado), sem oferta pública.      |
 | `Público, Convênio ou Particular` | Estabelecimento que oferece atendimento nas três modalidades (público, convênio e particular).                           |
 
-## Campos de Entidades Clínicas
+## Campos de Entidades Clínicas {#campos-de-entidades-clínicas}
 
-### Campos Básicos da Entidade
+### Campos Básicos da Entidade {#campos-básicos-da-entidade}
 
 | Campo       | Tipo   | Descrição                                                                                      |
 | ----------- | ------ | ---------------------------------------------------------------------------------------------- |
@@ -78,7 +78,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `label`     | string | Categoria da entidade clínica. [Ver categorias](#categorias-de-entidades-clinicas).            |
 | `assertion` | string | Contexto em que a entidade foi mencionada (quando aplicável). [Ver valores](#campo-assertion). |
 
-### Campos de Relação (quando aplicável)
+### Campos de Relação (quando aplicável) {#campos-de-relação-quando-aplicável}
 
 | Campo               | Tipo   | Descrição                                                           |
 | ------------------- | ------ | ------------------------------------------------------------------- |
@@ -86,7 +86,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `relation_entity`   | string | A outra entidade da relação                                         |
 | `relation_position` | string | Posição da entidade da linha na relação (`head` ou `tail`)          |
 
-## Campos Estruturados de Biomarcadores e Exames
+## Campos Estruturados de Biomarcadores e Exames {#campos-estruturados-de-biomarcadores-e-exames}
 
 Os campos abaixo se aplicam **apenas** às categorias `BIOMARKER` e `LAB_TEST`, e são preenchidos quando foi possível normalizar e estruturar a entidade.
 
@@ -102,13 +102,13 @@ Os campos abaixo se aplicam **apenas** às categorias `BIOMARKER` e `LAB_TEST`, 
 
 No JSONL, `normalized_entity`, `specific_marker` e `method` ficam no nível da entidade, e os demais campos ficam dentro do objeto `result`. Veja [Formato JSONL](./jsonl-format.md).
 
-## Detalhamentos e Informações Adicionais
+## Detalhamentos e Informações Adicionais {#detalhamentos-e-informações-adicionais}
 
 ### Campo assertion – Contexto das Entidades {#campo-assertion}
 
 O campo `assertion` indica o **contexto clínico** em que uma entidade foi mencionada no documento. O mesmo termo pode ter significados diferentes conforme o contexto, por isso esse campo é essencial para análises precisas.
 
-#### Valores Possíveis
+#### Valores Possíveis {#valores-possíveis}
 
 | Valor            | Nome               | Descrição                                                                                                              | Exemplo                                         |
 | ---------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
@@ -119,7 +119,7 @@ O campo `assertion` indica o **contexto clínico** em que uma entidade foi menci
 | `ABSENT`         | Ausente            | Termo negado no texto                                                                                                  | "Paciente nega hipertensão"                     |
 | `OTHER`          | Outro              | Menção fora da jornada clínica do paciente, como uma doença citada como referência, em estudo ou em documento de apoio | "Protocolo de rastreamento para câncer de colo" |
 
-#### Importância para Análise de Dados
+#### Importância para Análise de Dados {#importância-para-análise-de-dados}
 
 - **Evita falsos positivos**: entidades negadas (`ABSENT`) não devem ser contadas como presentes
 - **Separa o paciente da família**: entidades `FAMILY_HISTORY` não descrevem o próprio paciente
@@ -127,7 +127,7 @@ O campo `assertion` indica o **contexto clínico** em que uma entidade foi menci
 - **Contextualiza o histórico**: entidades `HISTORY` descrevem o passado do paciente
 - **Filtra menções de referência**: entidades `OTHER` não fazem parte da jornada clínica do paciente
 
-#### Exemplo Prático
+#### Exemplo Prático {#exemplo-prático}
 
 ```text
 Texto: "Paciente nega diabetes, com histórico de hipertensão. Mãe com câncer de mama.
@@ -140,7 +140,7 @@ Entidades extraídas:
 - "insuficiência cardíaca" → assertion: INVESTIGATION
 ```
 
-#### Categorias com Asserção
+#### Categorias com Asserção {#categorias-com-asserção}
 
 O contexto é inferido apenas para as categorias **`FINDING`**, **`INJURY`**, **`DISEASE`**, **`PHARM_SUBSTANCE`**, **`PROCEDURE`** e **`MEDICAL_DEVICE`**.
 

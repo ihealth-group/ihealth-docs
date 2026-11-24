@@ -7,14 +7,14 @@ pagination_next: clinical-data-extraction/v1/data-structure
 # Extração de Dados Clínicos
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../intro.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/intro).
 :::
 
-## Visão Geral
+## Visão Geral {#visão-geral}
 
 A **Extração de Dados Clínicos** da iHealth é um produto que disponibiliza dados estruturados extraídos de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos e projetos, e provedores em todas as regiões do Brasil. Esta extração é personalizada conforme critérios específicos definidos pelo cliente contratante.
 
-## O que é a Extração de Dados Clínicos?
+## O que é a Extração de Dados Clínicos? {#o-que-é-a-extração-de-dados-clínicos}
 
 Nossa extração de dados é uma seleção estruturada de nosso banco de dados clínico que:
 
@@ -24,18 +24,18 @@ Nossa extração de dados é uma seleção estruturada de nosso banco de dados c
 - **Oferece flexibilidade** com múltiplos formatos de disponibilização
 - **Mantém anonimização** garantindo privacidade dos pacientes
 
-## Formatos de Disponibilização
+## Formatos de Disponibilização {#formatos-de-disponibilização}
 
 Os dados extraídos são disponibilizados em dois formatos principais, organizados em **lotes de arquivos** para facilitar o processamento:
 
-### CSV
+### CSV {#csv}
 
 - **Granularidade**: Cada linha = 1 entidade clínica
 - **Estrutura**: Dados "achatados" em colunas
 - **Uso recomendado**: Análises estatísticas, agregações por tipo de entidade, análises exploratórias
 - **Entrega**: Arquivos em lotes de 10-50 pacientes cada
 
-### JSONL
+### JSONL {#jsonl}
 
 - **Granularidade**: Cada linha = 1 documento completo
 - **Estrutura**: Dados aninhados preservando hierarquia
@@ -44,7 +44,7 @@ Os dados extraídos são disponibilizados em dois formatos principais, organizad
 
 > **Importante**: O número de linhas por arquivo varia conforme a quantidade de documentos clínicos disponíveis para cada paciente na base de dados. Para detalhes completos sobre a estrutura de entrega, consulte a seção [Entrega dos Dados](./delivery.md).
 
-## Público-Alvo
+## Público-Alvo {#público-alvo}
 
 Esta documentação é destinada a:
 
@@ -53,7 +53,7 @@ Esta documentação é destinada a:
 - **Pesquisadores** que utilizarão os dados para estudos clínicos e RWE (Real World Evidence)
 - **Equipes de Business Intelligence** que integrarão os dados em dashboards e relatórios
 
-## Próximos Passos
+## Próximos Passos {#próximos-passos}
 
 1. **[Estrutura dos Dados](./data-structure.md)** - Entenda como os dados extraídos são organizados
 2. **[Formato CSV](./csv-format.md)** - Aprenda a trabalhar com dados em CSV
