@@ -28,6 +28,46 @@ docs/
 
 - **docusaurus.config.js**: Configuração principal com branding iHealth
 - **sidebars.js**: Navegação lateral da documentação
+- **i18n/en/**: Versão em inglês (veja [Idiomas](#idiomas))
+
+## Idiomas
+
+O site usa o i18n nativo do Docusaurus. O português é o idioma padrão e fica na raiz (`/`); o inglês fica em `/en/`. O seletor de idioma aparece no canto direito do navbar.
+
+```
+i18n/en/
+├── docusaurus-plugin-content-docs/
+│   ├── current/                 # Páginas em inglês, com os mesmos caminhos de docs/
+│   └── current.json             # Rótulos das categorias da sidebar
+└── docusaurus-theme-classic/
+    ├── navbar.json              # Itens do navbar
+    └── footer.json              # Links do rodapé
+```
+
+A tagline e o copyright ficam no `docusaurus.config.js`, escolhidos pela variável `DOCUSAURUS_CURRENT_LOCALE`.
+
+### Ao alterar uma página
+
+Toda alteração em `docs/` precisa da alteração equivalente no arquivo de mesmo caminho em `i18n/en/docusaurus-plugin-content-docs/current/`. Uma página sem arquivo em inglês aparece em português no site em inglês (é o caso, hoje, de `docs/clinical-data-extraction/v1/`).
+
+Regras da tradução:
+
+- **Manter como está**: nomes de campos, valores de enum (`PRESENT`, `BIOMARKER`), valores dos dados (`Público`, `câncer de mama`), strings usadas em filtros de código e o front matter de navegação (`slug`, `id`, `pagination_*`). Os dados entregues são em português.
+- **Exemplos clínicos**: manter o texto original e colocar a tradução em itálico, por exemplo `"Paciente nega hipertensão" (_patient denies hypertension_)`.
+- **IDs dos títulos**: todo título tem ID explícito (`## Visão Geral {#visão-geral}`), e a página em inglês usa o mesmo ID. Assim os links com `#` funcionam nos dois idiomas. Em um título novo, rode `npm run write-heading-ids -- . docs` antes de traduzir.
+- **Links entre uma página traduzida e uma não traduzida** (por exemplo, para a v1): use o caminho de URL absoluto (`/clinical-data-extraction/v1/intro`), não o caminho do arquivo `.md`. O Docusaurus não resolve links `.md` entre `docs/` e `i18n/`.
+
+Ao adicionar um item ao navbar, ao rodapé ou uma categoria na sidebar, rode `npm run write-translations -- --locale en` e traduza as chaves novas nos JSON.
+
+### Desenvolvimento por idioma
+
+`npm start` abre só o português. Para o inglês:
+
+```bash
+npm start -- --locale en
+```
+
+O `npm run build` gera os dois idiomas.
 
 ## Como Executar
 

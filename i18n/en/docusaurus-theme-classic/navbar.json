@@ -1,0 +1,10 @@
+{
+  "logo.alt": {
+    "message": "iHealth Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Documentação de produtos": {
+    "message": "Product documentation",
+    "description": "Navbar item with label Documentação de produtos"
+  }
+}

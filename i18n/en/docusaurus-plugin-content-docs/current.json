@@ -1,0 +1,14 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.Plataforma iHealth": {
+    "message": "iHealth Platform",
+    "description": "The label for category Plataforma iHealth in sidebar docsSidebar"
+  },
+  "sidebar.docsSidebar.category.Extração de Dados Clínicos": {
+    "message": "Clinical Data Extraction",
+    "description": "The label for category Extração de Dados Clínicos in sidebar docsSidebar"
+  }
+}

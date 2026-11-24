@@ -8,10 +8,26 @@ import { themes as prismThemes } from "prism-react-renderer";
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+// Locale being built ("pt" or "en"). Used for config values that the
+// i18n JSON files don't cover (tagline) or that a JSON file would freeze
+// (the copyright year).
+const currentLocale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "pt";
+
+const taglines = {
+  pt: "Documentação técnica para produtos iHealth",
+  en: "Technical documentation for iHealth products",
+};
+
+const year = new Date().getFullYear();
+const copyrights = {
+  pt: `Copyright © ${year} iHealth. Todos os direitos reservados.`,
+  en: `Copyright © ${year} iHealth. All rights reserved.`,
+};
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "iHealth Docs",
-  tagline: "Documentação técnica para produtos iHealth",
+  tagline: taglines[currentLocale] ?? taglines.pt,
   favicon: "img/favicon.ico",
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -33,12 +49,15 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
+  // Portuguese is served at the site root and English under /en/.
+  // English pages live in i18n/en/ (see README).
   i18n: {
     defaultLocale: "pt",
-    locales: ["pt"],
+    locales: ["pt", "en"],
+    localeConfigs: {
+      pt: { label: "Português", htmlLang: "pt-BR" },
+      en: { label: "English", htmlLang: "en-US" },
+    },
   },
 
   presets: [
@@ -76,6 +95,10 @@ const config = {
             sidebarId: "docsSidebar",
             position: "left",
             label: "Documentação de produtos",
+          },
+          {
+            type: "localeDropdown",
+            position: "right",
           },
         ],
       },
@@ -117,7 +140,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} iHealth. Todos os direitos reservados.`,
+        copyright: copyrights[currentLocale] ?? copyrights.pt,
       },
       prism: {
         theme: prismThemes.github,
