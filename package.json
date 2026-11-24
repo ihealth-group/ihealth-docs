@@ -11,6 +11,7 @@
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
+    "write-translations:en": "docusaurus write-translations --locale en && node scripts/clean-en-translations.mjs",
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {

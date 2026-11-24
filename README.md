@@ -55,9 +55,9 @@ Regras da tradução:
 - **Manter como está**: nomes de campos, valores de enum (`PRESENT`, `BIOMARKER`), valores dos dados (`Público`, `câncer de mama`), strings usadas em filtros de código e o front matter de navegação (`slug`, `id`, `pagination_*`). Os dados entregues são em português.
 - **Exemplos clínicos**: manter o texto original e colocar a tradução em itálico, por exemplo `"Paciente nega hipertensão" (_patient denies hypertension_)`.
 - **IDs dos títulos**: todo título tem ID explícito (`## Visão Geral {#visão-geral}`), e a página em inglês usa o mesmo ID. Assim os links com `#` funcionam nos dois idiomas. Em um título novo, rode `npm run write-heading-ids -- . docs` antes de traduzir.
-- **Links entre uma página traduzida e uma não traduzida** (por exemplo, para a v1): use o caminho de URL absoluto (`/clinical-data-extraction/v1/intro`), não o caminho do arquivo `.md`. O Docusaurus não resolve links `.md` entre `docs/` e `i18n/`.
+- **Links para uma página sem tradução**: o Docusaurus não resolve links `.md` entre `docs/` e `i18n/`, e o build quebra. Se uma página ficar sem versão em inglês, os links entre ela e páginas traduzidas precisam usar o caminho de URL absoluto (`/clinical-data-extraction/intro`), como fazem hoje os links "versão atual" da v1.
 
-Ao adicionar um item ao navbar, ao rodapé ou uma categoria na sidebar, rode `npm run write-translations -- --locale en` e traduza as chaves novas nos JSON.
+Ao adicionar um item ao navbar, ao rodapé ou uma categoria na sidebar, rode `npm run write-translations:en` e traduza as chaves novas nos JSON. Não use o `write-translations` direto: ele grava no `footer.json` o copyright em português com o ano fixo, que passa por cima do copyright do config, e cria um `code.json` desnecessário. O script `write-translations:en` desfaz os dois ([scripts/clean-en-translations.mjs](scripts/clean-en-translations.mjs)).
 
 ### Desenvolvimento por idioma
 
