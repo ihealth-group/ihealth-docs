@@ -2,15 +2,15 @@
 
 Esta página descreve o arquivo CSV da extração e traz exemplos de código em Python (pandas) para carregar, validar e analisar os dados. É indicada para quem vai trabalhar com os dados em formato tabular.
 
-## Características
+## Características {#características}
 
 - **Granularidade**: cada linha corresponde a 1 entidade clínica
 - **Estrutura**: dados "achatados" em colunas
 - **Uso recomendado**: análises de entidades individuais e estatísticas por tipo de entidade
 
-## Estrutura do Arquivo CSV
+## Estrutura do Arquivo CSV {#estrutura-do-arquivo-csv}
 
-### Cabeçalho
+### Cabeçalho {#cabeçalho}
 
 ```csv
 document_id,document_date,patient_id,case_id,gender,birthdate,death,provider_state_code,provider_type,entity_id,entity,label,assertion,normalized_entity,specific_marker,method,detection_status,score,numeric_value,unit,relation_type,relation_entity,relation_position
@@ -18,7 +18,7 @@ document_id,document_date,patient_id,case_id,gender,birthdate,death,provider_sta
 
 Os campos `normalized_entity` a `unit` são os [campos estruturados](./data-structure.md#campos-estruturados-de-biomarcadores-e-exames) e só vêm preenchidos em `BIOMARKER` e `LAB_TEST`.
 
-### Exemplo de Dados
+### Exemplo de Dados {#exemplo-de-dados}
 
 ```csv
 doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,FEMALE,1980-05-15 00:00:00,N,SP,Público,doc_123_45,câncer de mama,DISEASE,PRESENT,,,,,,,,disease_has_biomarker,HER2 3+,head
@@ -30,11 +30,11 @@ doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,MALE,1975-03-20 00:00:00,
 
 No exemplo, o câncer de mama e o biomarcador HER2 estão ligados pela relação `disease_has_biomarker`: cada um aparece em uma linha, com a outra entidade em `relation_entity` e a própria posição na relação em `relation_position`.
 
-## Trabalhando com CSV
+## Trabalhando com CSV {#trabalhando-com-csv}
 
 > Os exemplos desta página são sequenciais: cada bloco usa os imports e as variáveis (`df`, `entities`) criados nos blocos anteriores.
 
-### Carregando Dados
+### Carregando Dados {#carregando-dados}
 
 ```python
 import pandas as pd
@@ -47,7 +47,7 @@ print(df.info())
 print(df.head())
 ```
 
-### Limpeza e Validação
+### Limpeza e Validação {#limpeza-e-validação}
 
 ```python
 # Remover linhas com document_id vazio
@@ -65,7 +65,7 @@ entities = df.drop_duplicates('entity_id')
 print("Labels disponíveis:", entities['label'].unique())
 ```
 
-### Análise de Biomarcadores e Exames
+### Análise de Biomarcadores e Exames {#análise-de-biomarcadores-e-exames}
 
 ```python
 # Filtrar biomarcadores e exames com valor numérico
@@ -79,7 +79,7 @@ biomarker_stats = numeric_entities.groupby(['normalized_entity', 'unit'], dropna
 print(biomarker_stats)
 ```
 
-### Análise de Relações
+### Análise de Relações {#análise-de-relações}
 
 ```python
 # Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
@@ -101,25 +101,25 @@ relations_table = relations[['document_id', 'relation_type', 'entity', 'relation
 print(relations_table.head())
 ```
 
-## Considerações Importantes
+## Considerações Importantes {#considerações-importantes}
 
-### 1. Múltiplas Linhas por Documento
+### 1. Múltiplas Linhas por Documento {#1-múltiplas-linhas-por-documento}
 
 - Um documento pode gerar várias linhas (uma para cada entidade)
 - Use `document_id` para agrupar entidades do mesmo documento
 
-### 2. Campos Vazios
+### 2. Campos Vazios {#2-campos-vazios}
 
 - Nem todas as entidades possuem todos os campos preenchidos
 - No arquivo, campos vazios ficam em branco. Ao carregar com pandas, eles viram `NaN`: use `.isna()` e `.notna()` para verificá-los
 - Valide a presença de dados antes de análises
 
-### 3. Relações
+### 3. Relações {#3-relações}
 
 - Uma entidade com mais de uma relação aparece em uma linha por relação, com o mesmo `entity_id`
 - Cada relação aparece em duas linhas: a da entidade `head` e a da entidade `tail` (`relation_position`)
 - Para contar entidades, remova as duplicatas por `entity_id`; para contar relações, use só as linhas com `relation_position == 'head'`
 
-## Próximos Passos
+## Próximos Passos {#próximos-passos}
 
 Para exemplos de análise (distribuição de entidades, análises temporal e geográfica, comorbidades e outras), veja [Diretrizes de Análise](./analysis-guidelines.md).

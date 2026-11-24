@@ -7,24 +7,24 @@ pagination_next: clinical-data-extraction/v1/jsonl-format
 # Formato CSV
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../csv-format.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/csv-format).
 :::
 
-## Características
+## Características {#características}
 
 - **Granularidade**: Cada linha = 1 entidade clínica
 - **Estrutura**: Dados "achatados" em colunas
 - **Uso recomendado**: Análises de entidades individuais, estatísticas por tipo de entidade
 
-## Estrutura do Arquivo CSV
+## Estrutura do Arquivo CSV {#estrutura-do-arquivo-csv}
 
-### Cabeçalho
+### Cabeçalho {#cabeçalho}
 
 ```csv
 document_id,document_date,patient_id,case_id,gender,birthdate,death,provider_state_code,provider_type,entity_id,entity,label,assertion,normalized_entity,specific_marker,detection_status,condition,numeric_value,unit,loinc_code,terminology,term_code,term_desc,relation_type,relation_entity,relation_position
 ```
 
-### Exemplo de Dados
+### Exemplo de Dados {#exemplo-de-dados}
 
 ```csv
 doc_123,2023-05-31 13:15:47,patient_abc123,case_xyz789,MALE,1980-05-15 00:00:00,N,SP,Público,doc_123_45,hipertensão,DISEASE,PRESENTE,,,,,,,,CID-10,I10,Hipertensão arterial essencial,,,
@@ -34,9 +34,9 @@ doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:0
 doc_456,2023-06-15 09:30:22,patient_def456,case_uvw123,FEMALE,1975-03-20 00:00:00,N,MG,Convênio ou Particular,doc_456_90,rx toráx,PROCEDURE,PRESENTE,,,,,,,,TUSS,31001001,Radiografia de tórax,procedure_has_target_anatomy,tórax,head
 ```
 
-## Trabalhando com CSV
+## Trabalhando com CSV {#trabalhando-com-csv}
 
-### Carregando Dados
+### Carregando Dados {#carregando-dados}
 
 ```python
 import pandas as pd
@@ -49,7 +49,7 @@ print(df.info())
 print(df.head())
 ```
 
-### Limpeza e Validação
+### Limpeza e Validação {#limpeza-e-validação}
 
 ```python
 # Remover linhas com document_id vazio
@@ -67,9 +67,9 @@ entities = df.drop_duplicates('entity_id')
 print("Labels disponíveis:", entities['label'].unique())
 ```
 
-### Análises Básicas
+### Análises Básicas {#análises-básicas}
 
-#### Distribuição de Entidades
+#### Distribuição de Entidades {#distribuição-de-entidades}
 
 ```python
 # Distribuição por tipo de entidade
@@ -81,7 +81,7 @@ top_entities = entities['entity'].value_counts().head(20)
 print(top_entities)
 ```
 
-#### Análise Temporal
+#### Análise Temporal {#análise-temporal}
 
 ```python
 # Documentos por mês
@@ -90,7 +90,7 @@ monthly_docs = df.groupby('month')['document_id'].nunique()
 print(monthly_docs)
 ```
 
-#### Análise Geográfica
+#### Análise Geográfica {#análise-geográfica}
 
 ```python
 # Pacientes por UF (cada linha é uma entidade, então conte pacientes distintos).
@@ -99,7 +99,7 @@ patients_by_state = df.groupby('provider_state_code')['patient_id'].nunique().so
 print(patients_by_state)
 ```
 
-### Análise de Biomarcadores e Exames
+### Análise de Biomarcadores e Exames {#análise-de-biomarcadores-e-exames}
 
 ```python
 # Filtrar biomarcadores e exames com valor numérico
@@ -112,7 +112,7 @@ biomarker_stats = numeric_entities.groupby(['normalized_entity', 'unit'], dropna
 print(biomarker_stats)
 ```
 
-### Análise de Relações
+### Análise de Relações {#análise-de-relações}
 
 ```python
 # Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
@@ -128,26 +128,26 @@ related_entities = relations['relation_entity'].value_counts()
 print(related_entities)
 ```
 
-## Considerações Importantes
+## Considerações Importantes {#considerações-importantes}
 
-### 1. Múltiplas Linhas por Documento
+### 1. Múltiplas Linhas por Documento {#1-múltiplas-linhas-por-documento}
 
 - Um documento pode gerar várias linhas (uma para cada entidade)
 - Use `document_id` para agrupar entidades do mesmo documento
 
-### 2. Campos Vazios
+### 2. Campos Vazios {#2-campos-vazios}
 
 - Nem todas as entidades possuem todos os campos preenchidos
 - No arquivo, campos vazios ficam em branco. Ao carregar com pandas, eles viram `NaN`: use `.isna()` e `.notna()` para verificá-los
 - Valide a presença de dados antes de análises
 
-### 3. Relações
+### 3. Relações {#3-relações}
 
 - Uma entidade com mais de uma relação aparece em uma linha por relação, com o mesmo `entity_id`
 - Cada relação aparece em duas linhas: a da entidade `head` e a da entidade `tail` (`relation_position`)
 - Para contar entidades, remova as duplicatas por `entity_id`; para contar relações, use só as linhas com `relation_position == 'head'`
 
-### 4. Agregações
+### 4. Agregações {#4-agregações}
 
 ```python
 # Agrupar por documento
@@ -161,7 +161,7 @@ doc_entities = df.groupby('document_id').agg({
 entities_per_doc = df.groupby('document_id')['entity_id'].nunique()
 ```
 
-## Exemplo de Análise Completa
+## Exemplo de Análise Completa {#exemplo-de-análise-completa}
 
 ```python
 import pandas as pd

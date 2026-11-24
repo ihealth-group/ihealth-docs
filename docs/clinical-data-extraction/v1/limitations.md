@@ -7,18 +7,18 @@ pagination_next: null
 # Limitações e Considerações
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../limitations.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/limitations).
 :::
 
-## Contexto dos Dados Extraídos
+## Contexto dos Dados Extraídos {#contexto-dos-dados-extraídos}
 
 Esta seção descreve as limitações e considerações importantes para análise dos **dados extraídos** de nosso banco clínico. É fundamental entender estas limitações para interpretar corretamente os resultados das análises.
 
 > **Importante**: Os dados disponibilizados representam uma seleção específica de nosso banco de dados clínico, processados com técnicas de Processamento de Linguagem Natural (PLN). As limitações descritas abaixo aplicam-se tanto ao processo de extração quanto à seleção dos dados.
 
-## Limitações dos Dados
+## Limitações dos Dados {#limitações-dos-dados}
 
-### 1. Estruturação Automática
+### 1. Estruturação Automática {#1-estruturação-automática}
 
 Os dados são estruturados automaticamente usando técnicas de PLN, o que pode resultar em:
 
@@ -27,16 +27,16 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - **Falsos negativos**: Entidades importantes podem ser perdidas
 - **Inconsistências**: Mesmo termo pode ser extraído de forma diferente em contextos similares
 
-### 2. Cobertura dos Dados
+### 2. Cobertura dos Dados {#2-cobertura-dos-dados}
 
 - **Documentos não processados**: Nem todos os documentos podem ter entidades extraídas
 - **Cobertura temporal**: Dados representam apenas o período disponível na base de dados
 - **Cobertura geográfica**: Limitada aos provedores participantes do sistema
 - **Cobertura de especialidades**: Pode variar entre diferentes áreas médicas
 
-### 3. Qualidade da Extração
+### 3. Qualidade da Extração {#3-qualidade-da-extração}
 
-#### Limitações por Categoria
+#### Limitações por Categoria {#limitações-por-categoria}
 
 | Categoria   | Limitações Principais                                  |
 | ----------- | ------------------------------------------------------ |
@@ -45,7 +45,7 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 | `BIOMARKER` | Valores numéricos podem não ser extraídos corretamente |
 | `PROCEDURE` | Procedimentos complexos podem ser fragmentados         |
 
-#### Exemplos de Limitações
+#### Exemplos de Limitações {#exemplos-de-limitações}
 
 **Cobertura de Extração:**
 
@@ -53,23 +53,23 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - Algumas categorias podem ter maior precisão que outras
 - É recomendado verificar a distribuição de entidades por categoria antes de análises específicas
 
-### 4. Contexto Clínico
+### 4. Contexto Clínico {#4-contexto-clínico}
 
 - **Nuances perdidas**: Algumas nuances clínicas podem ser perdidas na extração
 - **Contexto temporal**: Relações temporais entre eventos podem não ser preservadas
 - **Gravidade**: Níveis de gravidade ou severidade podem não ser capturados
 - **Evolução**: Mudanças ao longo do tempo podem não ser rastreadas
 
-## Considerações Éticas
+## Considerações Éticas {#considerações-éticas}
 
-### 1. Privacidade e Confidencialidade
+### 1. Privacidade e Confidencialidade {#1-privacidade-e-confidencialidade}
 
 - **Dados anonimizados**: IDs são anonimizados, mas mantenha confidencialidade
 - **Uso responsável**: Use dados apenas para fins de pesquisa aprovados
 - **Compartilhamento**: Não compartilhe dados sem autorização adequada
 - **Armazenamento**: Mantenha dados em ambientes seguros
 
-### 2. Uso Responsável
+### 2. Uso Responsável {#2-uso-responsável}
 
 **Verificação de Anonimização:**
 
@@ -77,25 +77,25 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - Valide que os IDs de pacientes seguem o padrão de anonimização esperado
 - Mantenha logs de acesso e uso dos dados para auditoria
 
-### 3. Transparência
+### 3. Transparência {#3-transparência}
 
 - **Documente limitações**: Sempre documente as limitações dos dados
 - **Metodologia**: Descreva claramente a metodologia utilizada
 - **Resultados**: Apresente resultados com contexto adequado
 - **Revisão**: Submeta análises para revisão por pares quando apropriado
 
-## Limitações Técnicas
+## Limitações Técnicas {#limitações-técnicas}
 
-### 1. Processamento de Linguagem Natural
+### 1. Processamento de Linguagem Natural {#1-processamento-de-linguagem-natural}
 
-#### Desafios do PLN
+#### Desafios do PLN {#desafios-do-pln}
 
 - **Ambiguidade**: Termos médicos podem ter múltiplos significados
 - **Contexto**: Significado pode depender do contexto clínico
 - **Linguagem natural**: Variações na forma de expressar conceitos
 - **Terminologia**: Diferentes sistemas de codificação médica
 
-#### Exemplo de Ambiguidade
+#### Exemplo de Ambiguidade {#exemplo-de-ambiguidade}
 
 **Termos Ambíguos:**
 
@@ -103,16 +103,16 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - A mesma entidade pode ser classificada em diferentes categorias dependendo do contexto
 - É importante revisar manualmente amostras de dados para identificar possíveis ambiguidades
 
-### 2. Estrutura dos Dados
+### 2. Estrutura dos Dados {#2-estrutura-dos-dados}
 
-#### Limitações de Formato
+#### Limitações de Formato {#limitações-de-formato}
 
 - **CSV**: Perda de estrutura hierárquica original dos dados
 - **JSONL**: Maior complexidade para análises simples e estatísticas básicas
 - **Campos vazios**: Nem todos os campos são preenchidos para todas as entidades
 - **Completude**: A disponibilidade de informações varia por tipo de entidade
 
-#### Características dos Campos
+#### Características dos Campos {#características-dos-campos}
 
 **Características dos Dados:**
 
@@ -126,15 +126,15 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - Considere campos vazios como "informação não disponível"
 - Documente quais campos são essenciais para sua análise específica
 
-### 3. Performance e Escalabilidade
+### 3. Performance e Escalabilidade {#3-performance-e-escalabilidade}
 
 - **Tamanho dos arquivos**: Arquivos grandes podem ser difíceis de processar
 - **Memória**: Análises complexas podem requerer muita memória
 - **Tempo de processamento**: Algumas análises podem ser computacionalmente intensivas
 
-## Recomendações
+## Recomendações {#recomendações}
 
-### 1. Validação Clínica
+### 1. Validação Clínica {#1-validação-clínica}
 
 **Validação de Resultados:**
 
@@ -149,14 +149,14 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - Validar se hipertensos têm achados clínicos associados (cefaleia, tontura)
 - Confirmar se infartos estão associados a sintomas típicos (dor precordial, sudorese)
 
-### 2. Análise Exploratória
+### 2. Análise Exploratória {#2-análise-exploratória}
 
 - **Comece simples**: Inicie com análises descritivas básicas
 - **Explore gradualmente**: Aumente complexidade gradualmente
 - **Documente descobertas**: Mantenha registro de insights
 - **Valide hipóteses**: Teste hipóteses com dados adicionais
 
-### 3. Documentação
+### 3. Documentação {#3-documentação}
 
 **Metadados de Análise:**
 
@@ -178,14 +178,14 @@ Os dados são estruturados automaticamente usando técnicas de PLN, o que pode r
 - Resultados e interpretações
 - Recomendações futuras
 
-### 4. Reprodutibilidade
+### 4. Reprodutibilidade {#4-reprodutibilidade}
 
 - **Versionamento**: Use controle de versão para código e dados
 - **Ambiente**: Documente ambiente de execução
 - **Seeds**: Use seeds fixos para análises aleatórias
 - **Dependências**: Mantenha registro de versões de pacotes
 
-## Contato e Suporte
+## Contato e Suporte {#contato-e-suporte}
 
 Para dúvidas sobre limitações ou considerações:
 

@@ -8,7 +8,7 @@ Esta documentação explica como os dados são organizados, entregues e analisad
 Para extrações entregues até **20/09/2026**, consulte a [documentação v1](./v1/intro.md).
 :::
 
-## O que é a Extração de Dados Clínicos?
+## O que é a Extração de Dados Clínicos? {#o-que-é-a-extração-de-dados-clínicos}
 
 A extração é uma seleção estruturada do nosso banco de dados clínico que:
 
@@ -18,18 +18,18 @@ A extração é uma seleção estruturada do nosso banco de dados clínico que:
 - **Oferece flexibilidade**, com mais de um formato de disponibilização
 - **Mantém a anonimização**, garantindo a privacidade dos pacientes
 
-## Formatos de Disponibilização
+## Formatos de Disponibilização {#formatos-de-disponibilização}
 
 Os dados são disponibilizados em dois formatos, organizados em **lotes de arquivos** para facilitar o processamento:
 
-### CSV
+### CSV {#csv}
 
 - **Granularidade**: cada linha corresponde a 1 entidade clínica
 - **Estrutura**: dados "achatados" em colunas
 - **Uso recomendado**: análises estatísticas, agregações por tipo de entidade e análises exploratórias
 - **Entrega**: arquivos em lotes de 10–50 pacientes cada
 
-### JSONL
+### JSONL {#jsonl}
 
 - **Granularidade**: cada linha corresponde a 1 documento completo
 - **Estrutura**: dados aninhados, preservando a hierarquia
@@ -38,7 +38,7 @@ Os dados são disponibilizados em dois formatos, organizados em **lotes de arqui
 
 > **Importante**: o número de linhas por arquivo varia conforme a quantidade de documentos clínicos disponíveis para cada paciente na base. Para detalhes sobre a estrutura de entrega, consulte [Entrega dos Dados](./delivery.md).
 
-## Público-Alvo
+## Público-Alvo {#público-alvo}
 
 Esta documentação é destinada a:
 
@@ -47,7 +47,7 @@ Esta documentação é destinada a:
 - **Pesquisadores** que vão usar os dados em estudos clínicos e de RWE (Real World Evidence)
 - **Equipes de Business Intelligence** que vão integrar os dados a dashboards e relatórios
 
-## Próximos Passos
+## Próximos Passos {#próximos-passos}
 
 1. **[Estrutura dos Dados](./data-structure.md)**: entenda como os dados extraídos são organizados
 2. **[Formato CSV](./csv-format.md)**: aprenda a trabalhar com os dados em CSV

@@ -2,11 +2,11 @@
 
 Esta página reúne boas práticas e exemplos de análise dos dados extraídos, da preparação às análises avançadas. É indicada para cientistas e analistas de dados que vão explorar a extração.
 
-## Contexto dos Dados
+## Contexto dos Dados {#contexto-dos-dados}
 
 Os **dados extraídos** representam uma seleção de documentos médicos do nosso banco clínico, com ampla cobertura nacional e representatividade para análises, filtrados conforme os critérios definidos para o projeto.
 
-### Características Importantes dos Dados Extraídos
+### Características Importantes dos Dados Extraídos {#características-importantes-dos-dados-extraídos}
 
 - **Origem**: banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
 - **Seleção**: pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
@@ -14,13 +14,13 @@ Os **dados extraídos** representam uma seleção de documentos médicos do noss
 - **Anonimização**: identificadores de pacientes e provedores anonimizados
 - **Formatos**: disponibilizados em CSV e JSONL para diferentes tipos de análise
 
-## Preparação dos Dados
+## Preparação dos Dados {#preparação-dos-dados}
 
 > Os exemplos desta página são sequenciais: cada bloco usa os imports e as variáveis (`df`, `entities`) criados nos blocos anteriores.
 
-### Limpeza e Validação
+### Limpeza e Validação {#limpeza-e-validação}
 
-#### Para CSV
+#### Para CSV {#para-csv}
 
 ```python
 import pandas as pd
@@ -45,7 +45,7 @@ print("Colunas:", df.columns.tolist())
 print("Tipos de dados:", df.dtypes)
 ```
 
-#### Para JSONL
+#### Para JSONL {#para-jsonl}
 
 ```python
 import json
@@ -64,7 +64,7 @@ if data:
     print(json.dumps(data[0], indent=2, ensure_ascii=False))
 ```
 
-### Tratamento de Valores Ausentes
+### Tratamento de Valores Ausentes {#tratamento-de-valores-ausentes}
 
 - **Campos vazios**: ficam em branco no CSV e viram `NaN` ao carregar com pandas
 - **Valores numéricos ausentes**: campo `numeric_value` vazio
@@ -78,9 +78,9 @@ print("Campos vazios por coluna:")
 print(df.isna().sum())
 ```
 
-## Análises Recomendadas
+## Análises Recomendadas {#análises-recomendadas}
 
-### 1. Análise Descritiva
+### 1. Análise Descritiva {#1-análise-descritiva}
 
 #### Caracterização da Coorte {#caracterizacao-da-coorte}
 
@@ -109,7 +109,7 @@ print("Óbito registrado (%):")
 print((patients['death'].value_counts(normalize=True) * 100).round(1))
 ```
 
-#### Distribuição de Entidades
+#### Distribuição de Entidades {#distribuição-de-entidades}
 
 ```python
 # Distribuição por tipo de entidade
@@ -129,7 +129,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-#### Entidades Mais Frequentes
+#### Entidades Mais Frequentes {#entidades-mais-frequentes}
 
 ```python
 # Desconsiderar menções negadas, de familiares ou fora da jornada do paciente
@@ -149,7 +149,7 @@ for label in patient_entities['label'].dropna().unique():
     print(top_in_category)
 ```
 
-#### Contexto das Entidades
+#### Contexto das Entidades {#contexto-das-entidades}
 
 ```python
 # Quantidade de menções por categoria e contexto (assertion).
@@ -157,7 +157,7 @@ for label in patient_entities['label'].dropna().unique():
 print(pd.crosstab(entities['label'], entities['assertion'].fillna('(vazio)')))
 ```
 
-### 2. Análise Temporal
+### 2. Análise Temporal {#2-análise-temporal}
 
 A quantidade de documentos por período reflete a cobertura da base, não uma tendência clínica. Para estudos com os pacientes, costuma ser mais útil olhar o seguimento de cada um (usa a tabela `patients` da [Caracterização da Coorte](#caracterizacao-da-coorte)):
 
@@ -179,7 +179,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 3. Análise Geográfica e por Tipo de Provedor
+### 3. Análise Geográfica e por Tipo de Provedor {#3-análise-geográfica-e-por-tipo-de-provedor}
 
 ```python
 # Pacientes por UF e por tipo de provedor.
@@ -191,7 +191,7 @@ print("Pacientes por tipo de provedor:")
 print(df.groupby('provider_type')['patient_id'].nunique().sort_values(ascending=False))
 ```
 
-### 4. Análise de Relações
+### 4. Análise de Relações {#4-análise-de-relações}
 
 ```python
 # Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
@@ -209,9 +209,9 @@ for relation_type, group in relations.groupby('relation_type'):
     print(group['relation_entity'].str.lower().value_counts().head(5))
 ```
 
-## Análises Específicas
+## Análises Específicas {#análises-específicas}
 
-### 1. Análise de Biomarcadores e Exames
+### 1. Análise de Biomarcadores e Exames {#1-análise-de-biomarcadores-e-exames}
 
 ```python
 # Filtrar biomarcadores e exames com valor numérico
@@ -241,7 +241,7 @@ print("Pacientes por status de detecção:")
 print(detection_analysis)
 ```
 
-### 2. Análise de Comorbidades
+### 2. Análise de Comorbidades {#2-análise-de-comorbidades}
 
 ```python
 from collections import Counter
@@ -269,7 +269,7 @@ for (a, b), n in pair_counts.most_common(10):
     print(f"  {a} + {b}: {n} pacientes")
 ```
 
-### 3. Fármacos Associados a Condições
+### 3. Fármacos Associados a Condições {#3-fármacos-associados-a-condições}
 
 ```python
 # Pares fármaco–condição ligados pela relação may_treat (sem menções negadas).
@@ -291,7 +291,7 @@ print("Pares fármaco–condição (pacientes):")
 print(drug_condition.head(20))
 ```
 
-### 4. Análise de Qualidade dos Dados
+### 4. Análise de Qualidade dos Dados {#4-análise-de-qualidade-dos-dados}
 
 ```python
 structured = entities[entities['label'].isin(['BIOMARKER', 'LAB_TEST'])]
@@ -317,14 +317,14 @@ print("Preenchimento dos campos estruturados por categoria (%):")
 print((coverage * 100).round(1))
 ```
 
-## Considerações Específicas
+## Considerações Específicas {#considerações-específicas}
 
-### 1. Anonimização
+### 1. Anonimização {#1-anonimização}
 
 - **IDs de pacientes e casos**: anonimizados para preservar privacidade
 - **Preservação de privacidade**: mantenha confidencialidade em todas as análises
 
-### 2. Qualidade dos Dados
+### 2. Qualidade dos Dados {#2-qualidade-dos-dados}
 
 ```python
 # Entidades sem assertion (apenas nas categorias em que ela é inferida)
@@ -337,7 +337,7 @@ entities_without_assertion = entities[
 print(f"Entidades sem assertion: {entities_without_assertion}")
 ```
 
-### 3. Contexto Clínico
+### 3. Contexto Clínico {#3-contexto-clínico}
 
 ```python
 # Análise por documento
@@ -356,9 +356,9 @@ print("Documentos com mais entidades:")
 print(richest_docs.head(10))
 ```
 
-## Exemplos de Análises Avançadas
+## Exemplos de Análises Avançadas {#exemplos-de-análises-avançadas}
 
-### Trajetória de Exames por Paciente
+### Trajetória de Exames por Paciente {#trajetória-de-exames-por-paciente}
 
 A média de um exame por mês mistura pacientes diferentes a cada período. Para acompanhar a evolução, olhe os valores de cada paciente ao longo do tempo.
 
@@ -390,6 +390,6 @@ plt.tight_layout()
 plt.show()
 ```
 
-## Boas Práticas
+## Boas Práticas {#boas-práticas}
 
 Recomendações de validação clínica, documentação e reprodutibilidade das análises estão em [Limitações e Considerações](./limitations.md#recomendacoes).

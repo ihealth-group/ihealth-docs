@@ -7,10 +7,10 @@ pagination_next: clinical-data-extraction/v1/csv-format
 # Estrutura dos Dados
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../data-structure.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/data-structure).
 :::
 
-## Visão Geral
+## Visão Geral {#visão-geral}
 
 Os dados extraídos de nosso banco clínico são organizados em duas seções principais:
 
@@ -19,7 +19,7 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 
 > **Nota**: Estes dados representam uma seleção específica de nosso banco de dados clínico, com ampla cobertura nacional e boa representatividade para estudos, filtrados conforme critérios definidos pelo cliente contratante.
 
-## Campos de Metadados do Paciente e do Documento
+## Campos de Metadados do Paciente e do Documento {#campos-de-metadados-do-paciente-e-do-documento}
 
 | Campo                 | Tipo   | Descrição                                                                                      |
 | --------------------- | ------ | ---------------------------------------------------------------------------------------------- |
@@ -33,7 +33,7 @@ Os dados extraídos de nosso banco clínico são organizados em duas seções pr
 | `provider_state_code` | string | Código da Unidade Federativa do provedor                                                       |
 | `provider_type`       | string | Tipo de hospital (Público, Convênio, Particular). [Ver detalhes abaixo](#campo-provider-type). |
 
-## Campos Adicionais
+## Campos Adicionais {#campos-adicionais}
 
 Os campos abaixo podem ser contratados de forma adicional durante o processo de compra do banco de dados.
 
@@ -43,7 +43,7 @@ Os campos abaixo podem ser contratados de forma adicional durante o processo de 
 
 > **Importante**: Verifique com o time comercial durante as negociações para inclusão do campo.
 
-### Detalhamento dos Campos
+### Detalhamento dos Campos {#detalhamento-dos-campos}
 
 #### Campo death – Status de Óbito {#campo-death}
 
@@ -75,9 +75,9 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `Convênio ou Particular`          | Estabelecimento que atende por planos de saúde/convênios e/ou atendimento particular (privado), sem oferta pública.      |
 | `Público, Convênio ou Particular` | Estabelecimento que oferece atendimento nas três modalidades (público, convênio e particular).                           |
 
-## Campos de Entidades Clínicas
+## Campos de Entidades Clínicas {#campos-de-entidades-clínicas}
 
-### Campos Básicos da Entidade
+### Campos Básicos da Entidade {#campos-básicos-da-entidade}
 
 | Campo       | Tipo   | Descrição                                                                                         |
 | ----------- | ------ | ------------------------------------------------------------------------------------------------- |
@@ -86,7 +86,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `label`     | string | Categoria da entidade clínica                                                                     |
 | `assertion` | string | Aserção sobre o contexto da entidade (AUSENTE, PRESENTE, POSSIVEL, HISTORICO) (quando disponível) |
 
-### Campos de Terminologia (quando disponível)
+### Campos de Terminologia (quando disponível) {#campos-de-terminologia-quando-disponível}
 
 | Campo         | Tipo   | Descrição                                  |
 | ------------- | ------ | ------------------------------------------ |
@@ -94,7 +94,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `term_code`   | string | Código da terminologia                     |
 | `term_desc`   | string | Descrição do termo                         |
 
-### Campos de Relação (quando aplicável)
+### Campos de Relação (quando aplicável) {#campos-de-relação-quando-aplicável}
 
 | Campo               | Tipo   | Descrição                                            |
 | ------------------- | ------ | ---------------------------------------------------- |
@@ -102,7 +102,7 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `relation_entity`   | string | Entidade relacionada                                 |
 | `relation_position` | string | Posição da entidade da linha na relação (head, tail) |
 
-## Campos Estruturados para Exames e Biomarcadores
+## Campos Estruturados para Exames e Biomarcadores {#campos-estruturados-para-exames-e-biomarcadores}
 
 **Importante**: Os campos abaixo são preenchidos apenas quando foi possível fazer a normalização/estruturação da entidade e se aplicam apenas às categorias especificadas:
 
@@ -116,13 +116,13 @@ O campo `provider_type` classifica o provedor quanto à natureza da gestão e da
 | `condition`         | string | CLINICAL_ATT                      | Condições associadas                                              |
 | `loinc_code`        | string | BIOMARKER                         | Código LOINC (quando disponível)                                  |
 
-## Detalhamentos e Informações Adicionais
+## Detalhamentos e Informações Adicionais {#detalhamentos-e-informações-adicionais}
 
-### Campo de Asserção - Contexto das Entidades
+### Campo de Asserção - Contexto das Entidades {#campo-de-asserção---contexto-das-entidades}
 
 O campo `assertion` é uma classificação importante que indica o **contexto clínico** em que uma entidade foi mencionada no documento médico. Esta informação é crucial para análises precisas, pois o mesmo termo clínico pode ter significados diferentes dependendo do contexto.
 
-#### Valores Possíveis de Asserção
+#### Valores Possíveis de Asserção {#valores-possíveis-de-asserção}
 
 | Valor       | Descrição                                  | Exemplo de Uso                                |
 | ----------- | ------------------------------------------ | --------------------------------------------- |
@@ -131,7 +131,7 @@ O campo `assertion` é uma classificação importante que indica o **contexto cl
 | `POSSIVEL`  | A entidade é **suspeita** ou **possível**  | "Suspeita de pneumonia" ou "Possível infarto" |
 | `HISTORICO` | A entidade é um **histórico** do paciente  | "Histórico de cirurgia cardíaca em 2020"      |
 
-#### Importância para Análise de Dados
+#### Importância para Análise de Dados {#importância-para-análise-de-dados}
 
 A asserção é fundamental para análises precisas porque:
 
@@ -140,7 +140,7 @@ A asserção é fundamental para análises precisas porque:
 - **Contextualiza histórico**: Entidades `HISTORICO` fornecem informações sobre o passado do paciente
 - **Melhora precisão**: Permite análises mais refinadas considerando o contexto clínico
 
-#### Exemplo Prático
+#### Exemplo Prático {#exemplo-prático}
 
 ```text
 Texto: "Paciente nega diabetes, mas apresenta histórico de hipertensão.
@@ -152,7 +152,7 @@ Entidades extraídas:
 - "insuficiência cardíaca" → assertion: POSSIVEL
 ```
 
-#### Categorias com Asserção
+#### Categorias com Asserção {#categorias-com-asserção}
 
 O modelo de inferência de asserção é aplicado apenas às seguintes categorias de entidades:
 
@@ -160,11 +160,11 @@ O modelo de inferência de asserção é aplicado apenas às seguintes categoria
 
 Nas demais categorias (por exemplo, BIOMARKER, LAB_TEST, CLINICAL_ATT, BODY_PART, TEMPORAL_CONCEPT, entre outras), o modelo de inferência **não é aplicado**. Essas entidades são tratadas como naturalmente presentes no contexto clínico do documento e não demandam classificação adicional. Deste modo, a ausência do campo preenchido não indica falha do modelo na inferência.
 
-### Campos de Terminologia - Normalização e Codificação
+### Campos de Terminologia - Normalização e Codificação {#campos-de-terminologia---normalização-e-codificação}
 
 Os campos de terminologia (`terminology`, `term_code`, `term_desc`) são aplicados apenas para **3 categorias específicas** de entidades, quando foi possível fazer o mapeamento/normalização para terminologias médicas padronizadas.
 
-#### Categorias com Terminologia
+#### Categorias com Terminologia {#categorias-com-terminologia}
 
 | Categoria         | Terminologia | Descrição                                   | Exemplo                              |
 | ----------------- | ------------ | ------------------------------------------- | ------------------------------------ |
@@ -172,7 +172,7 @@ Os campos de terminologia (`terminology`, `term_code`, `term_desc`) são aplicad
 | `PROCEDURE`       | **TUSS**     | Terminologia Unificada da Saúde Suplementar | "cirurgia cardíaca" → TUSS: 31001001 |
 | `PHARM_SUBSTANCE` | **ATC**      | Anatomical Therapeutic Chemical             | "metformina" → ATC: A10BA02          |
 
-#### Exemplo Prático
+#### Exemplo Prático {#exemplo-prático-1}
 
 ```text
 Entidade extraída: "diabetes mellitus tipo 2"
@@ -185,9 +185,9 @@ Terminologia aplicada:
 
 > **Importante**: Nem todas as entidades das categorias `DISEASE`, `PROCEDURE` e `PHARM_SUBSTANCE` terão campos de terminologia preenchidos. Isso ocorre apenas quando foi possível fazer o mapeamento automático para as terminologias padronizadas.
 
-### Categorias de Entidades Clínicas
+### Categorias de Entidades Clínicas {#categorias-de-entidades-clínicas}
 
-#### Labels Disponíveis
+#### Labels Disponíveis {#labels-disponíveis}
 
 | Label              | Descrição                    | Exemplo                           |
 | ------------------ | ---------------------------- | --------------------------------- |
@@ -210,7 +210,7 @@ Terminologia aplicada:
 | `LAB_TEST`         | Exames laboratoriais         | "hemograma", "urina"              |
 | `CLINICAL_ATT`     | Sinais vitais                | "pressão arterial", "temperatura" |
 
-### Tipos de Relação
+### Tipos de Relação {#tipos-de-relação}
 
 | Relation Type                          | Descrição                             | Exemplo                   |
 | -------------------------------------- | ------------------------------------- | ------------------------- |

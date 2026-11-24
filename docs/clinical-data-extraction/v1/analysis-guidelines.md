@@ -7,14 +7,14 @@ pagination_next: clinical-data-extraction/v1/limitations
 # Diretrizes para Análise de Dados
 
 :::caution Documentação v1
-Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](../analysis-guidelines.md).
+Esta documentação corresponde às extrações entregues **até 20/09/2026**. Consulte a [versão atual](/clinical-data-extraction/analysis-guidelines).
 :::
 
-## Contexto dos Dados
+## Contexto dos Dados {#contexto-dos-dados}
 
 Esta documentação fornece diretrizes para análise dos **dados extraídos** de nosso banco clínico. Estes dados representam uma seleção específica de documentos médicos de nossa base, com ampla cobertura nacional e representatividade para análises, filtrados conforme critérios definidos para o projeto.
 
-### Características Importantes dos Dados Extraídos
+### Características Importantes dos Dados Extraídos {#características-importantes-dos-dados-extraídos}
 
 - **Origem**: Banco de dados clínico com ampla cobertura e representatividade para estudos e projetos
 - **Seleção**: Pacientes e documentos filtrados por critérios específicos (diagnósticos, medicamentos, procedimentos, etc.)
@@ -22,11 +22,11 @@ Esta documentação fornece diretrizes para análise dos **dados extraídos** de
 - **Anonimização**: Identificadores de pacientes e provedores anonimizados
 - **Formatos**: Disponibilizados em CSV e JSONL para diferentes tipos de análise
 
-## Preparação dos Dados
+## Preparação dos Dados {#preparação-dos-dados}
 
-### Limpeza e Validação
+### Limpeza e Validação {#limpeza-e-validação}
 
-#### Para CSV
+#### Para CSV {#para-csv}
 
 ```python
 import pandas as pd
@@ -51,7 +51,7 @@ print("Colunas:", df.columns.tolist())
 print("Tipos de dados:", df.dtypes)
 ```
 
-#### Para JSONL
+#### Para JSONL {#para-jsonl}
 
 ```python
 import json
@@ -70,7 +70,7 @@ if data:
     print(json.dumps(data[0], indent=2, ensure_ascii=False))
 ```
 
-### Tratamento de Valores Ausentes
+### Tratamento de Valores Ausentes {#tratamento-de-valores-ausentes}
 
 - **Campos vazios**: ficam em branco no CSV e viram `NaN` ao carregar com pandas
 - **Valores numéricos ausentes**: Campo `numeric_value` vazio
@@ -83,11 +83,11 @@ print("Campos vazios por coluna:")
 print(df.isna().sum())
 ```
 
-## Análises Recomendadas
+## Análises Recomendadas {#análises-recomendadas}
 
-### 1. Análise Descritiva
+### 1. Análise Descritiva {#1-análise-descritiva}
 
-#### Distribuição de Entidades
+#### Distribuição de Entidades {#distribuição-de-entidades}
 
 ```python
 # Distribuição por tipo de entidade
@@ -107,7 +107,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-#### Entidades Mais Frequentes
+#### Entidades Mais Frequentes {#entidades-mais-frequentes}
 
 ```python
 # Desconsiderar menções negadas
@@ -125,14 +125,14 @@ for label in patient_entities['label'].dropna().unique():
     print(top_in_category)
 ```
 
-#### Contexto das Entidades
+#### Contexto das Entidades {#contexto-das-entidades}
 
 ```python
 # Quantidade de menções por categoria e contexto (assertion)
 print(pd.crosstab(entities['label'], entities['assertion']))
 ```
 
-### 2. Análise Temporal
+### 2. Análise Temporal {#2-análise-temporal}
 
 ```python
 # Análise temporal
@@ -155,7 +155,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 3. Análise Geográfica
+### 3. Análise Geográfica {#3-análise-geográfica}
 
 ```python
 # Pacientes por UF (cada linha é uma entidade, então conte pacientes distintos).
@@ -165,7 +165,7 @@ print("Pacientes por UF:")
 print(patients_by_state)
 ```
 
-### 4. Análise de Relações
+### 4. Análise de Relações {#4-análise-de-relações}
 
 ```python
 # Cada relação aparece em duas linhas (uma da entidade head e outra da tail).
@@ -183,9 +183,9 @@ print("Entidades mais relacionadas:")
 print(related_entities.head(20))
 ```
 
-## Análises Específicas
+## Análises Específicas {#análises-específicas}
 
-### 1. Análise de Biomarcadores
+### 1. Análise de Biomarcadores {#1-análise-de-biomarcadores}
 
 ```python
 # Filtrar biomarcadores e exames com valor numérico
@@ -210,7 +210,7 @@ print("Análise por status de detecção:")
 print(detection_analysis)
 ```
 
-### 2. Análise de Comorbidades
+### 2. Análise de Comorbidades {#2-análise-de-comorbidades}
 
 ```python
 from collections import Counter
@@ -234,7 +234,7 @@ for (a, b), n in pair_counts.most_common(10):
     print(f"  {a} + {b}: {n} pacientes")
 ```
 
-### 3. Análise de Padrões de Tratamento
+### 3. Análise de Padrões de Tratamento {#3-análise-de-padrões-de-tratamento}
 
 ```python
 # Relacionar medicamentos a condições (sem menções negadas)
@@ -248,7 +248,7 @@ print("Padrões de tratamento mais comuns:")
 print(treatment_patterns.head(20))
 ```
 
-### 4. Análise de Qualidade dos Dados
+### 4. Análise de Qualidade dos Dados {#4-análise-de-qualidade-dos-dados}
 
 ```python
 # Verificar consistência entre entity e normalized_entity
@@ -269,14 +269,14 @@ print("Cobertura de terminologia por categoria:")
 print(terminology_coverage)
 ```
 
-## Considerações Específicas
+## Considerações Específicas {#considerações-específicas}
 
-### 1. Anonimização
+### 1. Anonimização {#1-anonimização}
 
 - **IDs de pacientes e casos**: Anonimizados para preservar privacidade
 - **Preservação de privacidade**: Mantenha confidencialidade em todas as análises
 
-### 2. Qualidade dos Dados
+### 2. Qualidade dos Dados {#2-qualidade-dos-dados}
 
 ```python
 # Entidades sem assertion (apenas nas categorias em que ela é inferida)
@@ -289,7 +289,7 @@ entities_without_assertion = entities[
 print(f"Entidades sem assertion: {entities_without_assertion}")
 ```
 
-### 3. Contexto Clínico
+### 3. Contexto Clínico {#3-contexto-clínico}
 
 ```python
 # Análise por documento
@@ -308,9 +308,9 @@ print("Documentos com mais entidades:")
 print(richest_docs.head(10))
 ```
 
-## Exemplos de Análises Avançadas
+## Exemplos de Análises Avançadas {#exemplos-de-análises-avançadas}
 
-### Análise de Séries Temporais
+### Análise de Séries Temporais {#análise-de-séries-temporais}
 
 ```python
 # Análise temporal de biomarcadores
@@ -342,22 +342,22 @@ plt.tight_layout()
 plt.show()
 ```
 
-## Boas Práticas
+## Boas Práticas {#boas-práticas}
 
-### 1. Documentação
+### 1. Documentação {#1-documentação}
 
 - **Mantenha registro** de todas as análises realizadas
 - **Documente limitações** e suposições
 - **Use versionamento** para código de análise
 - **Valide resultados** com especialistas clínicos
 
-### 2. Reprodutibilidade
+### 2. Reprodutibilidade {#2-reprodutibilidade}
 
 - **Seeds fixos** em análises com etapas aleatórias
 - **Versões** do Python e dos pacotes registradas
 - **Data e lote dos dados** usados em cada análise
 
-### 3. Validação
+### 3. Validação {#3-validação}
 
 - **Sempre valide** resultados com especialistas clínicos
 - **Considere limitações** dos dados de PLN
